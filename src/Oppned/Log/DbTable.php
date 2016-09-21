@@ -1,5 +1,5 @@
 <?php
-namespace Oppned;
+namespace Oppned\Log;
 
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;

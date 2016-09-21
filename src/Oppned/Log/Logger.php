@@ -1,5 +1,5 @@
 <?PHP
-namespace Oppned;
+namespace Oppned\Log;
 
 //use Zend\Session\Container;
 //use Zend\Stdlib\SplQueue;

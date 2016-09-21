@@ -1,5 +1,5 @@
 <?php
-namespace Oppned;
+namespace Oppned\Log;
 
 use Oppned\DbTable;
 use Zend\Db\Sql\Select;

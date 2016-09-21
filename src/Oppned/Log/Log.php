@@ -1,6 +1,6 @@
 <?php
 
-namespace Oppned;
+namespace Oppned\Log;
 
 class Log {
 	protected $data = array(
