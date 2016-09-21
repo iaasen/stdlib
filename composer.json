@@ -6,9 +6,9 @@
     ],
     "require": {
         "php": ">=5.6.0",
-        "zendframework/zend-db": "dev-master",
-        "zendframework/zend-modulemanager": "dev-master",
-        "zendframework/zend-view": "dev-master",
+        "zendframework/zend-db": "^2.8.2",
+        "zendframework/zend-modulemanager": "^2.7.2",
+        "zendframework/zend-view": "^2.8.1",
         "digitalnature/php-ref": "dev-master"
     }
 }
