@@ -10,5 +10,13 @@
         "zendframework/zend-modulemanager": "^2.7.2",
         "zendframework/zend-view": "^2.8.1",
         "digitalnature/php-ref": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "Oppned\\": "src/"
+        },
+        "classmap": [
+            "Module.php"
+        ]
     }
 }
