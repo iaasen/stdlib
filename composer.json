@@ -1,0 +1,14 @@
+{
+    "name": "iaasen/stdlib",
+    "description": "iaasen basic bundle",
+    "license": "",
+    "keywords": [
+    ],
+    "require": {
+        "php": ">=5.6.0",
+        "zendframework/zend-db": "dev-master",
+        "zendframework/zend-modulemanager": "dev-master",
+        "zendframework/zend-view": "dev-master",
+        "digitalnature/php-ref": "dev-master"
+    }
+}
