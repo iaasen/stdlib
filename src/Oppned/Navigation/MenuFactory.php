@@ -27,7 +27,7 @@ class MenuFactory implements FactoryInterface
 		$menu->setOnlyActiveBranch(true);
 		$menu->setRenderParents(false);
 		$menu->setMinDepth(1);
-		$menu->setMaxDepth(1);
+		$menu->setMaxDepth(2);
 		//$menu->setPartial(['layout/menuPartial', 'settings']);
 		return $menu;
 	}

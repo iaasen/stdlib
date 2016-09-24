@@ -32,18 +32,18 @@ return [
 			'menu' => \Oppned\Navigation\MenuFactory::class,
 		],
 	],
-	'navigation' => [
-		'default' => [
-			'home' => [
-				'label' => 'Forside',
-				'route' => 'home',
-			],
-		],
-		'login' => [
-			'login' => [
-				'label' => 'Logg inn',
-				'route' => 'auth/login',
-			],
-		]
-	],
+//	'navigation' => [
+//		'default' => [
+//			'home' => [
+//				'label' => 'Forside',
+//				'route' => 'home',
+//			],
+//		],
+//		'login' => [
+//			'login' => [
+//				'label' => 'Logg inn',
+//				'route' => 'auth/login',
+//			],
+//		]
+//	],
 ];
