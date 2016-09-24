@@ -79,7 +79,7 @@ class Message {
 	/**
 	 * 
 	 * Returns the messages in a list of DIV's following the names given in the static $css_classes
-	 * @param unknown_type $max_level
+	 * @param int $max_level
 	 */
 	static function returnHtml($max_level = false) {
 		$container = new Container(self::$container);

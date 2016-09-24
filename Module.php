@@ -35,22 +35,22 @@ class Module implements AutoloaderProviderInterface {
 	public function getServiceConfig() {
 		return [
 			'factories' => [
-				'Logger' => function ($sm) {
-					$logTable = $sm->get('LogTable');
-					$userTable = $sm->get('UserTable');
-					return new Logger($logTable, $userTable);
-				},
-				'LogTable' => function ($sm) {
-					$tableGateway = $sm->get('LogTableGateway');
-					$table = new \General\LogTable($tableGateway);
-					return $table;
-				},
-				'LogTableGateway' => function ($sm) {
-					$dbAdapter = $sm->get('Db\Boligkalk');
-					$resultSetPrototype = new ResultSet();
-					$resultSetPrototype->setArrayObjectPrototype(new \Oppned\Log());
-					return new TableGateway('Log', $dbAdapter, null, $resultSetPrototype);
-				},
+//				'Logger' => function ($sm) {
+//					$logTable = $sm->get('LogTable');
+//					$userTable = $sm->get('UserTable');
+//					return new Logger($logTable, $userTable);
+//				},
+//				'LogTable' => function ($sm) {
+//					$tableGateway = $sm->get('LogTableGateway');
+//					$table = new \General\LogTable($tableGateway);
+//					return $table;
+//				},
+//				'LogTableGateway' => function ($sm) {
+//					$dbAdapter = $sm->get('Db\Boligkalk');
+//					$resultSetPrototype = new ResultSet();
+//					$resultSetPrototype->setArrayObjectPrototype(new \Oppned\Log());
+//					return new TableGateway('Log', $dbAdapter, null, $resultSetPrototype);
+//				},
 			]
 		];
 	}

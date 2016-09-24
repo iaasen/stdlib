@@ -16,13 +16,11 @@ class Logger {
 	const INFO   = 6;
 	const DEBUG  = 7;
 
-	/**
-	 * @var $logTable LogTable
-	 * @var $userTable UserTable
-	 * @var $logs Log[]
-	 */
-	private $logTable = null;
-	private $userTable = null;
+	/** @var LogTable  */
+	private $logTable;
+	/** @var UserTable  */
+	private $userTable;
+	/** @var Log[] */
 	public $logs = [];
 
 

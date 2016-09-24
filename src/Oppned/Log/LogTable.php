@@ -1,11 +1,10 @@
 <?php
 namespace Oppned\Log;
 
-use Oppned\DbTable;
+use Oppned\AbstractTable;
 use Zend\Db\Sql\Select;
-use General\Message;
 
-class LogTable extends DbTable
+class LogTable extends AbstractTable
 {
 	public function find($id) {
 		if($this->accessToView($id)) {
@@ -14,15 +13,15 @@ class LogTable extends DbTable
 		else return false;	
 	}
 	
-	public function save($model, $recursive = false) {
-		if($this->accessToEdit($model))
+	public function save($model) {
+		if($this->accessToEdit($model)) {
 			return parent::save($model);
+		}
 		return false;
 	}
 	
 	public function delete($id) {
 		if($this->accessToEdit($id)) {
-			$model = $this->find($id);
 			return parent::delete($id);
 		}
 		else return false;
@@ -36,13 +35,13 @@ class LogTable extends DbTable
 	 * @param string $group
 	 */
 	public function getGroupLogs($filter = 'important', $limit = 10, $group = null) {
-		if(!$group) $group = $this->getCurrentUser()->current_group;
+		if(!$group) $group = $this->currentUser->current_group;
 		if(!$this->accessToView($group, 'group')) return false;;
 		
 		$query = array();
 		$query['group'] = $group;
 		$select = new Select();
-		$select->from($this->tableGateway->getTable());
+		$select->from($this->primaryGateway->getTable());
 		$select->where->equalTo('group', $group);
 		$select->limit($limit);
 		
@@ -63,7 +62,7 @@ class LogTable extends DbTable
 				$select->order('timestamp_created DESC');
 				break;
 		}
-		$rows = $this->tableGateway->selectWith($select);
+		$rows = $this->primaryGateway->selectWith($select);
 		
 		$logs = array();
 		foreach($rows AS $row) {

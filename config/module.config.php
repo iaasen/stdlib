@@ -11,10 +11,14 @@ return [
 		'factories' => [
 			//'navigation' => \Oppned\Navigation\NavigationFactory::class,
 			'navigation' => \Zend\Navigation\Service\DefaultNavigationFactory::class,
+			\Oppned\Log\Logger::class => \Oppned\Log\LoggerFactory::class,
+			\Oppned\Log\LogTable::class => \Oppned\Log\LogTableFactory::class,
+			'Oppned\Log\LogTableGateway' => \Oppned\Log\LogTableGatewayFactory::class,
 		],
 		'invokables' => [
 		],
 		'aliases' => [
+			'Logger' => \Oppned\Log\Logger::class,
 		]
 	],
 	'view_helpers' => [
