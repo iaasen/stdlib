@@ -2,7 +2,6 @@
 namespace Oppned;
 
 use Acl\Model\User;
-use Priceestimator\Model\ModelInterface;
 use Zend\Db\Sql\AbstractPreparableSql;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
