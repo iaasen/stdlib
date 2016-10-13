@@ -2,7 +2,7 @@
 namespace Oppned\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
-use General\Message;
+use Oppned\Message;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
