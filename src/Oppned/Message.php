@@ -129,8 +129,8 @@ class Message {
 	static function returnArray($max_level = false) {
 		$container = new Container(self::$container);
 		if(!isset($container->{self::$namespace})) return array();
-		
-		$msg = array();
+
+		$answer = [];
 		$n = $container->{self::$namespace};
 		$lines = count($n);
 		

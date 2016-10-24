@@ -12,8 +12,8 @@
         "digitalnature/php-ref": "dev-master"
     },
     "autoload": {
-        "psr-0": {
-            "Oppned\\": "src/"
+        "psr-4": {
+            "Oppned\\": "src/Oppned"
         },
         "classmap": [
             "Module.php"
