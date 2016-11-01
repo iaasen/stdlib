@@ -98,10 +98,12 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 		}
 	}
 
-//	public function __clone()
-//	{
-//		$this->id = null;
-//	}
+	public function __clone()
+	{
+		$this->id = null;
+		$this->timestamp_created = new DateTime();
+		$this->timestamp_updated = $this->timestamp_created;
+	}
 
 	/**
 	 * @return string
@@ -169,9 +171,9 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 		foreach($properties AS $property) {
 			$name = $property->getName();
 			$value = $this->__get($name);
+
 			$factory  = \phpDocumentor\Reflection\DocBlockFactory::createInstance();
 			$annotation = $factory->create($property->getDocComment());
-
 			switch($annotation->getTagsByName('var')[0]->getType()) {
 				case 'bool':
 					$data[$name] = ($value) ? 1 : 0;
