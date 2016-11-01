@@ -52,7 +52,7 @@ class Log extends AbstractModel {
 					$this->$name = $value;
 				}
 				else {
-					$this->$name = array_search($name, self::$priorities);
+					$this->$name = array_search($value, self::$priorities);
 				}
 				break;
 			default:
