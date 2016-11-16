@@ -3,27 +3,28 @@
 namespace Oppned;
 
 use Acl\Model\User;
-use Priceestimator\Service\AbstractTable;
-use Zend\Form\Fieldset;
-use Zend\Form\Form;
 use Zend\Mvc\Controller\AbstractActionController;
-use Priceestimator\View\Helper\MenuWidget;
+//use Priceestimator\View\Helper\MenuWidget;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 
 abstract class AbstractController extends AbstractActionController {
-	protected $tables = array();
 	protected $redirect;
-	protected $currentUser;
 
-	public function __construct(User $currentUser)
+	/** @var User|null */
+	protected $currentUser;
+	/** @var  \Zend\Navigation\Navigation */
+	protected $navigation;
+
+	public function __construct(User $currentUser, \Zend\Navigation\AbstractContainer $navigation)
 	{
 		$this->currentUser = $currentUser;
+		$this->navigation = $navigation;
 	}
 
 	public function onDispatch(\Zend\Mvc\MvcEvent $e) {
-		MenuWidget::mainMenu($this->getServiceLocator()->get('Acl\AuthService')->hasIdentity());
+		//MenuWidget::mainMenu($this->getServiceLocator()->get('Acl\AuthService')->hasIdentity());
 		return parent::onDispatch($e);
 	}
 
@@ -51,6 +52,15 @@ abstract class AbstractController extends AbstractActionController {
 		$data['success'] = false;
 		$data['messages'] = $message;
 		return new JsonModel($data);
+	}
+
+	/**
+	 * @return \Zend\Http\PhpEnvironment\Request
+	 */
+	public function getRequest() {
+		/** @var \Zend\Http\PhpEnvironment\Request $request */
+		$request = parent::getRequest();
+		return $request;
 	}
 
 //	/**
