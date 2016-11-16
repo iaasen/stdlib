@@ -22,11 +22,20 @@ class Log extends AbstractModel {
 	/** @var  string  */
 	protected $group;
 	/** @var  int */
-	protected $priority;
+	protected $severity;
 	/** @var  string */
 	protected $message;
 	/** @var  bool */
 	protected $viewed;
+
+	const EMERG  = 0;
+	const ALERT  = 1;
+	const CRIT   = 2;
+	const ERR    = 3;
+	const WARN   = 4;
+	const NOTICE = 5;
+	const INFO   = 6;
+	const DEBUG  = 7;
 
 	public static $priorities = array(
 		0 => 'EMERG',
@@ -47,12 +56,13 @@ class Log extends AbstractModel {
 
 	public function __set($name, $value) {
 		switch($name) {
+			case 'severity':
 			case 'priority':
 				if(is_numeric($value)) {
-					$this->$name = $value;
+					$this->severity = $value;
 				}
 				else {
-					$this->$name = array_search($name, self::$priorities);
+					$this->severity = array_search($value, self::$priorities);
 				}
 				break;
 			default:
@@ -63,8 +73,11 @@ class Log extends AbstractModel {
 	
 	public function __get($name) {
 		switch($name) {
+			case 'priority':
+				return $this->severity;
+			case 'severityName':
 			case 'priorityName':
-				return self::$priorities[$this-$name];
+				return self::$priorities[$this->severity];
 				break;
 			default:
 				return parent::__get($name);

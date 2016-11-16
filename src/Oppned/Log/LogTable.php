@@ -2,6 +2,7 @@
 namespace Oppned\Log;
 
 use Oppned\AbstractTable;
+use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 
 class LogTable extends AbstractTable
@@ -37,9 +38,20 @@ class LogTable extends AbstractTable
 	public function getGroupLogs($filter = 'important', $limit = 10, $group = null) {
 		if(!$group) $group = $this->currentUser->current_group;
 		if(!$this->accessToView($group, 'group')) return false;;
-		
-		$query = array();
-		$query['group'] = $group;
+
+		// Count unread logs and make sure they are all listed
+		if($filter == 'important') {
+			$select = new Select();
+			$select->columns(['count' => new Expression('COUNT(*)')]);
+			$select->from($this->primaryGateway->getTable());
+			$select->where->equalTo('group', $group);
+			$select->where->equalTo('viewed', 0);
+			$rows = $this->query($select);
+			if($rows->current()['count'] > $limit) $limit = (int) $rows->current()['count'];
+		}
+
+//		$query = [];
+//		$query['group'] = $group;
 		$select = new Select();
 		$select->from($this->primaryGateway->getTable());
 		$select->where->equalTo('group', $group);
@@ -48,7 +60,7 @@ class LogTable extends AbstractTable
 		switch($filter) {
 			case 'important':
 			default:
-				$select->order(array('viewed', 'timestamp_created DESC'));
+				$select->order(['viewed', 'timestamp_created DESC']);
 				break;
 			case 'read':
 				$select->where->equalTo('viewed', 1);
