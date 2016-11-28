@@ -6,12 +6,12 @@ use Acl\Model\User;
 use Zend\Form\Fieldset;
 use Zend\Form\Form;
 use Zend\Mvc\Controller\AbstractActionController;
+//use Priceestimator\View\Helper\MenuWidget;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 
 abstract class AbstractController extends AbstractActionController {
-	protected $tables = array();
 	protected $redirect;
 
 	/** @var User|null */
