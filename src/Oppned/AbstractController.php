@@ -3,11 +3,9 @@
 namespace Oppned;
 
 use Acl\Model\User;
-use Priceestimator\Service\AbstractTable;
 use Zend\Form\Fieldset;
 use Zend\Form\Form;
 use Zend\Mvc\Controller\AbstractActionController;
-use Priceestimator\View\Helper\MenuWidget;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
@@ -15,17 +13,22 @@ use Zend\View\Model\ViewModel;
 abstract class AbstractController extends AbstractActionController {
 	protected $tables = array();
 	protected $redirect;
-	protected $currentUser;
 
-	public function __construct(User $currentUser)
+	/** @var User|null */
+	protected $currentUser;
+	/** @var  \Zend\Navigation\Navigation */
+	protected $navigation;
+
+
+	public function __construct($currentUser, $navigation)
 	{
 		$this->currentUser = $currentUser;
+		$this->navigation = $navigation;
 	}
 
-	public function onDispatch(\Zend\Mvc\MvcEvent $e) {
-		MenuWidget::mainMenu($this->getServiceLocator()->get('Acl\AuthService')->hasIdentity());
-		return parent::onDispatch($e);
-	}
+//	public function onDispatch(\Zend\Mvc\MvcEvent $e) {
+//		return parent::onDispatch($e);
+//	}
 
 	public function getRedirect($defaultUrl = false) {
 		if($this->redirect === null) {
@@ -53,31 +56,7 @@ abstract class AbstractController extends AbstractActionController {
 		return new JsonModel($data);
 	}
 
-//	/**
-//	 * @param string $table
-//	 * @return DbTable
-//	 */
-//	public function getTable($table) {
-//		return $this->getServiceLocator()->get(ucfirst($table) . 'Table');
-//	}
 
-//	/**
-//	 * @param string $form
-//	 * @return Form
-//	 */
-//	public function getForm($form) {
-//		return $this->getServiceLocator()
-//			->get('FormElementManager')
-//			->get('Priceestimator\Form\\' . ucfirst($form) . 'Form');
-//	}
-//
-//	/**
-//	 * @param string $fieldset
-//	 * @return Fieldset
-//	 */
-//	public function getFieldset($fieldset) {
-//		return $this->getServiceLocator()
-//			->get('FormElementManager')
-//			->get('Priceestimator\Form\\' . ucfirst($fieldset) . 'Fieldset');
-//	}
+
+
 }

@@ -19,7 +19,7 @@ class LogTableFactory
 	public function __invoke($serviceLocator)
 	{
 		$tableGateway = $serviceLocator->get('Oppned\Log\LogTableGateway');
-		$currentUser = $serviceLocator->get(\Acl\Model\UserTable::class)->getCurrentUser();
+		$currentUser = $serviceLocator->get(\Acl\Service\UserTable::class)->getCurrentUser();
 		return new \Oppned\Log\LogTable($currentUser, $tableGateway);
 	}
 

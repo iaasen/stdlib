@@ -4,7 +4,7 @@ namespace Oppned\Log;
 //use Zend\Session\Container;
 //use Zend\Stdlib\SplQueue;
 
-use Acl\Model\UserTable;
+use Acl\Service\UserTable;
 
 class Logger {
 	const EMERG  = 0;
