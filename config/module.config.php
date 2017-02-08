@@ -1,7 +1,6 @@
 <?php
 namespace Oppned;
 
-use Oppned\View\Helper\MessageWidget;
 
 return [
 	'service_manager' => [
@@ -9,7 +8,6 @@ return [
 			\Zend\Navigation\Service\NavigationAbstractServiceFactory::class,
 		],
 		'factories' => [
-			//'navigation' => \Oppned\Navigation\NavigationFactory::class,
 			'navigation' => \Zend\Navigation\Service\DefaultNavigationFactory::class,
 			\Oppned\Log\Logger::class => \Oppned\Log\LoggerFactory::class,
 			\Oppned\Log\LogTable::class => \Oppned\Log\LogTableFactory::class,
@@ -23,7 +21,8 @@ return [
 	],
 	'view_helpers' => [
         'invokables' => [
-            'messages' => MessageWidget::class,
+            'messages' => \Oppned\View\Helper\MessageWidget::class,
+			'makeBootstrapFormHorizontal' => \Oppned\View\Helper\BootstrapFormHorizontal::class,
         ],
     ],
 	'navigation_helpers' => [
@@ -31,6 +30,16 @@ return [
 			'mainMenu' => \Oppned\Navigation\MainMenuFactory::class,
 			'menu' => \Oppned\Navigation\MenuFactory::class,
 		],
+	],
+	'form_elements' => [
+		'invokables' => [
+			'Primary' => \Oppned\Form\Element\Primary::class,
+		],
+		'factories' => [
+
+		],
+		'abstract_factories' => [
+		]
 	],
 //	'navigation' => [
 //		'default' => [

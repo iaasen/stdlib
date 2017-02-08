@@ -1,7 +1,6 @@
 <?php
 namespace Oppned;
 
-use Acl\Model\User;
 use Zend\Db\Sql\AbstractPreparableSql;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
@@ -11,12 +10,12 @@ use Zend\Db\Sql\Sql;
 
 abstract class AbstractTable
 {
-	/** @var  User */
+	/** @var  object */
 	protected $currentUser;
-	/** @var TableGateway  */
+	/** @var  TableGateway  */
 	protected $primaryGateway;
 
-	public function __construct(User $currentUser, TableGateway $primaryGateway, array $additionalDependencies = [])
+	public function __construct($currentUser, TableGateway $primaryGateway, array $additionalDependencies = [])
 	{
 		$this->currentUser = $currentUser;
 		$this->primaryGateway = $primaryGateway;

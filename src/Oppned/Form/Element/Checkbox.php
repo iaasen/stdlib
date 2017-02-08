@@ -8,13 +8,13 @@ use Zend\InputFilter\InputProviderInterface;
 class Checkbox extends ZendCheckbox implements InputProviderInterface {
 	
 	public function getInputSpecification() {
-		return array(
+		return [
 			'name' => $this->getName(),
 			'required' => true,
 			'allow_empty' => true,
-			'filters' => array(
-				array('name' => 'Boolean')
-			),
-		);		
+			'filters' => [
+				['name' => 'Boolean']
+			],
+		];
 	}
 }
