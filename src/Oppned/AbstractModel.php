@@ -68,6 +68,12 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 			case 'string':
 				$this->$name = (string) $value;
 				break;
+			case 'string[]':
+				if(is_string($value)) {
+					if(in_array(substr($value, 0, 1), ['{', '['])) $this->$name = json_decode($value);
+				}
+				else $this->$name = $value;
+				break;
 			case '\DateTime':
 				if(is_null($value)) $this->$name = null;
 				elseif(is_string($value)) $this->$name = new DateTime($value);
@@ -181,6 +187,9 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 				case '\DateTime':
 					if($value) $data[$name] = $value->format('c');
 					else $data[$name] = null;
+					break;
+				case 'string[]':
+					$data[$name] = json_encode($value);
 					break;
 				default:
 					$data[$name] = $value;
