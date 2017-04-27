@@ -12,11 +12,15 @@ use DateTime;
 use Exception;
 use InvalidArgumentException;
 use LogicException;
-use phpDocumentor\Reflection\DocBlock;
 use ReflectionClass;
 use ReflectionProperty;
-use Zend\Stdlib\ArrayObject;
 
+/**
+ * Class AbstractModel
+ * @package Oppned
+ * @property \DateTime $timestamp_created
+ * @property \DateTime $timestamp_updated
+ */
 abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 {
 	/** @var DateTime */
