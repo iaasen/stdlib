@@ -9,7 +9,8 @@
         "zendframework/zend-db": "^2.5",
         "zendframework/zend-modulemanager": "^2.5",
         "zendframework/zend-view": "^2.5",
-        "digitalnature/php-ref": "dev-master"
+        "digitalnature/php-ref": "dev-master",
+        "guzzlehttp/guzzle": "^6"
     },
     "autoload": {
         "psr-4": {
