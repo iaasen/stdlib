@@ -10,15 +10,17 @@ namespace Oppned\Transport;
 
 use GuzzleHttp\Client AS GuzzleClient;
 
-class GuzzleHttpTransport implements HttpTransportInterface
+abstract class GuzzleHttpTransport implements HttpTransportInterface
 {
 	/** @var  string */
 	public $base_url;
 	/** @var  string[] */
-	public $headers;
+	public $headers = [];
 
 	/** @var GuzzleClient  */
 	protected $client;
+
+	abstract protected function checkSession();
 
 	public function __construct($config)
 	{
@@ -48,12 +50,14 @@ class GuzzleHttpTransport implements HttpTransportInterface
 		unset($this->headers[$key]);
 	}
 
-	public function send($method, $url, $payload = [])
+	protected function send($method, $url, $payload = [], $checkSession = true)
 	{
-		$allowedMethods = ['GET', 'POST', 'DELETE'];
+		if($checkSession) $this->checkSession();
+
+		$allowedMethods = ['GET', 'POST', 'PUT', 'DELETE'];
 		if(!in_array($method, $allowedMethods)) throw new \Exception('Only GET, POST and DELETE allowed');
 
-		$allowedPayload = ['query', 'json'];
+		$allowedPayload = ['query', 'json', 'form_params'];
 		foreach($payload AS $key => $value) {
 			if(!in_array($key, $allowedPayload)) throw new \Exception("Payload must be 'query' or 'json'");
 		}

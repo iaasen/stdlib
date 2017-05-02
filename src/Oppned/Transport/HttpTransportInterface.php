@@ -11,15 +11,6 @@ namespace Oppned\Transport;
 
 interface HttpTransportInterface
 {
-
-	/**
-	 * @param string $method GET, POST, PUT, DELETE
-	 * @param string $url
-	 * @param array $payload
-	 * @return mixed
-	 */
-	public function send($method, $url, $payload = []);
-
 	public function sendGet($url, $query = []);
 	public function sendPostWithJson($url, $json, $query = []);
 	public function sendPostWithFormData($url, $post, $query = []);
