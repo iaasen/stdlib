@@ -20,7 +20,19 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 	/** @var GuzzleClient  */
 	protected $client;
 
+	/**
+	 * Is run before each request
+	 * @return void
+	 */
 	abstract protected function checkSession();
+
+	/**
+	 * Is run if error code is given from server
+	 * Request is attempted a second time if function returns true
+	 * If function returns false the API error will be forwarded
+	 * @return bool
+	 */
+	abstract protected function renewSession();
 
 	public function __construct($config)
 	{
@@ -32,6 +44,7 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 
 		$this->client = new GuzzleClient([
 			'base_uri' => $this->base_url,
+			'http_errors' => true, //  Don't throw exceptions for 4xx errors
 //			'headers' => $this->headers,
 //			'auth' => [$this->username, $this->password],
 			'verify' => false,
@@ -42,6 +55,10 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 		$this->headers = $headers;
 	}
 
+	public function addHeader($name, $value) {
+		$this->addHeaders([$name => $value]);
+	}
+
 	public function addHeaders($headers) {
 		$this->headers = array_merge($this->headers, $headers);
 	}
@@ -50,23 +67,33 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 		unset($this->headers[$key]);
 	}
 
-	protected function send($method, $url, $payload = [], $checkSession = true)
+	public function send($method, $url, $payload = [], $checkSession = true)
 	{
 		if($checkSession) $this->checkSession();
 
+		try {
+			return $this->internalSend($method, $url, $payload);
+		}
+		catch(\Exception $e) {
+			if($e->getCode() == 401) { // 401 when access token is not accepted
+				if($this->renewSession()) return $this->internalSend($method, $url, $payload);
+			}
+			throw $e;
+		}
+	}
+
+	protected function internalSend($method, $url, $payload = []) {
 		$allowedMethods = ['GET', 'POST', 'PUT', 'DELETE'];
 		if(!in_array($method, $allowedMethods)) throw new \Exception('Only GET, POST and DELETE allowed');
 
 		$allowedPayload = ['query', 'json', 'form_params'];
 		foreach($payload AS $key => $value) {
-			if(!in_array($key, $allowedPayload)) throw new \Exception("Payload must be 'query' or 'json'");
+			if(!in_array($key, $allowedPayload)) throw new \Exception("Payload must be 'query', 'json' or 'form_params'");
 		}
 
 		$payload['headers'] = $this->headers;
 
 		$response = $this->client->request($method, $url, $payload);
-		if($response->getStatusCode() >= 400) throw new \Exception($response->getReasonPhrase(), $response->getStatusCode());
-
 		return $response->getBody()->getContents();
 	}
 
@@ -77,9 +104,6 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 
 	/**
 	 * @deprecated Use sendGet()
-	 * @param string $url
-	 * @param string[] $query
-	 * @return \stdClass
 	 */
 	public function sendQuery($url, $query)
 	{
@@ -96,10 +120,13 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 
 	public function sendPostWithFormData($url, $post, $query = [])
 	{
-		return $this->send('POST', $url, [
+		$this->addHeader('Content-Type', 'application/x-www-form-urlencoded');
+		$data = $this->send('POST', $url, [
 			'form_params' => $post,
 			'query' => $query,
 		]);
+		$this->addHeader('Content-Type', 'application/json');
+		return $data;
 	}
 
 	public function sendPutWithJson($url, $json, $query = [])
