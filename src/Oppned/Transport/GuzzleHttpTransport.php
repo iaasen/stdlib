@@ -19,6 +19,8 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 
 	/** @var GuzzleClient  */
 	protected $client;
+	/** @var  bool */
+	protected $cookies;
 
 	/**
 	 * Is run before each request
@@ -36,19 +38,23 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 
 	public function __construct($config)
 	{
-		$permittedConfig = ['base_url', 'headers'];
+
+		$permittedConfig = ['base_url', 'headers', 'cookies'];
 		$config = array_intersect_key($config, array_flip($permittedConfig));
 		foreach($config AS $key => $value) {
 			$this->$key = $value;
 		}
 
-		$this->client = new GuzzleClient([
+		$guzzleConfig = [
 			'base_uri' => $this->base_url,
 			'http_errors' => true, //  Don't throw exceptions for 4xx errors
+			'cookies' => $this->cookies,
 //			'headers' => $this->headers,
 //			'auth' => [$this->username, $this->password],
-			'verify' => false,
-		]);
+			'verify' => false
+		];
+
+		$this->client = new GuzzleClient($guzzleConfig);
 	}
 
 	public function setHeaders($headers) {
@@ -70,7 +76,6 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 	public function send($method, $url, $payload = [], $checkSession = true)
 	{
 		if($checkSession) $this->checkSession();
-
 		try {
 			return $this->internalSend($method, $url, $payload);
 		}
@@ -83,14 +88,15 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 	}
 
 	protected function internalSend($method, $url, $payload = []) {
-		$allowedMethods = ['GET', 'POST', 'PUT', 'DELETE'];
-		if(!in_array($method, $allowedMethods)) throw new \Exception('Only GET, POST and DELETE allowed');
+		$allowedMethods = ['POST', 'GET', 'PUT', 'DELETE'];
+		if(!in_array($method, $allowedMethods)) {
+			throw new \Exception('Only GET, POST, PUT and DELETE allowed');
+		}
 
 		$allowedPayload = ['query', 'json', 'form_params'];
 		foreach($payload AS $key => $value) {
 			if(!in_array($key, $allowedPayload)) throw new \Exception("Payload must be 'query', 'json' or 'form_params'");
 		}
-
 		$payload['headers'] = $this->headers;
 
 		$response = $this->client->request($method, $url, $payload);
