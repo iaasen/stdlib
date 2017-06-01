@@ -27,6 +27,8 @@ use ReflectionProperty;
 class AbstractEntity
 {
 	private $docBlockFactory;
+	/** @var \stdClass  */
+	public $_links;
 
 	public function __construct($data = [])
 	{
