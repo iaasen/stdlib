@@ -28,6 +28,10 @@ class AbstractEntity
 {
 	/** @var DocBlockFactory  */
 	private $docBlockFactory;
+	/**
+	 * if set to true an Exception will be sent when trying to set a property that is not defined
+	 * @var bool  */
+	protected $throwExceptionOnMissingProperty = false;
 
 	public function __construct($data = [])
 	{
@@ -45,15 +49,19 @@ class AbstractEntity
 			}
 
 			// All properties must be predefined
-			if(!property_exists($this, $key)) throw new Exception("Property '$key' not found in " . get_class($this), 400);
+			if(!property_exists($this, $key)) {
+				if($this->throwExceptionOnMissingProperty) throw new Exception("Property '$key' not found in " . get_class($this), 400);
+				else continue;
+			}
 
 			// Populate according to @var doc-comment
 			$reflection = new ReflectionProperty($this, $key);
 			//$factory  = DocBlockFactory::createInstance();
 			$annotation = $this->docBlockFactory->create($reflection->getDocComment());
 			if(!$annotation->hasTag('var')) throw new \LogicException("Property '$key' must have a @var tag in " . get_class($this), 500);
-
-			switch($annotation->getTagsByName('var')[0]->getType()) {
+			/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
+			$tag = $annotation->getTagsByName('var')[0];
+			switch($tag->getType()) {
 				case 'bool':
 					$this->$key = (bool) $value;
 					break;
