@@ -39,7 +39,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
      */
     public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {
-        $currentUser = $serviceLocator->getServiceLocator()->get('UserTable')->getCurrentUser();
+        $currentUser = $serviceLocator->getServiceLocator()->get(\Acl\Service\UserService::class)->getCurrentUser();
         return new $requestedName($currentUser);
     }
 }

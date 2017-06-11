@@ -78,7 +78,7 @@ abstract class DbTable implements ServiceLocatorAwareInterface
 	}
 	
 	public function getCurrentUser() {
-		return $this->getServiceLocator()->get('UserTable')->getCurrentUser();
+		return $this->getServiceLocator()->get(\Acl\Service\UserService::class)->getCurrentUser();
 	}
 	
 	/**

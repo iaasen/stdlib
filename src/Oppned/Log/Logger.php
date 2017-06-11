@@ -4,7 +4,7 @@ namespace Oppned\Log;
 //use Zend\Session\Container;
 //use Zend\Stdlib\SplQueue;
 
-use Acl\Service\UserTable;
+use Acl\Service\UserService;
 
 class Logger {
 	const EMERG  = 0;
@@ -18,16 +18,16 @@ class Logger {
 
 	/** @var LogTable  */
 	private $logTable;
-	/** @var UserTable  */
-	private $userTable;
+	/** @var \Acl\Service\UserService  */
+	private $userService;
 	/** @var Log[] */
 	public $logs = [];
 
 
-	public function __construct(LogTable $logTable, UserTable $userTable)
+	public function __construct(LogTable $logTable, UserService $userService)
 	{
 		$this->logTable = $logTable;
-		$this->userTable = $userTable;
+		$this->userService = $userService;
 	}
 
 	/**
@@ -53,7 +53,7 @@ class Logger {
 		$log->message = $message;
 		if($group) $log->group = $group;
 		else {
-			$user = $this->userTable->getCurrentUser();
+			$user = $this->userService->getCurrentUser();
 			$log->group = $user->current_group;
 		}
 		$this->logs[] = $log;
@@ -65,7 +65,7 @@ class Logger {
 		$log->message = $message;
 		if($user) $log->user = $user;
 		else {
-			$user = $this->userTable->getCurrentUser();
+			$user = $this->userService->getCurrentUser();
 			$log->user = $user->username;
 		}
 		$this->logs[] = $log;

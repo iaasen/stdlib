@@ -35,8 +35,9 @@ abstract class AbstractTable
 					$select->order($order);
 				}
 		);
-		
-		$objects = array();
+		$objects = [];
+
+
 		for($i = 0; $i < $rowSet->count(); $i++) {
 			$objects[] = $rowSet->current();
 			$rowSet->next();
@@ -106,6 +107,18 @@ abstract class AbstractTable
 	
 	public function getObjectPrototype() {
 		return $this->primaryGateway->getResultSetPrototype()->getArrayObjectPrototype();
+	}
+
+	public function getTableName() {
+		return $this->primaryGateway->getTable();
+	}
+
+	public function convertRowSetToArray($rowSet) {
+		$objects = [];
+		foreach($rowSet as $row) {
+			$objects[] = $row;
+		}
+		return $objects;
 	}
 
 

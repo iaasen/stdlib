@@ -131,6 +131,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 	 *
 	 * @param array $data
 	 * @throws \Exception
+	 * @return void
 	 */
 	public function exchangeArray($data) {
 		foreach($data AS $key => $value) {

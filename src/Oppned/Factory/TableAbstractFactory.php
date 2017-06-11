@@ -42,7 +42,7 @@ class TableAbstractFactory implements AbstractFactoryInterface
 	public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
 	{
 		preg_match($this->pattern, $requestedName, $matches);
-		$currentUser = $serviceLocator->get('UserTable')->getCurrentUser();
+		$currentUser = $serviceLocator->get(\Acl\Service\UserService::class)->getCurrentUser();
 		$tableGateway = $serviceLocator->get($requestedName . 'Gateway');
 		return new $requestedName($currentUser, $tableGateway);
 	}

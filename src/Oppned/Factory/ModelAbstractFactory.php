@@ -50,7 +50,7 @@ class ModelAbstractFactory implements AbstractFactoryInterface
 //    	echo $requestedName . ' ';
     	$model = new $requestedName();
 	    if(property_exists($model, 'group')) {
-	    	$model->group = $serviceLocator->get('UserTable')->getCurrentUser()->current_group;
+	    	$model->group = $serviceLocator->get(\Acl\Service\UserService::class)->getCurrentUser()->current_group;
 	    }
 	    return $model;
     }

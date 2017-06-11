@@ -19,8 +19,8 @@ class LoggerFactory
 	public function __invoke($serviceLocator)
 	{
 		$logTable = $serviceLocator->get(\Oppned\Log\LogTable::class);
-		$userTable = $serviceLocator->get(\Acl\Service\UserTable::class);
-		return new Logger($logTable, $userTable);
+		$userService = $serviceLocator->get(\Acl\Service\UserService::class);
+		return new Logger($logTable, $userService);
 	}
 
 }
