@@ -8,7 +8,7 @@
 
 namespace Oppned;
 
-///use DateTime;
+use \Oppned\Entity\DateTime;
 use Exception;
 use phpDocumentor\Reflection\DocBlockFactory;
 use ReflectionObject;
@@ -80,12 +80,14 @@ class AbstractEntity
 					}
 					else $this->$key = $value;
 					break;
-//				case '\DateTime':
-//					if(is_null($value)) $this->$key = null;
-//					elseif(is_string($value)) $this->$key = new DateTime($value);
-//					elseif($value instanceof DateTime) $this->$key = $value;
-//					else throw new InvalidArgumentException("Property '$key' must be a string or an instance of \\DateTime in " . get_class($this));
-//					break;
+				case '\DateTime':
+				case 'DateTime':
+					if(is_null($value)) $this->$key = null;
+					elseif(is_string($value)) $this->$key = new DateTime($value);
+					elseif($value instanceof \DateTime) $this->$key = new DateTime($value->format('c'));
+					elseif($value instanceof DateTime) $this->$key = $value;
+					else throw new \InvalidArgumentException("Property '$key' must be a string or an instance of \\DateTime in " . get_class($this));
+					break;
 				default:
 					if(is_null($this->$key) || !is_null($value)) { // Make sure default values are not overwritten with null
 						$this->$key = $value;
