@@ -60,6 +60,12 @@ class AbstractEntity implements ModelInterface
 
 	public function __get($name)
 	{
+		// Look for getter method (getField())
+		$getterName = 'get' . ucfirst($name);
+		if(method_exists($this, $getterName)) {
+			return $this->$getterName();
+		}
+		// Default behaviour
 		return $this->$name;
 	}
 
