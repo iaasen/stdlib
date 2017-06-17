@@ -27,7 +27,7 @@ abstract class AbstractTable
 		}
 	}
 	
-	protected function fetchAll($where = null, $order = array())
+	protected function fetchAll($where = [], $order = array())
 	{
 		$rowSet = $this->primaryGateway->select(
 				function(Select $select) use ($where, $order) {
