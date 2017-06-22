@@ -11,6 +11,8 @@ namespace Oppned;
 use \Oppned\Entity\DateTime;
 use Exception;
 use phpDocumentor\Reflection\DocBlockFactory;
+use phpDocumentor\Reflection\Types\Array_;
+use phpDocumentor\Reflection\Types\Object_;
 use ReflectionClass;
 use ReflectionObject;
 use ReflectionProperty;
@@ -95,38 +97,76 @@ class AbstractEntity implements ModelInterface
 		if(!$annotation->hasTag('var')) throw new \LogicException("Property '$name' must have a @var tag in " . get_class($this), 500);
 		/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
 		$tag = $annotation->getTagsByName('var')[0];
-		switch($tag->getType()) {
-			case 'bool':
-				$this->$name = (bool) $value;
-				break;
-			case 'int':
-				$this->$name = strlen($value) ? (int) $value : null;
-				break;
-			case 'float':
-				$this->$name = (float) $value;
-				break;
-			case 'string':
-				$this->$name = (string) $value;
-				break;
-			case 'string[]':
-				if(is_string($value)) {
-					if(in_array(substr($value, 0, 1), ['{', '['])) $this->$name = json_decode($value);
-				}
-				else $this->$name = $value;
-				break;
-			case '\DateTime':
-			case 'DateTime':
-				if(is_null($value)) $this->$name = null;
-				elseif(is_string($value)) $this->$name = new DateTime($value);
-				elseif($value instanceof \DateTime) $this->$name = new DateTime($value->format('c'));
-				elseif($value instanceof DateTime) $this->$name = $value;
-				else throw new \InvalidArgumentException("Property '$name' must be a string or an instance of \\DateTime in " . get_class($this));
+		$type = $tag->getType();
+
+		// Array of objects
+		if($type instanceof Array_ && $type->getValueType() instanceof Object_) {
+			$this->setObjectArray($type->getValueType()->__toString(), $name, $value);
+		}
+		// Object
+		elseif($type instanceof Object_) {
+			$this->setObject($type->__toString(), $name, $value);
+		}
+		// Primitive type
+		else {
+			switch($tag->getType()) {
+				case 'bool':
+					$this->$name = (bool) $value;
+					break;
+				case 'int':
+					$this->$name = strlen($value) ? (int) $value : null;
+					break;
+				case 'float':
+					$this->$name = (float) $value;
+					break;
+				case 'string':
+					$this->$name = (string) $value;
+					break;
+				case 'string[]':
+					if(is_string($value)) {
+						if(in_array(substr($value, 0, 1), ['{', '['])) $this->$name = json_decode($value);
+					}
+					else $this->$name = $value;
+					break;
+				case '\DateTime':
+				case 'DateTime':
+					if(is_null($value)) $this->$name = null;
+					elseif(is_string($value)) $this->$name = new DateTime($value);
+					elseif($value instanceof \DateTime) $this->$name = new DateTime($value->format('c'));
+					elseif($value instanceof DateTime) $this->$name = $value;
+					else throw new \InvalidArgumentException("Property '$name' must be a string or an instance of \\DateTime in " . get_class($this));
+					break;
+				default:
+					if(is_null($this->$name) || !is_null($value)) { // Make sure default values are not overwritten with null
+						$this->$name = $value;
+					}
+					break;
+			}
+		}
+	}
+
+	protected function setObject($className, $name, $value) {
+		switch($className) {
+			case 'object':
+				$this->$name = $value;
 				break;
 			default:
-				if(is_null($this->$name) || !is_null($value)) { // Make sure default values are not overwritten with null
-					$this->$name = $value;
-				}
+				$this->$name = ($value instanceof $className) ? $value : new $className($value);
 				break;
+		}
+	}
+
+	protected function setObjectArray($className, $name, $value) {
+		$this->$name = [];
+		foreach($value AS $row) {
+			switch($className) {
+				case 'object':
+					$this->$name[] = $row;
+					break;
+				default:
+					$this->$name[] = ($row instanceof $className) ? $row : new $className($row);
+					break;
+			}
 		}
 	}
 
