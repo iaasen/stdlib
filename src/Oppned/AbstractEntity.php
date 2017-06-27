@@ -151,21 +151,24 @@ class AbstractEntity implements ModelInterface
 				$this->$name = $value;
 				break;
 			default:
-				$this->$name = ($value instanceof $className) ? $value : new $className($value);
+				if(is_null($value)) $this->$name = null;
+				else $this->$name = ($value instanceof $className) ? $value : new $className($value);
 				break;
 		}
 	}
 
 	protected function setObjectArray($className, $name, $value) {
 		$this->$name = [];
-		foreach($value AS $row) {
-			switch($className) {
-				case 'object':
-					$this->$name[] = $row;
-					break;
-				default:
-					$this->$name[] = ($row instanceof $className) ? $row : new $className($row);
-					break;
+		if(is_array($value)) {
+			foreach($value AS $row) {
+				switch($className) {
+					case 'object':
+						$this->$name[] = $row;
+						break;
+					default:
+						$this->$name[] = ($row instanceof $className) ? $row : new $className($row);
+						break;
+				}
 			}
 		}
 	}
