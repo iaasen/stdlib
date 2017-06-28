@@ -111,7 +111,7 @@ class AbstractEntity implements ModelInterface
 		else {
 			switch($tag->getType()) {
 				case 'bool':
-					$this->$name = (bool) $value;
+					$this->$name = (!is_null($value)) ? (bool) $value : null;
 					break;
 				case 'int':
 					$this->$name = strlen($value) ? (int) $value : null;
