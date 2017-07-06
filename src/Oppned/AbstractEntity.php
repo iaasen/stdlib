@@ -128,14 +128,6 @@ class AbstractEntity implements ModelInterface
 					}
 					else $this->$name = $value;
 					break;
-				case '\DateTime':
-				case 'DateTime':
-					if(is_null($value)) $this->$name = null;
-					elseif(is_string($value)) $this->$name = new DateTime($value);
-					elseif($value instanceof \DateTime) $this->$name = new DateTime($value->format('c'));
-					elseif($value instanceof DateTime) $this->$name = $value;
-					else throw new \InvalidArgumentException("Property '$name' must be a string or an instance of \\DateTime in " . get_class($this));
-					break;
 				default:
 					if(is_null($this->$name) || !is_null($value)) { // Make sure default values are not overwritten with null
 						$this->$name = $value;
@@ -149,6 +141,14 @@ class AbstractEntity implements ModelInterface
 		switch($className) {
 			case 'object':
 				$this->$name = $value;
+				break;
+			case '\DateTime':
+			case 'DateTime':
+				if(is_null($value)) $this->$name = null;
+				elseif(is_string($value)) $this->$name = new DateTime($value);
+				elseif($value instanceof \DateTime) $this->$name = new DateTime($value->format('c'));
+				elseif($value instanceof DateTime) $this->$name = $value;
+				else throw new \InvalidArgumentException("Property '$name' must be a string or an instance of \\DateTime in " . get_class($this));
 				break;
 			default:
 				if(is_null($value)) $this->$name = null;
