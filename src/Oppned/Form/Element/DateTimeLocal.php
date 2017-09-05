@@ -9,11 +9,11 @@
 namespace Oppned\Form\Element;
 
 
-class DateTime extends \Zend\Form\Element\DateTime
+class DateTimeLocal extends \Zend\Form\Element\DateTimeLocal
 {
 	public function init() {
-		$this->setOption('format', 'Y-m-d H:i');
-		$this->setAttribute('step', 1);
+		//$this->setOption('format', 'Y-m-d H:i');
+		//$this->setAttribute('step', 1);
 		$this->setAttribute('class', 'dateTimePicker');
 	}
 }
