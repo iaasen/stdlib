@@ -154,15 +154,16 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 			$annotation = $factory->create($property->getDocComment());
 
 			switch($annotation->getTagsByName('var')[0]->getType()) {
-//				case '\DateTime':
-//					if($value) {
+				case '\DateTime':
+					if($value) {
+						$data[$name] = $value->format('Y-m-d H:i');
 //						if(strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false) // Chrome
-//							$data[$name] = $value->format('Y-m-d');
+//							$data[$name] = $value->format('Y-m-d H:i');
 //						else
-//							$data[$name] = $value->format('d.m.Y');
-//					}
-//					else $_data[$name] = null;
-//					break;
+//							$data[$name] = $value->format('d.m.Y H:i');
+					}
+					else $_data[$name] = null;
+					break;
 				default:
 					$data[$name] = $value;
 					break;
