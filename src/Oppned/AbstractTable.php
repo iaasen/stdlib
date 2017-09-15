@@ -79,6 +79,7 @@ abstract class AbstractTable
 				throw new \Exception('Given id does not exist');
 			}
 		}
+		$model->id = $id;
 		return $id;
 	}
 		
