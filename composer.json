@@ -1,7 +1,7 @@
 {
     "name": "iaasen/stdlib",
-    "description": "iaasen basic bundle",
-    "license": "",
+    "description": "A collection of abstract classes to support the way I like to use Zend Framework",
+    "license": "proprietary",
     "keywords": [
     ],
     "require": {
@@ -14,7 +14,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Oppned\\": "src/Oppned"
+            "Oppned\\": "src/Oppned",
+            "Iaasen\\": "src/Iaasen"
         },
         "classmap": [
             "Module.php"
