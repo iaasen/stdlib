@@ -11,9 +11,24 @@ namespace Oppned\Form\Element;
 
 class DateTimeLocal extends \Zend\Form\Element\DateTimeLocal
 {
+	const DATETIME_LOCAL_FORMAT = 'Y-m-d H:i';
+	const DATETIME_FORMAT = self::DATETIME_LOCAL_FORMAT;
+
 	public function init() {
-		//$this->setOption('format', 'Y-m-d H:i');
+		$this->setFormat('Y-m-d H:i');
 		//$this->setAttribute('step', 1);
 		$this->setAttribute('class', 'dateTimePicker');
+	}
+
+	public function getInputSpecification()
+	{
+		return [
+			'name' => $this->getName(),
+			'required' => true,
+			'filters' => [
+				['name' => 'Zend\Filter\StringTrim'],
+			],
+		];
+
 	}
 }
