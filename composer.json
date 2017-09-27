@@ -1,20 +1,21 @@
 {
     "name": "iaasen/stdlib",
-    "description": "iaasen basic bundle",
+    "description": "A collection of abstract and base classes supporting they way I like to use Zend Framework",
     "license": "",
     "keywords": [
     ],
     "require": {
-        "php": ">=5.6.0",
-        "zendframework/zend-db": "^2.5",
-        "zendframework/zend-modulemanager": "^2.5",
-        "zendframework/zend-view": "^2.5",
+        "php": ">=7.0",
+        "zendframework/zend-db": "^2",
+        "zendframework/zend-modulemanager": "^2",
+        "zendframework/zend-view": "^2",
         "digitalnature/php-ref": "dev-master",
         "guzzlehttp/guzzle": "^6"
     },
     "autoload": {
         "psr-4": {
-            "Oppned\\": "src/Oppned"
+            "Oppned\\": "src/Oppned",
+            "Iaasen\\": "src/Iaasen"
         },
         "classmap": [
             "Module.php"

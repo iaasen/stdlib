@@ -8,16 +8,9 @@
 
 namespace Oppned\Transport;
 
-
-interface HttpTransportInterface
+/**
+ * @deprecated Use Iaasen\Transport\HttpTransportInterface
+ */
+interface HttpTransportInterface extends \Iaasen\Transport\HttpTransportInterface
 {
-	public function sendGet($url, $query = []);
-	public function sendPostWithJson($url, $json, $query = []);
-	public function sendPostWithFormData($url, $post, $query = []);
-	public function sendPutWithJson($url, $json, $query = []);
-	public function sendDelete($url);
-
-	public function setHeaders($headers);
-	public function addHeaders($headers);
-	public function deleteHeader($key);
 }

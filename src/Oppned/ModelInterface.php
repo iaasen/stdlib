@@ -8,15 +8,9 @@
 
 namespace Oppned;
 
-interface ModelInterface
+/**
+ * @deprecated Use Iaasen\Model\ModelInterface
+ */
+interface ModelInterface extends \Iaasen\Model\ModelInterface
 {
-    public function __get($name);
-    public function __set($name, $value);
-    public function __isset($name);
-    public function __unset($name);
-	public function __clone();
-    public function __toString();
-    public function exchangeArray($data);
-    public function getArrayCopy();
-    public function databaseSaveArray();
 }

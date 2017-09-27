@@ -10,21 +10,8 @@ namespace Oppned\Entity;
 
 
 /**
- * Extending \DateTime to make it work well with json_encode. Intended for use in REST services
- * Class DateTime
- * @package Oppned\Entity
+ * @deprecated Use Iaasen\Entity\DateTime
  */
-class DateTime extends \DateTime implements \JsonSerializable
+class DateTime extends \Iaasen\Entity\DateTime
 {
-	/**
-	 * Specify data which should be serialized to JSON
-	 * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
-	 * @return mixed data which can be serialized by <b>json_encode</b>,
-	 * which is a value of any type other than a resource.
-	 * @since 5.4.0
-	 */
-	function jsonSerialize()
-	{
-		return $this->format('c');
-	}
 }
