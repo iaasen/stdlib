@@ -101,9 +101,9 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 			throw new \Exception('Only GET, POST, PUT and DELETE allowed');
 		}
 
-		$allowedPayload = ['query', 'json', 'form_params'];
+		$allowedPayload = ['query', 'json', 'form_params', 'body'];
 		foreach($payload AS $key => $value) {
-			if(!in_array($key, $allowedPayload)) throw new \Exception("Payload must be 'query', 'json' or 'form_params'");
+			if(!in_array($key, $allowedPayload)) throw new \Exception("Payload must be 'query', 'json', 'form_params' or 'body'");
 		}
 		$payload['headers'] = $this->headers;
 
@@ -130,6 +130,14 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 			'json' => $json,
 			'query' => $query,
 		]);
+	}
+
+	public function sendPostWithBody($url, $body, $query = []) {
+		$data = $this->send('POST', $url, [
+			'body' => $body,
+			'query' => $query,
+		]);
+		return $data;
 	}
 
 	public function sendPostWithFormData($url, $post, $query = [])
