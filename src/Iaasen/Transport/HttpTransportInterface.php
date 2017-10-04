@@ -13,6 +13,7 @@ interface HttpTransportInterface
 {
 	public function sendGet($url, $query = []);
 	public function sendPostWithJson($url, $json, $query = []);
+	public function sendPostWithBody($url, $body, $query = []);
 	public function sendPostWithFormData($url, $post, $query = []);
 	public function sendPutWithJson($url, $json, $query = []);
 	public function sendDelete($url);
