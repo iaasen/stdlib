@@ -6,10 +6,10 @@
     ],
     "require": {
         "php": ">=5.6.0",
-        "zendframework/zend-db": "^2.5",
-        "zendframework/zend-modulemanager": "^2.5",
-        "zendframework/zend-view": "^2.5",
-        "digitalnature/php-ref": "dev-master",
+        "zendframework/zend-db": "^2",
+        "zendframework/zend-modulemanager": "^2",
+        "zendframework/zend-view": "^2",
+        "digitalnature/php-ref": "^1",
         "guzzlehttp/guzzle": "^6"
     },
     "autoload": {
