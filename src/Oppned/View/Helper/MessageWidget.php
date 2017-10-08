@@ -1,23 +1,25 @@
 <?php
 namespace Oppned\View\Helper;
 
+use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Zend\View\Helper\AbstractHelper;
 use Oppned\Message;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
-class MessageWidget extends AbstractHelper implements ServiceLocatorAwareInterface
+class MessageWidget extends AbstractHelper
 {
-	protected $serviceLocator;
-	
+	/** @var  FlashMessenger */
+	protected $flashMessenger;
+
+
 	public function __invoke() {
 		return $this;
 	}
 		
 	public function render($maxLevel = false) {
 		$output = '';
-		if($this->getServiceLocator()->get('flashmessenger')->getPluginFlashMessenger()->count()) {
-			$output .= $this->getServiceLocator()->get('flashmessenger')->render();
+
+		foreach($this->getFlashMessenger()->getMessages() AS $message) {
+			$output .= '<div class="message">' . $message . '</div>' . PHP_EOL;
 		}
 		if(Message::count($maxLevel)) {
 			$messages = Message::returnArray($maxLevel);
@@ -36,9 +38,12 @@ class MessageWidget extends AbstractHelper implements ServiceLocatorAwareInterfa
 		);
 		
 		$output = '<table class="table table-condensed" style="margin-bottom: 0px">';
-		if($this->getServiceLocator()->get('flashmessenger')->getPluginFlashMessenger()->count()) {
-			$output .= $this->getServiceLocator()->get('flashmessenger')->render();
+
+		$this->getFlashMessenger()->addMessage("asdf");
+		foreach($this->getFlashMessenger()->getMessages() AS $message) {
+			$output .= '<tr class=""><td>' . $message . '</tr></td>' . PHP_EOL;
 		}
+
 		if(Message::count($maxLevel)) {
 			$messages = Message::returnArray($maxLevel);
 			foreach($messages AS $m) {
@@ -50,14 +55,11 @@ class MessageWidget extends AbstractHelper implements ServiceLocatorAwareInterfa
 	}
 	
 	public function count($maxLevel = false) {
-		return $this->getServiceLocator()->get('flashmessenger')->getPluginFlashMessenger()->count() + Message::count($maxLevel);
+		return $this->getFlashMessenger()->count() + Message::count($maxLevel);
 	}
-	
-	public function setServiceLocator(ServiceLocatorInterface $serviceLocator) {
-		$this->serviceLocator = $serviceLocator;
-	}
-	
-	public function getServiceLocator() {
-		return $this->serviceLocator;
+
+	protected function getFlashMessenger() {
+		if(!$this->flashMessenger) $this->flashMessenger = new FlashMessenger();
+		return $this->flashMessenger;
 	}
 }

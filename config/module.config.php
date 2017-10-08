@@ -3,6 +3,8 @@ namespace Oppned;
 
 
 return [
+	'modules' => [
+	],
 	'service_manager' => [
 		'abstract_factories' => [
 			\Zend\Navigation\Service\NavigationAbstractServiceFactory::class,
@@ -20,10 +22,15 @@ return [
 		]
 	],
 	'view_helpers' => [
+		'aliases' => [
+			'messages' => \Oppned\View\Helper\MessageWidget::class,
+		],
         'invokables' => [
-            'messages' => \Oppned\View\Helper\MessageWidget::class,
 			'makeBootstrapFormHorizontal' => \Oppned\View\Helper\BootstrapFormHorizontal::class,
         ],
+		'factories' => [
+			\Oppned\View\Helper\MessageWidget::class => \Oppned\View\Helper\MessageWidgetFactory::class,
+		]
     ],
 	'navigation_helpers' => [
 		'factories' => [
