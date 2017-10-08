@@ -1,7 +1,7 @@
 <?php
 namespace Oppned\Log;
 
-use Oppned\AbstractTable;
+use Iaasen\Service\AbstractTable;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 
