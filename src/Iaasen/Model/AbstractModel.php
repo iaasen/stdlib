@@ -201,7 +201,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 					break;
 				case '\DateTime':
 					/** @var \DateTime $value */
-					if($value) $data[$name] = $value->format('c');
+					if($value) $data[$name] = $value->format('Y-m-d H:i');
 					else $data[$name] = null;
 					break;
 				case 'string[]':
