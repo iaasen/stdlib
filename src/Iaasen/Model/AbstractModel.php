@@ -59,7 +59,9 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 		$factory  = \phpDocumentor\Reflection\DocBlockFactory::createInstance();
 		$annotation = $factory->create($reflection->getDocComment());
 		if(!$annotation->hasTag('var')) throw new \LogicException("Property '$name' must have a @var tag in " . get_class($this));
-		switch($annotation->getTagsByName('var')[0]->getType()) {
+		/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
+		$tag = $annotation->getTagsByName('var')[0];
+		switch($tag->getType()) {
 			case 'bool':
 				$this->$name = (bool) $value;
 				break;
@@ -73,6 +75,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 				$this->$name = (string) $value;
 				break;
 			case 'string[]':
+			case 'int[]':
 				if(is_string($value)) {
 					if(in_array(substr($value, 0, 1), ['{', '['])) $this->$name = json_decode($value);
 				}
@@ -153,9 +156,12 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 			$factory  = \phpDocumentor\Reflection\DocBlockFactory::createInstance();
 			$annotation = $factory->create($property->getDocComment());
 
-			switch($annotation->getTagsByName('var')[0]->getType()) {
+			/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
+			$tag = $annotation->getTagsByName('var')[0];
+			switch($tag->getType()) {
 				case '\DateTime':
 					if($value) {
+						/** @var \DateTime $value */
 						$data[$name] = $value->format('Y-m-d H:i');
 //						if(strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false) // Chrome
 //							$data[$name] = $value->format('Y-m-d H:i');
@@ -186,15 +192,20 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 
 			$factory  = \phpDocumentor\Reflection\DocBlockFactory::createInstance();
 			$annotation = $factory->create($property->getDocComment());
-			switch($annotation->getTagsByName('var')[0]->getType()) {
+
+			/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
+			$tag = $annotation->getTagsByName('var')[0];
+			switch($tag->getType()) {
 				case 'bool':
 					$data[$name] = ($value) ? 1 : 0;
 					break;
 				case '\DateTime':
-					if($value) $data[$name] = $value->format('c');
+					/** @var \DateTime $value */
+					if($value) $data[$name] = $value->format('Y-m-d H:i');
 					else $data[$name] = null;
 					break;
 				case 'string[]':
+				case 'int[]':
 					$data[$name] = json_encode($value);
 					break;
 				default:
