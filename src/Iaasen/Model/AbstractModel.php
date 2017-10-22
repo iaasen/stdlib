@@ -213,7 +213,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 					break;
 			}
 		}
-		$data['timestamp_updated'] = date('c');
+		$data['timestamp_updated'] = date('Y-m-d H:i');
 		return $data;
 	}
 }
