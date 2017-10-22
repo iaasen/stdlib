@@ -178,6 +178,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 		return $data;
 	}
 
+
 	/**
 	 * Used by \Priceestimator\Model\DbTable to format modeldata for the database.
 	 * @return array
