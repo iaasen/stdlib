@@ -28,6 +28,8 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 	/** @var DateTime */
 	protected $timestamp_updated;
 
+	const MYSQL_TIME_FORMAT = 'Y-m-d H:i:s';
+
 	//abstract public function __clone();
 
 	public function __construct()
@@ -162,7 +164,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 				case '\DateTime':
 					if($value) {
 						/** @var \DateTime $value */
-						$data[$name] = $value->format('Y-m-d H:i');
+						$data[$name] = $value->format(self::MYSQL_TIME_FORMAT);
 //						if(strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false) // Chrome
 //							$data[$name] = $value->format('Y-m-d H:i');
 //						else
@@ -202,7 +204,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 					break;
 				case '\DateTime':
 					/** @var \DateTime $value */
-					if($value) $data[$name] = $value->format('Y-m-d H:i');
+					if($value) $data[$name] = $value->format(self::MYSQL_TIME_FORMAT);
 					else $data[$name] = null;
 					break;
 				case 'string[]':
@@ -214,7 +216,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 					break;
 			}
 		}
-		$data['timestamp_updated'] = date('Y-m-d H:i');
+		$data['timestamp_updated'] = date(self::MYSQL_TIME_FORMAT);
 		return $data;
 	}
 }
