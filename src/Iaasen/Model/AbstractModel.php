@@ -85,7 +85,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 				break;
 			case '\DateTime':
 				if(is_null($value)) $this->$name = null;
-				elseif(is_string($value)) $this->$name = new DateTime($value);
+				elseif(is_string($value)) $this->$name = (strlen($value)) ? new DateTime($value) : null;
 				elseif($value instanceof DateTime) $this->$name = $value;
 				else throw new InvalidArgumentException("Property '$name' must be a string or an instance of \\DateTime in " . get_class($this));
 				break;
