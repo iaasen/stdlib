@@ -78,6 +78,8 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 				break;
 			case 'string[]':
 			case 'int[]':
+			case '[]':
+			case '\stdClass':
 				if(is_string($value)) {
 					if(in_array(substr($value, 0, 1), ['{', '['])) $this->$name = json_decode($value);
 				}
@@ -147,6 +149,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 	/**
 	 * Called by \Zend\Form::bind()
 	 * @return array
+	 * @throws Exception
 	 */
 	public function getArrayCopy() {
 		$reflection = new ReflectionClass($this);
@@ -209,6 +212,8 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 					break;
 				case 'string[]':
 				case 'int[]':
+				case '[]':
+				case '\stdClass':
 					$data[$name] = json_encode($value);
 					break;
 				default:
