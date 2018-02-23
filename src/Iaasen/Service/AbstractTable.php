@@ -45,14 +45,18 @@ abstract class AbstractTable
 		}
 		return $objects;
 	}
-	
+
+	/**
+	 * @param $id
+	 * @return array|\ArrayObject|null
+	 * @throws \Exception
+	 */
 	protected function find($id)
 	{
 		$id  = (int) $id;
 		$rowSet = $this->primaryGateway->select(array('id' => $id));
 		$row = $rowSet->current();
 		if (!$row) {
-			//throw new \Exception("Could not find row $id");
 			throw new \Exception("Row '$id' not found", 404);
 		}
 		return $row;
@@ -123,6 +127,7 @@ abstract class AbstractTable
 		return $objects;
 	}
 
-
-
+	public function getAdapter() {
+		return $this->primaryGateway->getAdapter();
+	}
 }
