@@ -36,10 +36,15 @@ class AbstractEntity implements \Iaasen\Model\ModelInterface
 	 * @var bool  */
 	protected $throwExceptionOnMissingProperty = false;
 
+	/**
+	 * AbstractEntity constructor.
+	 * @param array $data
+	 */
 	public function __construct($data = [])
 	{
 		$this->docBlockFactory = DocBlockFactory::createInstance();
-		if(count($data)) $this->exchangeArray($data);
+		if($data instanceof \stdClass) $data = (array) $data;
+		if(!is_null($data) && count($data)) $this->exchangeArray($data);
 	}
 
 	public function exchangeArray($data) {
@@ -231,7 +236,7 @@ class AbstractEntity implements \Iaasen\Model\ModelInterface
 					case '\DateTime':
 					case 'DateTime';
 						/** @var DateTime $value */
-						if($value) $data[$name] = $value->format('c');
+						if($value) $data[$name] = $value->format('Y-m-d H:i:s');
 						else $data[$name] = null;
 						break;
 					default:
