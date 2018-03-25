@@ -2,7 +2,6 @@
 namespace Iaasen\Service;
 
 use Iaasen\Model\ModelInterface;
-use Zend\Db\Sql\AbstractPreparableSql;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Sql;
@@ -101,15 +100,29 @@ abstract class AbstractTable
 	/**
 	 * Send query directly to adapter return rows
 	 * 
-	 * @param AbstractPreparableSql $select
+	 * @param Select $select
 	 * @param bool $outputSqlString
 	 * @return \Zend\Db\Adapter\Driver\ResultInterface
+	 * @deprecated Use selectWith() or selectToObjects()
 	 */
 	protected function query($select, $outputSqlString = false) {
-		if($outputSqlString) echo $select->getSqlString($this->primaryGateway->getAdapter()->getPlatform());
+		if($outputSqlString) echo $this->getSqlString($select);
 		$sql = new Sql($this->primaryGateway->getAdapter());
 		$statement = $sql->prepareStatementForSqlObject($select);
 		return $statement->execute();
+	}
+
+	protected function getSqlString(Select $select) {
+		return $select->getSqlString($this->primaryGateway->getAdapter()->getPlatform());
+	}
+
+	protected function selectToObjects(Select $select) {
+		$rows = $this->primaryGateway->selectWith($select);
+		$objects = [];
+		foreach($rows AS $row) {
+			$objects[] = $row;
+		}
+		return $objects;
 	}
 	
 	public function getObjectPrototype() {
