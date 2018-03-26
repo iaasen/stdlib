@@ -2,6 +2,7 @@
 namespace Iaasen\Service;
 
 use Iaasen\Model\ModelInterface;
+use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Sql;
@@ -27,7 +28,7 @@ abstract class AbstractTable
 		}
 	}
 	
-	protected function fetchAll($where = [], $order = array())
+	protected function fetchAll($where = [], $order = [])
 	{
 		$rowSet = $this->primaryGateway->select(
 				function(Select $select) use ($where, $order) {
@@ -54,7 +55,7 @@ abstract class AbstractTable
 	protected function find($id)
 	{
 		$id  = (int) $id;
-		$rowSet = $this->primaryGateway->select(array('id' => $id));
+		$rowSet = $this->primaryGateway->select(['id' => $id]);
 		$row = $rowSet->current();
 		if (!$row) {
 			throw new \Exception("Row '$id' not found", 404);
@@ -93,7 +94,7 @@ abstract class AbstractTable
 		if(is_object($id)) {
 			$id = $id->id;
 		}
-		$result = $this->primaryGateway->delete(array('id' => $id));
+		$result = $this->primaryGateway->delete(['id' => $id]);
 		return (bool) $result;
 	}
 	
@@ -117,12 +118,11 @@ abstract class AbstractTable
 	}
 
 	protected function selectToObjects(Select $select) {
-		$rows = $this->primaryGateway->selectWith($select);
-		$objects = [];
-		foreach($rows AS $row) {
-			$objects[] = $row;
-		}
-		return $objects;
+		return $this->convertRowSetToArray($rows = $this->primaryGateway->selectWith($select));
+	}
+
+	protected function whereToObjects(Where $where) {
+		return $this->convertRowSetToArray($this->primaryGateway->select($where));
 	}
 	
 	public function getObjectPrototype() {
