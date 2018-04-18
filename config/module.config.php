@@ -14,6 +14,7 @@ return [
 			\Oppned\Log\Logger::class => \Oppned\Log\LoggerFactory::class,
 			\Oppned\Log\LogTable::class => \Oppned\Log\LogTableFactory::class,
 			'Oppned\Log\LogTableGateway' => \Oppned\Log\LogTableGatewayFactory::class,
+			\Iaasen\Messenger\EmailService::class => \Iaasen\Messenger\EmailServiceFactory::class,
 		],
 		'invokables' => [
 		],
@@ -47,6 +48,19 @@ return [
 		],
 		'abstract_factories' => [
 		]
+	],
+	'messenger' => [
+		'email' => [
+			'transport' => [
+				'method' => 'smtp',
+				'host' => '',
+				'port' => 25,
+				'security' => null,
+				'username' => '',
+				'password' => '',
+			],
+			'from' => '',
+		],
 	],
 //	'navigation' => [
 //		'default' => [

@@ -11,28 +11,30 @@ namespace Iaasen\Messenger;
 
 class EmailService
 {
-	/** @var  \Swift_SmtpTransport */
+	/** @var  \Swift_Transport */
 	protected $transport;
 	/** @var \Swift_Mailer  */
 	protected $mailer;
 	/** @var  string */
-	protected $default_from = 'ikkesvar@nteb.no';
+	protected $default_from;
 
-	public function __construct($transport, $defaultFrom = null)
+	public function __construct(\Swift_Transport $transport, string $defaultFrom)
 	{
 		$this->transport = $transport;
 		$this->mailer = new \Swift_Mailer($transport);
-		if($defaultFrom) $this->default_from = $defaultFrom;
+		$this->default_from = $defaultFrom;
 	}
 
 	/**
 	 * @param Email $email
+	 * @return bool
+	 * @throws \Exception
 	 */
 	public function send($email) {
 		$swiftMessage = new \Swift_Message($email->subject);
 
 		if(!strlen($email->from)) $email->from = $this->default_from;
-		$swiftMessage->setFrom($this->default_from);
+		$swiftMessage->setFrom($email->from);
 
 		$swiftMessage->setBody($email->body);
 		if($email->body_html) $swiftMessage->addPart($email->body_html, 'text/html');
