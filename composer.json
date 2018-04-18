@@ -10,7 +10,8 @@
         "zendframework/zend-modulemanager": "^2",
         "zendframework/zend-view": "^2",
         "digitalnature/php-ref": "^1",
-        "guzzlehttp/guzzle": "^6"
+        "guzzlehttp/guzzle": "^6",
+        "swiftmailer/swiftmailer": "^6"
     },
     "autoload": {
         "psr-4": {
