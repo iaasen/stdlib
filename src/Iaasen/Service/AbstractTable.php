@@ -1,7 +1,8 @@
 <?php
 namespace Iaasen\Service;
 
-use Iaasen\Model\ModelInterface;
+use Iaasen\Model\AbstractModel;
+use Iaasen\Exception\NotFoundException;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
@@ -16,6 +17,10 @@ abstract class AbstractTable
 	/** @var  TableGateway  */
 	protected $primaryGateway;
 
+	protected $allowInsertWithId = false;
+
+	const MYSQL_TIMESTAMP_FORMAT = 'Y-m-d H:i:s';
+
 	public function __construct($currentUser, TableGateway $primaryGateway, array $additionalDependencies = [])
 	{
 		$this->currentUser = $currentUser;
@@ -26,6 +31,17 @@ abstract class AbstractTable
 			}
 			$this->$key = $value;
 		}
+	}
+
+	public function setAllowInsertWithId(bool $allow) {
+		$this->allowInsertWithId = $allow;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function getAllowInsertWithId() {
+		return $this->allowInsertWithId;
 	}
 	
 	protected function fetchAll($where = [], $order = [])
@@ -58,37 +74,50 @@ abstract class AbstractTable
 		$rowSet = $this->primaryGateway->select(['id' => $id]);
 		$row = $rowSet->current();
 		if (!$row) {
-			throw new \Exception("Row '$id' not found", 404);
+			throw new NotFoundException("Row '$id' not found in " . get_class($this));
 		}
 		return $row;
 	}
 
 	/**
-	 * @param ModelInterface $model
+	 * @param AbstractModel $model
 	 * @return int
 	 * @throws \Exception
 	 */
 	protected function save($model) {
 		$data = $model->databaseSaveArray();
 		unset($data['id']);
-		if(isset($data['timestamp_updated'])) $data['timestamp_updated'] = date("Y-m-d H:i:s", time());
+		if(isset($data['timestamp_updated'])) $data['timestamp_updated'] = date(self::MYSQL_TIMESTAMP_FORMAT, time());
 		
 		$id = (int) $model->id;
 		if ($id == 0) {
+			// New row with autoincrement
 			$this->primaryGateway->insert($data);
 			$id = $this->primaryGateway->getLastInsertValue();
 		} else {
-			if ($this->find($id)) {
+			try {
+				// Update existing row
+				$this->find($id); // Throws exception if not found
 				unset($data['timestamp_created']);
-				$this->primaryGateway->update($data, array('id' => $id));
-			} else {
-				throw new \Exception('Given id does not exist');
+				$this->primaryGateway->update($data, ['id' => $id]);
+			}
+			catch(NotFoundException $e) {
+				// New row with id set, overrides autoincrement
+				if($this->allowInsertWithId) {
+					$data['id'] = $model->id;
+					$this->primaryGateway->insert($data);
+				}
+				else throw $e;
 			}
 		}
 		$model->id = $id;
 		return $id;
 	}
-		
+
+	/**
+	 * @param int $id
+	 * @return bool
+	 */
 	protected function delete($id)
 	{
 		if(is_object($id)) {

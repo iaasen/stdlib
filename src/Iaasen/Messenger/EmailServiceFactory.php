@@ -32,7 +32,7 @@ class EmailServiceFactory implements FactoryInterface
 		else throw new \InvalidArgumentException("Only method 'smtp' is defined");
 
 		if(strlen($transport['username'])) $swiftTransport->setUsername($transport['username']);
-		if(strlen($transport['password'])) $swiftTransport->setUsername($transport['password']);
+		if(strlen($transport['password'])) $swiftTransport->setPassword($transport['password']);
 
 		return new EmailService($swiftTransport, $config['from']);
 	}
