@@ -66,7 +66,7 @@ abstract class AbstractTable
 	 *
 	 * @param $id
 	 * @return array|\ArrayObject|null
-	 * @throws \Exception
+	 * @throws NotFoundException
 	 */
 	protected function find($id)
 	{
