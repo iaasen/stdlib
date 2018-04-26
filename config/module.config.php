@@ -22,15 +22,23 @@ return [
 			'Logger' => \Oppned\Log\Logger::class,
 		]
 	],
+	'controller_plugins' => [
+		'invokables' => [
+			\Iaasen\Messenger\SessionMessenger::class => \Iaasen\Messenger\SessionMessenger::class,
+		],
+		'aliases' => [
+			'flashMessenger' => \Iaasen\Messenger\SessionMessenger::class,
+		],
+	],
 	'view_helpers' => [
 		'aliases' => [
-			'messages' => \Oppned\View\Helper\MessageWidget::class,
+			'messages' => \Iaasen\Messenger\SessionMessengerViewHelper::class,
 		],
         'invokables' => [
 			'makeBootstrapFormHorizontal' => \Oppned\View\Helper\BootstrapFormHorizontal::class,
         ],
 		'factories' => [
-			\Oppned\View\Helper\MessageWidget::class => \Oppned\View\Helper\MessageWidgetFactory::class,
+			\Iaasen\Messenger\SessionMessengerViewHelper::class => \Iaasen\Messenger\SessionMessengerViewHelper::class,
 		]
     ],
 	'navigation_helpers' => [

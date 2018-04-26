@@ -5,7 +5,7 @@
     "keywords": [
     ],
     "require": {
-        "php": ">=5.6.0",
+        "php" : "^7.1",
         "zendframework/zend-db": "^2",
         "zendframework/zend-modulemanager": "^2",
         "zendframework/zend-view": "^2",
