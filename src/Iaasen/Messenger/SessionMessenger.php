@@ -43,13 +43,13 @@ class SessionMessenger implements PluginInterface
 	 * @param string $severity
 	 * @param int $hops
 	 * @return SessionMessenger
-	 * @todo $hops must be set
 	 */
 	public function addMessage(string $message, string $severity = self::SEVERITY_DEFAULT, int $hops = 2) : self {
 		$messageArray = [
 			'severity' => $severity,
 			'message' => $message,
 		];
+		$this->getContainer()->setExpirationHops($hops);
 		$this->getQueue()->enqueue($messageArray);
 		return $this;
 	}
