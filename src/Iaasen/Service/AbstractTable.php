@@ -82,7 +82,6 @@ abstract class AbstractTable
 	/**
 	 * @param AbstractModel $model
 	 * @return int
-	 * @throws \Exception
 	 */
 	protected function save($model) {
 		$data = $model->databaseSaveArray();
@@ -121,6 +120,7 @@ abstract class AbstractTable
 	protected function delete($id)
 	{
 		if(is_object($id)) {
+			/** @var object $id */
 			$id = $id->id;
 		}
 		$result = $this->primaryGateway->delete(['id' => $id]);

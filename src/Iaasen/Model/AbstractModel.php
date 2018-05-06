@@ -10,6 +10,7 @@ namespace Iaasen\Model;
 
 use DateTime;
 use Exception;
+use Iaasen\Exception\NotFoundException;
 use InvalidArgumentException;
 use LogicException;
 use ReflectionClass;
@@ -44,7 +45,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 			if($reflection->isProtected()) return $this->$name;
 			else throw new \Exception("Property '$name' in " . get_class($this) . " is private", 107);
 		}
-		throw new \Exception("Property '$name' not found in " . get_class($this), 106);
+		throw new NotFoundException("Property '$name' not found in " . get_class($this));
 	}
 
 	/**
@@ -149,7 +150,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 	/**
 	 * Called by \Zend\Form::bind()
 	 * @return array
-	 * @throws Exception
+	 * @throws \ReflectionException
 	 */
 	public function getArrayCopy() {
 		$reflection = new ReflectionClass($this);
