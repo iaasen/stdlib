@@ -34,7 +34,8 @@ class AbstractController extends AbstractActionController
 			if(!$redirect && $request->getHeader('Referer')) {
 				/** @var Referer $header */
 				$header = $request->getHeader('Referer');
-				$redirect = $header->uri()->getPath();
+				//$redirect = $header->uri()->getPath();
+				$redirect = $header->uri()->__toString();
 			}
 			if($redirect === null) $redirect = $defaultUrl;
 			$this->redirect = $redirect;
