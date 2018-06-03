@@ -33,6 +33,10 @@ abstract class AbstractTable
 		}
 	}
 
+	/**
+	 * Allow to insert rows into the database with 'id' set, bypassing the auto numbering scheme
+	 * @param bool $allow
+	 */
 	public function setAllowInsertWithId(bool $allow) {
 		$this->allowInsertWithId = $allow;
 	}
