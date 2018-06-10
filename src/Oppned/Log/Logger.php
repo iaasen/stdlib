@@ -79,6 +79,7 @@ class Logger {
 	 * @return array
 	 */
 	public function getGroupLogs($filter = 'important', $limit = 5, $group = null) {
+		if(!$group) $group = $this->userService->getCurrentUser()->current_group;
 		return $this->logTable->getGroupLogs($filter, $limit, $group);
 	}
 	

@@ -7,7 +7,7 @@ use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Sql;
-
+use Zend\Db\TableGateway\TableGatewayInterface;
 
 
 abstract class AbstractTable
@@ -21,7 +21,7 @@ abstract class AbstractTable
 
 	const MYSQL_TIMESTAMP_FORMAT = 'Y-m-d H:i:s';
 
-	public function __construct($currentUser, TableGateway $primaryGateway, array $additionalDependencies = [])
+	public function __construct($currentUser, TableGatewayInterface $primaryGateway, array $additionalDependencies = [])
 	{
 		$this->currentUser = $currentUser;
 		$this->primaryGateway = $primaryGateway;

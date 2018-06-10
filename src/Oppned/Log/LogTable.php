@@ -35,8 +35,7 @@ class LogTable extends AbstractTable
 	 * @param string $filter Valid options: 'important', 'read', 'unread', 'all'
 	 * @param string $group
 	 */
-	public function getGroupLogs($filter = 'important', $limit = 10, $group = null) {
-		if(!$group) $group = $this->currentUser->current_group;
+	public function getGroupLogs($filter = 'important', $limit = 10, $group) {
 		if(!$this->accessToView($group, 'group')) return false;;
 
 		// Count unread logs and make sure they are all listed

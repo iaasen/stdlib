@@ -9,6 +9,8 @@
 namespace Iaasen\Controller;
 
 
+use Iaasen\Initializer\NavigationAwareInterface;
+use Iaasen\Initializer\ViewRendererAwareInterface;
 use Zend\Http\Header\Referer;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -17,7 +19,7 @@ use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
 
-class AbstractController extends AbstractActionController
+class AbstractController extends AbstractActionController implements NavigationAwareInterface, ViewRendererAwareInterface
 {
 	/** @var string */
 	protected $redirect;
@@ -71,8 +73,6 @@ class AbstractController extends AbstractActionController
 		$this->setAttributesForNavigationPagesRecursive($search, null, $visible, $pages);
 	}
 
-
-
 	public function setViewRenderer(PhpRenderer $viewRenderer) {
 		$this->viewRenderer = $viewRenderer;
 	}
@@ -80,6 +80,4 @@ class AbstractController extends AbstractActionController
 	public function setNavigation(Navigation $navigation) {
 		$this->navigation = $navigation;
 	}
-
-
 }

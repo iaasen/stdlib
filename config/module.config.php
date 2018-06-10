@@ -2,6 +2,10 @@
 namespace Oppned;
 
 
+use Iaasen\Initializer\NavigationInitializer;
+use Iaasen\Initializer\ViewRendererInitializer;
+use Zend\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
+
 return [
 	'modules' => [
 	],
@@ -22,12 +26,22 @@ return [
 			'Logger' => \Oppned\Log\Logger::class,
 		]
 	],
+	'controllers' => [
+		'initializers' => [
+			NavigationInitializer::class,
+			ViewRendererInitializer::class,
+		]
+	],
 	'controller_plugins' => [
+		'factories' => [
+			\Iaasen\Controller\Plugin\NavigationPlugin::class => ReflectionBasedAbstractFactory::class,
+		],
 		'invokables' => [
 			\Iaasen\Messenger\SessionMessenger::class => \Iaasen\Messenger\SessionMessenger::class,
 		],
 		'aliases' => [
 			'flashMessenger' => \Iaasen\Messenger\SessionMessenger::class,
+			'navigation' => \Iaasen\Controller\Plugin\NavigationPlugin::class,
 		],
 	],
 	'view_helpers' => [
