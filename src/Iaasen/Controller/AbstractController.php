@@ -58,6 +58,12 @@ class AbstractController extends AbstractActionController implements NavigationA
 		return new JsonModel($data);
 	}
 
+	/**
+	 * @param string $search
+	 * @param array|null $attributes
+	 * @param bool|null $visible
+	 * @param array|null $pages
+	 */
 	protected function setAttributesForNavigationPagesRecursive(string $search, ?array $attributes = null, ?bool $visible = null, ?array $pages = null) {
 		if($pages === null) $pages = $this->navigation->getPages();
 		foreach($pages AS $page) {

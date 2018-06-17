@@ -3,6 +3,7 @@ namespace Iaasen\Service;
 
 use Iaasen\Model\AbstractModel;
 use Iaasen\Exception\NotFoundException;
+use Zend\Db\Sql\AbstractPreparableSql;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
@@ -134,10 +135,9 @@ abstract class AbstractTable
 	/**
 	 * Send query directly to adapter return rows
 	 * 
-	 * @param Select $select
+	 * @param AbstractPreparableSql $select
 	 * @param bool $outputSqlString
 	 * @return \Zend\Db\Adapter\Driver\ResultInterface
-	 * @deprecated Use selectWith() or selectToObjects()
 	 */
 	protected function query($select, $outputSqlString = false) {
 		if($outputSqlString) echo $this->getSqlString($select);
@@ -146,7 +146,7 @@ abstract class AbstractTable
 		return $statement->execute();
 	}
 
-	protected function getSqlString(Select $select) {
+	protected function getSqlString(AbstractPreparableSql $select) {
 		return $select->getSqlString($this->primaryGateway->getAdapter()->getPlatform());
 	}
 
