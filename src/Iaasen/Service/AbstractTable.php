@@ -146,16 +146,20 @@ abstract class AbstractTable
 		return $statement->execute();
 	}
 
-	protected function getSqlString(AbstractPreparableSql $select) {
-		return $select->getSqlString($this->primaryGateway->getAdapter()->getPlatform());
+	protected function getSqlString(AbstractPreparableSql $sql) : string {
+		return $sql->getSqlString($this->primaryGateway->getAdapter()->getPlatform());
 	}
 
-	protected function selectToObjects(Select $select) {
+	protected function selectToObjects(Select $select) : array {
 		return $this->convertRowSetToArray($rows = $this->primaryGateway->selectWith($select));
 	}
 
-	protected function whereToObjects(Where $where) {
+	protected function whereToObjects(Where $where) : array {
 		return $this->convertRowSetToArray($this->primaryGateway->select($where));
+	}
+
+	protected function selectToArrays(Select $select) : array {
+		return $this->convertRowSetToArray($this->query($select));
 	}
 	
 	public function getObjectPrototype() {
@@ -166,7 +170,7 @@ abstract class AbstractTable
 		return $this->primaryGateway->getTable();
 	}
 
-	public function convertRowSetToArray($rowSet) {
+	public function convertRowSetToArray($rowSet) : array {
 		$objects = [];
 		foreach($rowSet as $row) {
 			$objects[] = $row;
