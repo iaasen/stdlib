@@ -116,7 +116,14 @@ abstract class AbstractRestResource extends AbstractResourceListener
 	}
 
 
-	protected function calculateStartEnd() {
+	/**
+	 * Returns an array with start and end times in unix timestamp
+	 * Result is based on post/query parameters: year, month, start, end
+	 * year and month are integers
+	 * start and end are unix timestamps
+	 * @return int[]
+	 */
+	protected function calculateStartEnd() : array {
 		$event = $this->getEvent();
 		$year = $event->getRouteParam('year', $event->getQueryParam('year', date('Y')));
 		$month = $event->getRouteParam('month', $event->getQueryParam('month', date('m')));

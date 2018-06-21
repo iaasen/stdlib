@@ -8,8 +8,9 @@
 
 namespace Iaasen\Model;
 
-use \Oppned\Entity\DateTime;
+use \Iaasen\Entity\DateTime;
 use Exception;
+use Nteb\ApiEntities\Exception\InvalidArgumentException;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\Object_;
@@ -92,7 +93,7 @@ class AbstractEntity implements \Iaasen\Model\ModelInterface
 
 		// All properties must be predefined
 		if(!property_exists($this, $name)) {
-			if($this->throwExceptionOnMissingProperty) throw new Exception("Property '$name' not found in " . get_class($this), 400);
+			if($this->throwExceptionOnMissingProperty) throw new InvalidArgumentException("Property '$name' not found in " . get_class($this), 400);
 			else return;
 		}
 
