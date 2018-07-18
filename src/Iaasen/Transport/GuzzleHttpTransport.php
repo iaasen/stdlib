@@ -90,7 +90,7 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 	 * @return string
 	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
-	public function send(string $method, string $url, array $payload = [], bool $checkSession = true) : string
+	public function send(string $method, string $url, array $payload = [], bool $checkSession = true)
 	{
 		if($checkSession) $this->checkSession();
 		try {
