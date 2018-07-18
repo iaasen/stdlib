@@ -11,14 +11,15 @@ namespace Iaasen\Transport;
 
 interface HttpTransportInterface
 {
-	public function sendGet($url, $query = []);
-	public function sendPostWithJson($url, $json, $query = []);
-	public function sendPostWithBody($url, $body, $query = []);
-	public function sendPostWithFormData($url, $post, $query = []);
-	public function sendPutWithJson($url, $json, $query = []);
-	public function sendDelete($url);
+	public function sendGet(string $url, array $query = []);
+	public function sendPostWithJson(string $url, $json, array $query = []);
+	public function sendPostWithBody(string $url, $body, array $query = []);
+	public function sendPostWithFormData(string $url, $post, array $query = []);
+	public function sendPutWithJson(string $url, $json, array $query = []);
+	public function sendDelete(string $url);
 
-	public function setHeaders($headers);
-	public function addHeaders($headers);
-	public function deleteHeader($key);
+	public function setHeaders(array $headers);
+	public function addHeaders(array $headers);
+	public function addHeader(string $key, string $header);
+	public function deleteHeader(string $key);
 }

@@ -9,6 +9,7 @@
 namespace Iaasen\Transport;
 
 use GuzzleHttp\Client AS GuzzleClient;
+use Iaasen\Exception\InvalidArgumentException;
 
 /**
  * Class GuzzleHttpTransport
@@ -42,9 +43,9 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 	 * If function returns false the API error will be forwarded
 	 * @return bool
 	 */
-	abstract protected function renewSession();
+	abstract protected function renewSession() : bool;
 
-	public function __construct($config)
+	public function __construct(array $config)
 	{
 
 		$permittedConfig = ['base_url', 'headers', 'cookies'];
@@ -65,29 +66,37 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 		$this->client = new GuzzleClient($guzzleConfig);
 	}
 
-	public function setHeaders($headers) {
+	public function setHeaders(array $headers) {
 		$this->headers = $headers;
 	}
 
-	public function addHeader($name, $value) {
+	public function addHeader(string $name, string $value) {
 		$this->addHeaders([$name => $value]);
 	}
 
-	public function addHeaders($headers) {
+	public function addHeaders(array $headers) {
 		$this->headers = array_merge($this->headers, $headers);
 	}
 
-	public function deleteHeader($key) {
+	public function deleteHeader(string $key) {
 		unset($this->headers[$key]);
 	}
 
-	public function send($method, $url, $payload = [], $checkSession = true)
+	/**
+	 * @param string $method
+	 * @param string $url
+	 * @param array $payload
+	 * @param bool $checkSession
+	 * @return string
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function send(string $method, string $url, array $payload = [], bool $checkSession = true)
 	{
 		if($checkSession) $this->checkSession();
 		try {
 			return $this->internalSend($method, $url, $payload);
 		}
-		catch(\Exception $e) {
+		catch(\GuzzleHttp\Exception\GuzzleException $e) {
 			if($e->getCode() == 401) { // 401 when access token is not accepted
 				if($this->renewSession()) return $this->internalSend($method, $url, $payload);
 			}
@@ -95,36 +104,58 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 		}
 	}
 
-	protected function internalSend($method, $url, $payload = []) {
+	/**
+	 * @param string $method
+	 * @param string $url
+	 * @param array $payload
+	 * @return string
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	protected function internalSend(string $method, string $url, array $payload = []) : string {
 		$allowedMethods = ['POST', 'GET', 'PUT', 'DELETE'];
 		if(!in_array($method, $allowedMethods)) {
-			throw new \Exception('Only GET, POST, PUT and DELETE allowed');
+			throw new InvalidArgumentException('Only GET, POST, PUT and DELETE allowed');
 		}
 
 		$allowedPayload = ['query', 'json', 'form_params', 'body'];
 		foreach($payload AS $key => $value) {
-			if(!in_array($key, $allowedPayload)) throw new \Exception("Payload must be 'query', 'json', 'form_params' or 'body'");
+			if(!in_array($key, $allowedPayload)) throw new InvalidArgumentException("Payload must be 'query', 'json', 'form_params' or 'body'");
 		}
 		$payload['headers'] = $this->headers;
 
 		$response = $this->client->request($method, $url, $payload);
+
 		return $response->getBody()->getContents();
 	}
 
-	public function sendGet($url, $query = [])
+	/**
+	 * @param string $url
+	 * @param array $query
+	 * @return string
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function sendGet(string $url, array $query = [])
 	{
 		return $this->send('GET', $url, ['query' => $query]);
 	}
 
 	/**
 	 * @deprecated Use sendGet()
+	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
 	public function sendQuery($url, $query)
 	{
 		return $this->sendGet($url, $query);
 	}
 
-	public function sendPostWithJson($url, $json, $query = [])
+	/**
+	 * @param string $url
+	 * @param $json
+	 * @param array $query
+	 * @return string
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function sendPostWithJson(string $url, $json, array $query = [])
 	{
 		return $this->send('POST', $url, [
 			'json' => $json,
@@ -132,7 +163,14 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 		]);
 	}
 
-	public function sendPostWithBody($url, $body, $query = []) {
+	/**
+	 * @param string $url
+	 * @param $body
+	 * @param array $query
+	 * @return string
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function sendPostWithBody(string $url, $body, array $query = []) {
 		$data = $this->send('POST', $url, [
 			'body' => $body,
 			'query' => $query,
@@ -140,7 +178,14 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 		return $data;
 	}
 
-	public function sendPostWithFormData($url, $post, $query = [])
+	/**
+	 * @param string $url
+	 * @param $post
+	 * @param array $query
+	 * @return string
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function sendPostWithFormData(string $url, $post, array $query = [])
 	{
 		$this->addHeader('Content-Type', 'application/x-www-form-urlencoded');
 		$data = $this->send('POST', $url, [
@@ -151,7 +196,14 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 		return $data;
 	}
 
-	public function sendPutWithJson($url, $json, $query = [])
+	/**
+	 * @param string $url
+	 * @param $json
+	 * @param array $query
+	 * @return string
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function sendPutWithJson(string $url, $json, array $query = [])
 	{
 		return $this->send('PUT', $url, [
 			'json' => $json,
@@ -159,7 +211,12 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 		]);
 	}
 
-	public function sendDelete($url) {
+	/**
+	 * @param string $url
+	 * @return string
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function sendDelete(string $url) {
 		return $this->send('DELETE', $url);
 	}
 }
