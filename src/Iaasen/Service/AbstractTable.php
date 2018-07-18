@@ -3,6 +3,7 @@ namespace Iaasen\Service;
 
 use Iaasen\Model\AbstractModel;
 use Iaasen\Exception\NotFoundException;
+use Iaasen\Model\ModelInterface;
 use Zend\Db\Sql\AbstractPreparableSql;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
@@ -70,7 +71,7 @@ abstract class AbstractTable
 	/**
 	 *
 	 * @param $id
-	 * @return array|\ArrayObject|null
+	 * @return ModelInterface|null
 	 * @throws NotFoundException
 	 */
 	protected function find($id)
