@@ -27,4 +27,8 @@ class DateTime extends \DateTime implements \JsonSerializable
 	{
 		return $this->format('c');
 	}
+
+	function formatMysql(){
+		return $this->format('Y-m-d H:i:s');
+	}
 }

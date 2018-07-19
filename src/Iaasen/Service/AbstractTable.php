@@ -151,6 +151,10 @@ abstract class AbstractTable
 		return $sql->getSqlString($this->primaryGateway->getAdapter()->getPlatform());
 	}
 
+	protected function getSelectPrototype() : Select {
+		return $this->primaryGateway->getSql()->select();
+	}
+
 	protected function selectToObjects(Select $select) : array {
 		return $this->convertRowSetToArray($rows = $this->primaryGateway->selectWith($select));
 	}
