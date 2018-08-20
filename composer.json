@@ -4,6 +4,7 @@
     "license": "proprietary",
     "keywords": [
     ],
+    "minimum-stability": "dev",
     "require": {
         "php" : "^7.1",
         "zendframework/zend-db": "^2",

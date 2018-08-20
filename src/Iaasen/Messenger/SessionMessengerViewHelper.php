@@ -31,7 +31,7 @@ class SessionMessengerViewHelper
 		$output = '<table class="table table-condensed" style="margin-bottom: 0">';
 
 		foreach($this->getSessionMessenger()->getMessagesWithSeverity() AS $message) {
-			$output .= '<tr class="' . $message['severity'] . '"><td>' . $message . '</tr></td>' . PHP_EOL;
+			$output .= '<tr class="' . $message['severity'] . '"><td>' . $message['message'] . '</tr></td>' . PHP_EOL;
 		}
 
 		$output .= '</table>';
