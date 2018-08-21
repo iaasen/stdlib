@@ -25,6 +25,13 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 	public $base_url;
 	/** @var  string[] */
 	public $headers = [];
+	/**
+	 * Format: ['username', 'password', 'type']
+	 * Default type is 'basic'
+	 * Other types are 'digest', 'ntlm'
+	 * @var string[]
+	 */
+	private $auth;
 
 	/** @var GuzzleClient  */
 	protected $client;
@@ -48,10 +55,20 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 	public function __construct(array $config)
 	{
 
-		$permittedConfig = ['base_url', 'headers', 'cookies'];
+		$permittedConfig = ['base_url', 'headers', 'cookies', 'auth'];
 		$config = array_intersect_key($config, array_flip($permittedConfig));
 		foreach($config AS $key => $value) {
-			$this->$key = $value;
+			if($key == 'auth') {
+				$authArray = [
+					$value['username'],
+					$value['password'],
+					isset($value['type']) ? $value['type'] : 'basic',
+				];
+				$this->auth = $authArray;
+			}
+			else {
+				$this->$key = $value;
+			}
 		}
 
 		$guzzleConfig = [
@@ -62,6 +79,8 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 //			'auth' => [$this->username, $this->password],
 			'verify' => false
 		];
+		if($this->auth) $guzzleConfig['auth'] = $this->auth;
+
 
 		$this->client = new GuzzleClient($guzzleConfig);
 	}
