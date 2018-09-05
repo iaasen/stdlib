@@ -30,8 +30,8 @@ use ReflectionProperty;
  */
 class AbstractEntity implements \Iaasen\Model\ModelInterface
 {
-	/** @var DocBlockFactory  */
-	private $docBlockFactory;
+	/** @var array */
+	private static $docBlockData;
 	/**
 	 * if set to true an Exception will be sent when trying to set a property that is not defined
 	 * @var bool  */
@@ -43,9 +43,66 @@ class AbstractEntity implements \Iaasen\Model\ModelInterface
 	 */
 	public function __construct($data = [])
 	{
-		$this->docBlockFactory = DocBlockFactory::createInstance();
+		$this->generateDocBlockData();
 		if($data instanceof \stdClass) $data = (array) $data;
 		if(!is_null($data) && count($data)) $this->exchangeArray($data);
+	}
+
+	private function generateDocBlockData() {
+		if(!isset(self::$docBlockData[get_class($this)])) {
+
+
+			$docBlockFactory = DocBlockFactory::createInstance();
+			$reflection = new ReflectionClass($this);
+			$publicProperties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
+
+			foreach($publicProperties AS $property) {
+				if($property->isStatic()) continue;
+
+				// Setter
+				$setterName = 'set' . ucfirst($property->name);
+				if(method_exists($this, $setterName)) {
+					$doc = [
+						'type' => 'setter',
+						'value' => $setterName,
+					];
+				}
+				else {
+					// Read docBlock
+					$annotation = $docBlockFactory->create($property->getDocComment());
+					if(!$annotation->hasTag('var')) throw new \LogicException("Property '$property->name' must have a @var tag in " . get_class($this), 500);
+					/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
+					$tag = $annotation->getTagsByName('var')[0];
+					$type = $tag->getType();
+
+					// Array of objects
+					if($type instanceof Array_ && $type->getValueType() instanceof Object_) {
+						$doc = [
+							'type' => 'objectArray',
+							'value' => $type->getValueType()->__toString(),
+						];
+					}
+					// Object
+					elseif($type instanceof Object_) {
+						$doc = [
+							'type' => 'object',
+							'value' => $type->__toString(),
+						];
+					}
+					// Primitive type
+					else {
+						$doc = [
+							'type' => 'primitive',
+							'value' => $type->__toString(),
+						];
+
+					}
+				}
+
+				// Save to static
+				self::$docBlockData[get_class($this)][$property->name] = $doc;
+			}
+		}
 	}
 
 	public function exchangeArray($data) {
@@ -77,6 +134,7 @@ class AbstractEntity implements \Iaasen\Model\ModelInterface
 		return $this->$name;
 	}
 
+
 	/**
 	 * @param string $name
 	 * @param mixed $value
@@ -84,38 +142,21 @@ class AbstractEntity implements \Iaasen\Model\ModelInterface
 	 */
 	public function __set($name, $value)
 	{
-		// Look for setter method (setField())
-		$setterName = 'set' . ucfirst($name);
-		if(method_exists($this, $setterName)) {
-			$this->$setterName($value);
-			return;
-		}
-
-		// All properties must be predefined
-		if(!property_exists($this, $name)) {
+		$doc = self::$docBlockData[get_class($this)];
+		if(isset($doc[$name])) $doc = $doc[$name];
+		else {
 			if($this->throwExceptionOnMissingProperty) throw new InvalidArgumentException("Property '$name' not found in " . get_class($this), 400);
 			else return;
 		}
 
-		// Populate according to @var doc-comment
-		$reflection = new ReflectionProperty($this, $name);
-		$annotation = $this->docBlockFactory->create($reflection->getDocComment());
-		if(!$annotation->hasTag('var')) throw new \LogicException("Property '$name' must have a @var tag in " . get_class($this), 500);
-		/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
-		$tag = $annotation->getTagsByName('var')[0];
-		$type = $tag->getType();
-
-		// Array of objects
-		if($type instanceof Array_ && $type->getValueType() instanceof Object_) {
-			$this->setObjectArray($type->getValueType()->__toString(), $name, $value);
+		if($doc['type'] == 'objectArray') {
+			$this->setObjectArray($doc['value'], $name, $value);
 		}
-		// Object
-		elseif($type instanceof Object_) {
-			$this->setObject($type->__toString(), $name, $value);
+		elseif($doc['type'] == 'object') {
+			$this->setObject($doc['value'], $name, $value);
 		}
-		// Primitive type
 		else {
-			switch($tag->getType()) {
+			switch($doc['value']) {
 				case 'bool':
 					$this->$name = (!is_null($value)) ? (bool) $value : null;
 					break;
