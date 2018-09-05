@@ -30,7 +30,7 @@ class AbstractController extends AbstractActionController implements NavigationA
 
 	public function getRedirect($defaultUrl = false) {
 		if($this->redirect === null) {
-			$redirect = $this->params()->fromQuery('redirect');
+			$redirect = $this->params()->fromQuery('redirect', $this->params()->fromQuery('redirect_uri'));
 			/** @var Request $request */
 			$request = $this->getRequest();
 			if(!$redirect && $request->getHeader('Referer')) {

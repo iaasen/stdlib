@@ -136,19 +136,27 @@ abstract class AbstractRestResource extends AbstractResourceListener
 		if($start === null) { // Default is beginning of current month
 			$start = mktime(0, 0, 0, $month, 1, $year);
 		}
-		if($end === null) { // Default is beginning of next month
-			if($month == 12) {
-				$_month = 1;
-				$_year = $year + 1;
-			}
-			else {
-				$_month = $month + 1;
-				$_year = $year;
-			}
-			$end = mktime(0, 0, 0, $_month, 1, $_year);
-			if($end > time()) $end = time();
+
+		// Calculate end of this month (actually beginning of next month)
+		if($month == 12) {
+			$_month = 1;
+			$_year = $year + 1;
 		}
-		return [$start, $end];
+		else {
+			$_month = $month + 1;
+			$_year = $year;
+		}
+		$endOfThisMonth = mktime(0, 0, 0, $_month, 1, $_year);
+
+
+		if($end === null) { // Default is beginning of next month
+			$end = $endOfThisMonth;
+		}
+
+		// Don't go beyond current month
+		if($end > $endOfThisMonth) $end = $endOfThisMonth;
+
+		return [(int) $start, (int) $end];
 	}
 
 	protected function requestForSingleMonth() {
