@@ -10,7 +10,7 @@ namespace Iaasen\Model;
 
 use \Iaasen\Entity\DateTime;
 use Exception;
-use Nteb\ApiEntities\Exception\InvalidArgumentException;
+use Iaasen\Exception\InvalidArgumentException;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\Object_;
@@ -196,7 +196,7 @@ class AbstractEntity implements \Iaasen\Model\ModelInterface
 			case '\DateTime':
 			case 'DateTime':
 				if(is_null($value)) $this->$name = null;
-				elseif(is_string($value)) $this->$name = new DateTime($value);
+				elseif(is_string($value)) $this->$name = (strlen($value)) ? new DateTime($value) : null;
 				elseif($value instanceof \DateTime) $this->$name = new DateTime($value->format('c'));
 				elseif($value instanceof DateTime) $this->$name = $value;
 				else throw new \InvalidArgumentException("Property '$name' must be a string or an instance of \\DateTime in " . get_class($this));
