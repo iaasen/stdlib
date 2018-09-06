@@ -149,7 +149,11 @@ class AbstractEntity implements \Iaasen\Model\ModelInterface
 			else return;
 		}
 
-		if($doc['type'] == 'objectArray') {
+		if($doc['type'] == 'setter') {
+			$setterName = $doc['value'];
+			$this->$setterName($value);
+		}
+		elseif($doc['type'] == 'objectArray') {
 			$this->setObjectArray($doc['value'], $name, $value);
 		}
 		elseif($doc['type'] == 'object') {
