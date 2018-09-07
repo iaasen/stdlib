@@ -59,44 +59,33 @@ class AbstractEntity implements \Iaasen\Model\ModelInterface
 			foreach($publicProperties AS $property) {
 				if($property->isStatic()) continue;
 
-				// Setter
-				$setterName = 'set' . ucfirst($property->name);
-				if(method_exists($this, $setterName)) {
+				// Read docBlock
+				$annotation = $docBlockFactory->create($property->getDocComment());
+				if(!$annotation->hasTag('var')) throw new \LogicException("Property '$property->name' must have a @var tag in " . get_class($this), 500);
+				/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
+				$tag = $annotation->getTagsByName('var')[0];
+				$type = $tag->getType();
+
+				// Array of objects
+				if($type instanceof Array_ && $type->getValueType() instanceof Object_) {
 					$doc = [
-						'type' => 'setter',
-						'value' => $setterName,
+						'type' => 'objectArray',
+						'value' => $type->getValueType()->__toString(),
 					];
 				}
+				// Object
+				elseif($type instanceof Object_) {
+					$doc = [
+						'type' => 'object',
+						'value' => $type->__toString(),
+					];
+				}
+				// Primitive type
 				else {
-					// Read docBlock
-					$annotation = $docBlockFactory->create($property->getDocComment());
-					if(!$annotation->hasTag('var')) throw new \LogicException("Property '$property->name' must have a @var tag in " . get_class($this), 500);
-					/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
-					$tag = $annotation->getTagsByName('var')[0];
-					$type = $tag->getType();
-
-					// Array of objects
-					if($type instanceof Array_ && $type->getValueType() instanceof Object_) {
-						$doc = [
-							'type' => 'objectArray',
-							'value' => $type->getValueType()->__toString(),
-						];
-					}
-					// Object
-					elseif($type instanceof Object_) {
-						$doc = [
-							'type' => 'object',
-							'value' => $type->__toString(),
-						];
-					}
-					// Primitive type
-					else {
-						$doc = [
-							'type' => 'primitive',
-							'value' => $type->__toString(),
-						];
-
-					}
+					$doc = [
+						'type' => 'primitive',
+						'value' => $type->__toString(),
+					];
 				}
 
 				// Save to static
@@ -123,6 +112,10 @@ class AbstractEntity implements \Iaasen\Model\ModelInterface
 		return $data;
 	}
 
+	/**
+	 * @param string $name
+	 * @return mixed
+	 */
 	public function __get($name)
 	{
 		// Look for getter method (getField())
@@ -142,6 +135,13 @@ class AbstractEntity implements \Iaasen\Model\ModelInterface
 	 */
 	public function __set($name, $value)
 	{
+		// Look for setter method (setField())
+		$setterName = 'set' . ucfirst($name);
+		if(method_exists($this, $setterName)) {
+			$this->$setterName($value);
+			return;
+		}
+
 		$doc = self::$docBlockData[get_class($this)];
 		if(isset($doc[$name])) $doc = $doc[$name];
 		else {
@@ -149,11 +149,13 @@ class AbstractEntity implements \Iaasen\Model\ModelInterface
 			else return;
 		}
 
-		if($doc['type'] == 'setter') {
-			$setterName = $doc['value'];
-			$this->$setterName($value);
-		}
-		elseif($doc['type'] == 'objectArray') {
+
+
+//		if($doc['type'] == 'setter') {
+//			$setterName = $doc['value'];
+//			$this->$setterName($value);
+//		}
+		if($doc['type'] == 'objectArray') {
 			$this->setObjectArray($doc['value'], $name, $value);
 		}
 		elseif($doc['type'] == 'object') {
