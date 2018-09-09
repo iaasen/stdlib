@@ -41,6 +41,9 @@ class Attachment extends AbstractModel
 	/** @var int */
 	protected $size;
 
+
+	// Not included in database
+
 	/** @var int */
 	protected $error;
 
