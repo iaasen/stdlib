@@ -10,9 +10,11 @@ namespace Iaasen\Model;
 
 use Exception;
 use Iaasen\Entity\DateTime;
-use Iaasen\Exception\NotFoundException;
-use InvalidArgumentException;
-use LogicException;
+use Iaasen\Exception\InvalidArgumentException;
+use Iaasen\Exception\LogicException;
+use phpDocumentor\Reflection\DocBlockFactory;
+use phpDocumentor\Reflection\Types\Array_;
+use phpDocumentor\Reflection\Types\Object_;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -24,6 +26,8 @@ use ReflectionProperty;
  */
 abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 {
+	/** @var array */
+	private static $docBlockData;
 	/** @var DateTime */
 	protected $timestamp_created;
 	/** @var DateTime */
@@ -35,17 +39,68 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 
 	public function __construct()
 	{
+		$this->generateDocBlockData();
 		$this->timestamp_created = new DateTime();
 		$this->timestamp_updated = $this->timestamp_created;
 	}
 
-	public function __get($name) {
-		if(property_exists($this, $name)) {
-			$reflection = new ReflectionProperty($this, $name);
-			if($reflection->isProtected()) return $this->$name;
-			else throw new \Exception("Property '$name' in " . get_class($this) . " is private", 107);
+	private function generateDocBlockData() {
+		if(!isset(self::$docBlockData[get_class($this)])) {
+			$docBlockFactory = DocBlockFactory::createInstance();
+			$reflection = new ReflectionClass($this);
+			$publicProperties = $reflection->getProperties(ReflectionProperty::IS_PROTECTED);
+
+			foreach($publicProperties AS $property) {
+				if($property->isStatic()) continue;
+
+				// Read docBlock
+				$annotation = $docBlockFactory->create($property->getDocComment());
+				if(!$annotation->hasTag('var')) throw new LogicException("Property '$property->name' must have a @var tag in " . get_class($this));
+				/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
+				$tag = $annotation->getTagsByName('var')[0];
+				$type = $tag->getType();
+
+				// Array of objects
+				if($type instanceof Array_ && $type->getValueType() instanceof Object_) {
+					$doc = [
+						'type' => 'objectArray',
+						'value' => $type->getValueType()->__toString(),
+					];
+				}
+				// Object
+				elseif($type instanceof Object_) {
+					$doc = [
+						'type' => 'object',
+						'value' => $type->__toString(),
+					];
+				}
+				// Primitive type
+				else {
+					$doc = [
+						'type' => 'primitive',
+						'value' => $type->__toString(),
+					];
+				}
+
+				// Save to static
+				self::$docBlockData[get_class($this)][$property->name] = $doc;
+			}
 		}
-		throw new NotFoundException("Property '$name' not found in " . get_class($this));
+	}
+
+	protected function getDocBlock(string $name) : ?array {
+		return (isset(self::$docBlockData[get_class($this)][$name])) ? self::$docBlockData[get_class($this)][$name] : null;
+	}
+
+
+	public function __get($name) {
+		$getterName = 'get' . ucfirst($name);
+		if(method_exists($this, $getterName)) return $this->$getterName;
+
+		$doc = self::$docBlockData[get_class($this)];
+		if(isset($doc[$name])) return $this->$name;
+
+		throw new InvalidArgumentException("Property '$name' not found or is private in " . get_class($this));
 	}
 
 	/**
@@ -56,37 +111,63 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 	 * @throws InvalidArgumentException
 	 * @return void
      */
-	public function __set($name, $value) {
-		if(!property_exists($this, $name)) throw new Exception("Property '$name' not found in " . get_class($this), 106);
-		$reflection = new ReflectionProperty($this, $name);
-		$factory  = \phpDocumentor\Reflection\DocBlockFactory::createInstance();
-		$annotation = $factory->create($reflection->getDocComment());
-		if(!$annotation->hasTag('var')) throw new \LogicException("Property '$name' must have a @var tag in " . get_class($this));
-		/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
-		$tag = $annotation->getTagsByName('var')[0];
-		switch($tag->getType()) {
-			case 'bool':
-				$this->$name = (bool) $value;
-				break;
-			case 'int':
-				$this->$name = strlen($value) ? (int) $value : null;
-				break;
-			case 'float':
-				$this->$name = (float) $value;
-				break;
-			case 'string':
-				$this->$name = (string) $value;
-				break;
-			case 'string[]':
-			case 'int[]':
-			case '[]':
-			case '\stdClass':
-				if(is_string($value)) {
-					if(in_array(substr($value, 0, 1), ['{', '['])) $this->$name = json_decode($value);
-				}
-				else $this->$name = $value;
+	public function __set($name, $value)
+	{
+		// Look for setter method (setField())
+		$setterName = 'set' . ucfirst($name);
+		if (method_exists($this, $setterName)) {
+			$this->$setterName($value);
+			return;
+		}
+
+		$doc = self::$docBlockData[get_class($this)];
+		if (isset($doc[$name])) $doc = $doc[$name];
+		else {
+			if ($this->throwExceptionOnMissingProperty) throw new InvalidArgumentException("Property '$name' not found or is private in " . get_class($this));
+			else return;
+		}
+
+		if ($doc['type'] == 'objectArray') {
+			$this->setObjectArray($doc['value'], $name, $value);
+		} elseif ($doc['type'] == 'object') {
+			$this->setObject($doc['value'], $name, $value);
+		} else {
+			switch ($doc['value']) {
+				case 'bool':
+					$this->$name = (!is_null($value)) ? (bool)$value : null;
+					break;
+				case 'int':
+					$this->$name = strlen($value) ? (int)$value : null;
+					break;
+				case 'float':
+					$this->$name = (float)$value;
+					break;
+				case 'string':
+					$this->$name = (string)$value;
+					break;
+				case 'string[]':
+				case 'int[]':
+				case '[]':
+					if (is_string($value)) {
+						if (in_array(substr($value, 0, 1), ['{', '['])) $this->$name = json_decode($value);
+					} else $this->$name = $value;
+					break;
+				default:
+					if (is_null($this->$name) || !is_null($value)) { // Make sure default values are not overwritten with null
+						$this->$name = $value;
+					}
+					break;
+			}
+		}
+	}
+
+	protected function setObject($className, $name, $value) {
+		switch($className) {
+			case 'object':
+				$this->$name = $value;
 				break;
 			case '\DateTime':
+			case 'DateTime':
 				if(is_null($value)) $this->$name = null;
 				elseif(is_string($value)) $this->$name = (strlen($value)) ? new DateTime($value) : null;
 				elseif($value instanceof \DateTime) $this->$name = new DateTime($value->format('c'));
@@ -94,27 +175,39 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 				else throw new InvalidArgumentException("Property '$name' must be a string or an instance of \\DateTime in " . get_class($this));
 				break;
 			default:
-				$this->$name = $value;
+				if(is_null($value)) $this->$name = null;
+				else $this->$name = ($value instanceof $className) ? $value : new $className($value);
 				break;
+		}
+	}
+
+	protected function setObjectArray($className, $name, $value) {
+		$this->$name = [];
+		if(is_array($value)) {
+			foreach($value AS $row) {
+				switch($className) {
+					case 'object':
+						$this->$name[] = $row;
+						break;
+					default:
+						$this->$name[] = ($row instanceof $className) ? $row : new $className($row);
+						break;
+				}
+			}
 		}
 	}
 
 	public function __isset($name)
 	{
-		if(!property_exists($this, $name)) throw new Exception("Property '$name' not found in " . get_class($this), 106);
-		$reflection = new ReflectionProperty($this, $name);
-		if($reflection->isProtected()) return isset($this->$name);
-		else throw new Exception("Property '$name' in " . get_class($this) . " is private", 107);
+		$doc = self::$docBlockData[get_class($this)];
+		if(isset($doc[$name])) return isset($this->$name);
+		return false; // Anything else is not set
 	}
 
 	public function __unset($name)
 	{
-		if(property_exists($this, $name)) {
-			$reflection = new ReflectionProperty($this, $name);
-			if($reflection->isProtected()) {
-				unset($this->$name);
-			}
-		}
+		$doc = self::$docBlockData[get_class($this)];
+		if(isset($doc[$name])) $this->$name = null;
 	}
 
 	public function __clone()
@@ -151,31 +244,20 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 	/**
 	 * Called by \Zend\Form::bind()
 	 * @return array
-	 * @throws \ReflectionException
 	 */
 	public function getArrayCopy() {
-		$reflection = new ReflectionClass($this);
-		$properties = $reflection->getProperties(ReflectionProperty::IS_PROTECTED);
 		$data = [];
-		foreach($properties AS $property) {
-			$name = $property->getName();
+		foreach(self::$docBlockData[get_class($this)] AS $name => $doc) {
 			$value = $this->__get($name);
-			$factory  = \phpDocumentor\Reflection\DocBlockFactory::createInstance();
-			$annotation = $factory->create($property->getDocComment());
 
-			/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
-			$tag = $annotation->getTagsByName('var')[0];
-			switch($tag->getType()) {
+			switch($doc['value']) {
 				case '\DateTime':
+				case 'DateTime':
 					if($value) {
-						/** @var \DateTime $value */
+						/** @var DateTime $value */
 						$data[$name] = $value->format(self::MYSQL_TIME_FORMAT);
-//						if(strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false) // Chrome
-//							$data[$name] = $value->format('Y-m-d H:i');
-//						else
-//							$data[$name] = $value->format('d.m.Y H:i');
 					}
-					else $_data[$name] = null;
+					else $data[$name] = null;
 					break;
 				default:
 					$data[$name] = $value;
@@ -187,23 +269,14 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 
 
 	/**
-	 * Used by \Priceestimator\Model\DbTable to format modeldata for the database.
+	 * Used by \Priceestimator\Model\DbTable to format model data for the database.
 	 * @return array
 	 */
 	public function databaseSaveArray() {
-		$reflection = new ReflectionClass($this);
-		$properties = $reflection->getProperties(ReflectionProperty::IS_PROTECTED);
 		$data = [];
-		foreach($properties AS $property) {
-			$name = $property->getName();
+		foreach(self::$docBlockData[get_class($this)] AS $name => $doc) {
 			$value = $this->__get($name);
-
-			$factory  = \phpDocumentor\Reflection\DocBlockFactory::createInstance();
-			$annotation = $factory->create($property->getDocComment());
-
-			/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
-			$tag = $annotation->getTagsByName('var')[0];
-			switch($tag->getType()) {
+			switch ($doc['value']) {
 				case 'bool':
 					$data[$name] = ($value) ? 1 : 0;
 					break;
@@ -215,7 +288,6 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 				case 'string[]':
 				case 'int[]':
 				case '[]':
-				case '\stdClass':
 					$data[$name] = json_encode($value);
 					break;
 				default:
