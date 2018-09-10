@@ -20,6 +20,7 @@ class AbstractModel extends TestCase
 		'string' => 'abc',
 		'stringArray' => '["abc","bcd"]',
 		'dateTime' => '2018-08-15 15:10:00',
+		'setter' => 'abc',
 	];
 
 	protected $time = '2018-08-15 15:10:00';
@@ -111,6 +112,12 @@ class AbstractModel extends TestCase
 		$this->assertSame($this->time, $data['timestamp_created']);
 		$this->assertNotEquals($this->time, $data['timestamp_updated']);
 		$this->assertTrue(is_string($data['timestamp_updated']));
+	}
+
+	public function testSetterFunction() {
+		$object = new AbstractModelImplementation();
+		$object->setter = 'abc';
+		$this->assertSame('abc', $object->setter);
 	}
 
 

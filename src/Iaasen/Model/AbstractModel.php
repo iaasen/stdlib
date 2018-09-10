@@ -95,7 +95,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 
 	public function __get($name) {
 		$getterName = 'get' . ucfirst($name);
-		if(method_exists($this, $getterName)) return $this->$getterName;
+		if(method_exists($this, $getterName)) return $this->$getterName();
 
 		$doc = self::$docBlockData[get_class($this)];
 		if(isset($doc[$name])) return $this->$name;

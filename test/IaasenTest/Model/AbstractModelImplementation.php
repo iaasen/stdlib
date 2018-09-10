@@ -20,6 +20,7 @@ use Iaasen\Entity\DateTime;
  * @property string[] $stringArray
  * @property \stdClass $stdClass
  * @property DateTime $dateTime
+ * @property string $setter
  */
 class AbstractModelImplementation extends \Iaasen\Model\AbstractModel
 {
@@ -35,4 +36,14 @@ class AbstractModelImplementation extends \Iaasen\Model\AbstractModel
 	protected $stringArray;
 	/** @var DateTime */
 	protected $dateTime;
+	/** @var string */
+	protected $setter;
+
+	public function setSetter($value) {
+		$this->setter = $value;
+	}
+
+	public function getSetter() {
+		return $this->setter;
+	}
 }
