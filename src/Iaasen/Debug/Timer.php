@@ -22,11 +22,15 @@ class Timer
 	 * @param bool $output Set true to print time to screen/output
 	 * @return float
 	 */
-	public static function getElapsed(bool $output = true) : float {
+	public static function getElapsed() : float {
 		if(!self::$timestamp) throw new InvalidArgumentException('Counter is not started using setStart()');
 		$elapsed = microtime(true) - self::$timestamp;
-		if($output) echo date('c') . ' - ' . $elapsed . PHP_EOL . '<br>';
 		self::setStart();
 		return $elapsed;
+	}
+
+	public static function printElapsed(?string $tag = '') : void {
+		$elapsed = self::getElapsed();
+		if($tag) echo $tag . ' - ' . date('c') . ' - ' . $elapsed . '<br>' . PHP_EOL;
 	}
 }
