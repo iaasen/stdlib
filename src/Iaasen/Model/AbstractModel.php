@@ -20,7 +20,7 @@ use ReflectionProperty;
 
 /**
  * Class AbstractModel
- * @package Oppned
+ * @package Iaasen\Model
  * @property \DateTime $timestamp_created
  * @property \DateTime $timestamp_updated
  */
@@ -32,10 +32,15 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 	protected $timestamp_created;
 	/** @var DateTime */
 	protected $timestamp_updated;
-
+	/** @var string  */
 	const MYSQL_TIME_FORMAT = 'Y-m-d H:i:s';
 
-	//abstract public function __clone();
+	/**
+	 * if set to true an Exception will be sent when trying to set a property that is not defined
+	 * @var bool  */
+	private $throwExceptionOnMissingProperty = true;
+
+
 
 	public function __construct()
 	{
@@ -298,5 +303,9 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 		}
 		$data['timestamp_updated'] = date(self::MYSQL_TIME_FORMAT);
 		return $data;
+	}
+
+	public function setThrowExceptionOnMissingProperty(bool $throw) {
+		$this->throwExceptionOnMissingProperty = $throw;
 	}
 }
