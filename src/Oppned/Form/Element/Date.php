@@ -9,12 +9,7 @@
 namespace Oppned\Form\Element;
 
 
-class Date extends \Zend\Form\Element\DateTime
+class Date extends \Iaasen\Form\Element\Date
 {
-	public function init() {
-		$this->setOption('format', 'Y-m-d');
-		$this->setAttribute('step', 1);
-		$this->setAttribute('class', 'datePicker');
-	}
 
 }
