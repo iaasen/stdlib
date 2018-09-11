@@ -29,8 +29,9 @@ class Timer
 		return $elapsed;
 	}
 
-	public static function printElapsed(?string $tag = 'Timestamp') : void {
+	public static function printElapsed(?string $tag = 'Timestamp', ?$stop = false) : void {
 		$elapsed = self::getElapsed();
-		if($tag) echo $tag . ' - ' . date('c') . ' - ' . $elapsed . '<br>' . PHP_EOL;
+		if($tag) echo $elapsed . ' - ' . $tag . ' - ' . date('c') . '<br>' . PHP_EOL;
+		if($stop) exit();
 	}
 }
