@@ -147,10 +147,11 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 					break;
 				case 'string[]':
 				case 'int[]':
-				case '[]':
+				case 'mixed[]':
 					if (is_string($value)) {
 						if (in_array(substr($value, 0, 1), ['{', '['])) $this->$name = json_decode($value);
-					} else $this->$name = $value;
+					}
+					else $this->$name = $value;
 					break;
 				default:
 					if (is_null($this->$name) || !is_null($value)) { // Make sure default values are not overwritten with null
@@ -172,7 +173,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 				elseif(is_string($value)) $this->$name = (strlen($value)) ? new DateTime($value) : null;
 				elseif($value instanceof \DateTime) $this->$name = new DateTime($value->format('c'));
 				elseif($value instanceof DateTime) $this->$name = $value;
-				else throw new InvalidArgumentException("Property '$name' must be a string or an instance of \\DateTime in " . get_class($this));
+				else throw new InvalidArgumentException("Property '$name' must be a string or an instance of DateTime in " . get_class($this));
 				break;
 			default:
 				if(is_null($value)) $this->$name = null;
