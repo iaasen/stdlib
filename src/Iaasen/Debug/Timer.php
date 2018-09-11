@@ -29,7 +29,8 @@ class Timer
 		return $elapsed;
 	}
 
-	public static function printElapsed(?string $tag = 'Timestamp', ?$stop = false) : void {
+	public static function printElapsed(?string $tag = 'Timestamp', ?bool $stop = false) : void {
+		if(!self::$timestamp) throw new InvalidArgumentException('Counter is not started using setStart()');
 		$elapsed = self::getElapsed();
 		if($tag) echo $elapsed . ' - ' . $tag . ' - ' . date('c') . '<br>' . PHP_EOL;
 		if($stop) exit();
