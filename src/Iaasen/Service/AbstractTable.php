@@ -58,13 +58,13 @@ abstract class AbstractTable
 					$select->order($order);
 				}
 		);
+
 		$objects = [];
-
-
 		for($i = 0; $i < $rowSet->count(); $i++) {
 			$objects[] = $rowSet->current();
 			$rowSet->next();
 		}
+
 		return $objects;
 	}
 

@@ -20,7 +20,7 @@ use ReflectionProperty;
 
 /**
  * Class AbstractModel
- * @package Oppned
+ * @package Iaasen\Model
  * @property \DateTime $timestamp_created
  * @property \DateTime $timestamp_updated
  */
@@ -32,10 +32,15 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 	protected $timestamp_created;
 	/** @var DateTime */
 	protected $timestamp_updated;
-
+	/** @var string  */
 	const MYSQL_TIME_FORMAT = 'Y-m-d H:i:s';
 
-	//abstract public function __clone();
+	/**
+	 * if set to true an Exception will be sent when trying to set a property that is not defined
+	 * @var bool  */
+	private $throwExceptionOnMissingProperty = true;
+
+
 
 	public function __construct()
 	{
@@ -147,10 +152,11 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 					break;
 				case 'string[]':
 				case 'int[]':
-				case '[]':
+				case 'mixed[]':
 					if (is_string($value)) {
 						if (in_array(substr($value, 0, 1), ['{', '['])) $this->$name = json_decode($value);
-					} else $this->$name = $value;
+					}
+					else $this->$name = $value;
 					break;
 				default:
 					if (is_null($this->$name) || !is_null($value)) { // Make sure default values are not overwritten with null
@@ -172,7 +178,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 				elseif(is_string($value)) $this->$name = (strlen($value)) ? new DateTime($value) : null;
 				elseif($value instanceof \DateTime) $this->$name = new DateTime($value->format('c'));
 				elseif($value instanceof DateTime) $this->$name = $value;
-				else throw new InvalidArgumentException("Property '$name' must be a string or an instance of \\DateTime in " . get_class($this));
+				else throw new InvalidArgumentException("Property '$name' must be a string or an instance of DateTime in " . get_class($this));
 				break;
 			default:
 				if(is_null($value)) $this->$name = null;
@@ -297,5 +303,9 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 		}
 		$data['timestamp_updated'] = date(self::MYSQL_TIME_FORMAT);
 		return $data;
+	}
+
+	public function setThrowExceptionOnMissingProperty(bool $throw) {
+		$this->throwExceptionOnMissingProperty = $throw;
 	}
 }
