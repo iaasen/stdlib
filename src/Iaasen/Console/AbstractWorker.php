@@ -106,4 +106,10 @@ abstract class AbstractWorker implements WorkerInterface
 		}
 	}
 
+	protected function shouldContinue() {
+		pcntl_signal_dispatch();
+		if(!self::$run || self::$reload) return false;
+		else return true;
+	}
+
 }
