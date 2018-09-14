@@ -4,6 +4,7 @@ namespace Iaasen\Service;
 use Iaasen\Model\AbstractModel;
 use Iaasen\Exception\NotFoundException;
 use Iaasen\Model\ModelInterface;
+use Zend\Db\Adapter\Adapter;
 use Zend\Db\Sql\AbstractPreparableSql;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
@@ -14,7 +15,7 @@ use Zend\Db\TableGateway\TableGatewayInterface;
 
 abstract class AbstractTable
 {
-	/** @var  object */
+	/** @var  mixed */
 	protected $currentUser;
 	/** @var  TableGateway  */
 	protected $primaryGateway;
@@ -126,7 +127,7 @@ abstract class AbstractTable
 	protected function delete($id)
 	{
 		if(is_object($id)) {
-			/** @var object $id */
+			/** @var mixed $id */
 			$id = $id->id;
 		}
 		$result = $this->primaryGateway->delete(['id' => $id]);
@@ -187,12 +188,25 @@ abstract class AbstractTable
 		return $this->primaryGateway->getAdapter();
 	}
 
+	public function begin() {
+		/** @var Adapter $adapter */
+		$adapter = $this->primaryGateway->getAdapter();
+		$adapter->query("START TRANSACTION;", Adapter::QUERY_MODE_EXECUTE);
+
+	}
+
+	public function commit() {
+		/** @var Adapter $adapter */
+		$adapter = $this->primaryGateway->getAdapter();
+		$adapter->query("COMMIT;", Adapter::QUERY_MODE_EXECUTE);
+	}
+
 	/**
 	 * Returns an array where they key is the the key from the objects and the value is an array of all objects with that key.
 	 * Useful for collecting dependencies from the database
-	 * @param object[] $objects
+	 * @param mixed[] $objects
 	 * @param string $key
-	 * @return object[]
+	 * @return mixed[]
 	 */
 	protected function getObjectKeyMatrix(array $objects, string $key = 'id') : array {
 		return array_reduce($objects, function($carry, $item) use($key) {
@@ -209,9 +223,9 @@ abstract class AbstractTable
 	}
 
 	/**
-	 * @param object[] $objectKeyMatrix The object matrix given by getObjectKeyMatrix()
+	 * @param mixed[] $objectKeyMatrix The object matrix given by getObjectKeyMatrix()
 	 * @param string $objectFunction What function to call on parent object
-	 * @param object[] $childObjects The child objects to populate
+	 * @param mixed[] $childObjects The child objects to populate from
 	 * @param string $childKey The child object attribute used to match against the object matrix
 	 */
 	protected function populateObjectKeyMatrixWithFunctionCall(array $objectKeyMatrix, string $objectFunction, array $childObjects, string $childKey) : void {
