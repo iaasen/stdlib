@@ -9,24 +9,9 @@
 namespace Oppned;
 
 
-class Numbers
+/**
+ * @deprecated Use \Iaasen\Numbers
+ */
+class Numbers extends \Iaasen\Numbers
 {
-	static function secondsToHumanReadable($seconds) {
-		if ($seconds == 0) return '0 s';
-		else {
-			$s = $seconds % 60;
-			$m = floor(($seconds % 3600) / 60);
-			$h = floor(($seconds % 86400) / 3600);
-			$d = floor($seconds / 86400);
-			//$d = floor(($up%2592000)/86400);
-			//$M = floor($up/2592000);
-			$txt = '';
-			//if($M) $txt = $M . 'mnd';
-			if ($d) $txt .= ' ' . $d . 'd';
-			if ($h) $txt .= ' ' . $h . 't';
-			if ($m) $txt .= ' ' . $m . 'm';
-			if ($s) $txt .= ' ' . $s . 's';
-		}
-		return ltrim($txt, ' ,');
-	}
 }
