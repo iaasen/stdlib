@@ -15,6 +15,7 @@ use Zend\Http\Header\Referer;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Navigation\Navigation;
+use Zend\Uri\Uri;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
@@ -56,6 +57,15 @@ class AbstractController extends AbstractActionController implements NavigationA
 		$data['success'] = false;
 		$data['messages'] = $message;
 		return new JsonModel($data);
+	}
+
+	public function appendToQuery(string $key, string $value, ?Uri $uri = null) : Uri {
+		if(!$uri) {
+			/** @var \Zend\Http\PhpEnvironment\Request $request */
+			$request = $this->getRequest();
+			$uri = $request->getUri();
+		}
+		return $uri->setQuery(array_merge($uri->getQueryAsArray(), [$key => $value]));
 	}
 
 	/**
