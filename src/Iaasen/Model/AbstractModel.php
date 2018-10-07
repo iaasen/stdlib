@@ -27,7 +27,7 @@ use ReflectionProperty;
 abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 {
 	/** @var array */
-	private static $docBlockData;
+	protected static $docBlockData;
 	/** @var DateTime */
 	protected $timestamp_created;
 	/** @var DateTime */
@@ -45,6 +45,10 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 	public function __construct()
 	{
 		$this->generateDocBlockData();
+//		if(get_class($this) == 'Acl\Model\User') {
+//			$doc = static::$docBlockData;
+//			~r($doc);
+//		}
 		$this->timestamp_created = new DateTime();
 		$this->timestamp_updated = $this->timestamp_created;
 	}
@@ -153,6 +157,9 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 				case 'string[]':
 				case 'int[]':
 				case 'mixed[]':
+					throw new \Exception('string[] int[] mixed[] is not user here');
+					break;
+				case 'array':
 					if (is_string($value)) {
 						if (in_array(substr($value, 0, 1), ['{', '['])) $this->$name = json_decode($value);
 					}
