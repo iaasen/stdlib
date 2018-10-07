@@ -189,6 +189,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 				break;
 			default:
 				if(is_null($value)) $this->$name = null;
+				elseif(is_string($value) && in_array(substr($value, 0, 1), ['{', '['])) $this->$name = json_decode($value);
 				else $this->$name = ($value instanceof $className) ? $value : new $className($value);
 				break;
 		}
@@ -303,6 +304,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 				case 'int[]':
 				case '[]':
 				case 'mixed[]':
+				case '\stdClass':
 					$data[$name] = json_encode($value);
 					break;
 				default:
