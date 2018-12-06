@@ -21,6 +21,7 @@ return [
 			\Iaasen\Messenger\EmailService::class => \Iaasen\Messenger\EmailServiceFactory::class,
 		],
 		'invokables' => [
+			\Iaasen\Messenger\SessionMessenger::class => \Iaasen\Messenger\SessionMessenger::class,
 		],
 		'aliases' => [
 			'Logger' => \Oppned\Log\Logger::class,
