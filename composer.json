@@ -8,6 +8,7 @@
     "require": {
         "php" : "^7.1",
         "ext-intl": "*",
+        "ext-json": "*",
         "zendframework/zend-db": "^2",
         "zendframework/zend-modulemanager": "^2",
         "zendframework/zend-view": "^2",
