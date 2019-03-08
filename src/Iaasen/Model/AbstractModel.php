@@ -293,11 +293,13 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 					if($value) $data[$name] = $value->format(self::MYSQL_TIME_FORMAT);
 					else $data[$name] = null;
 					break;
-				case 'array':
 				case 'string[]':
 				case 'int[]':
 				case '[]':
 				case 'mixed[]':
+				case 'array':
+					$data[$name] = json_encode(array_values($value));
+					break;
 				case '\stdClass':
 					$data[$name] = json_encode($value);
 					break;
