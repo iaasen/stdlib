@@ -176,8 +176,9 @@ class AbstractEntity implements \Iaasen\Model\ModelInterface
 					$this->$name = (string) $value;
 					break;
 				case 'string[]':
-					if(is_string($value)) {
-						if(in_array(substr($value, 0, 1), ['{', '['])) $this->$name = json_decode($value);
+					if(is_object($value)) $this->$name = (array) $value;
+					elseif(is_string($value)) {
+						if(in_array(substr($value, 0, 1), ['{', '['])) $this->$name = (array) json_decode($value);
 					}
 					else $this->$name = $value;
 					break;
