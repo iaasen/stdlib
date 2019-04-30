@@ -131,9 +131,9 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
 	protected function internalSend(string $method, string $url, array $payload = []) : string {
-		$allowedMethods = ['POST', 'GET', 'PUT', 'DELETE'];
+		$allowedMethods = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'];
 		if(!in_array($method, $allowedMethods)) {
-			throw new InvalidArgumentException('Only GET, POST, PUT and DELETE allowed');
+			throw new InvalidArgumentException('Only GET, POST, PATCH, PUT and DELETE allowed');
 		}
 
 		$allowedPayload = ['query', 'json', 'form_params', 'body'];
@@ -213,6 +213,15 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 		]);
 		$this->addHeader('Content-Type', 'application/json');
 		return $data;
+	}
+
+	public function sendPatchWithJson(string $url, $json, array $query = []) {
+		$this->addHeader('Content-Type', 'application/json');
+		$json = $this->send('PATCH', $url, [
+			'json' => $json,
+			'query' => $query,
+		]);
+		return $json;
 	}
 
 	/**
