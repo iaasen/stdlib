@@ -215,6 +215,24 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 		return $data;
 	}
 
+	/**
+	 * @param string $url
+	 * @param $post
+	 * @param array $query
+	 * @return string
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function sendPatchWithFormData(string $url, $post, array $query = [])
+	{
+		$this->addHeader('Content-Type', 'application/x-www-form-urlencoded');
+		$data = $this->send('PATCH', $url, [
+			'form_params' => $post,
+			'query' => $query,
+		]);
+		$this->addHeader('Content-Type', 'application/json');
+		return $data;
+	}
+
 	public function sendPatchWithJson(string $url, $json, array $query = []) {
 		$this->addHeader('Content-Type', 'application/json');
 		$json = $this->send('PATCH', $url, [
