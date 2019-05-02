@@ -8,6 +8,7 @@
 
 namespace Iaasen\Model;
 
+use ArrayObject;
 use Exception;
 use Iaasen\Entity\DateTime;
 use Iaasen\Exception\InvalidArgumentException;
@@ -24,7 +25,7 @@ use ReflectionProperty;
  * @property \DateTime $timestamp_created
  * @property \DateTime $timestamp_updated
  */
-abstract class AbstractModel extends \ArrayObject  implements ModelInterface
+abstract class AbstractModel extends ArrayObject  implements ModelInterface
 {
 	/** @var array */
 	protected static $docBlockData;
@@ -47,6 +48,7 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 		$this->generateDocBlockData();
 		$this->timestamp_created = new DateTime();
 		$this->timestamp_updated = $this->timestamp_created;
+		parent::__construct();
 	}
 
 	private function generateDocBlockData() {
@@ -298,7 +300,8 @@ abstract class AbstractModel extends \ArrayObject  implements ModelInterface
 				case '[]':
 				case 'mixed[]':
 				case 'array':
-					$data[$name] = json_encode(array_values($value));
+					if(is_array($value)) json_encode(array_values($value));
+					else $data[$name] = json_encode($value);
 					break;
 				case '\stdClass':
 					$data[$name] = json_encode($value);
