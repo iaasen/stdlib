@@ -300,7 +300,7 @@ abstract class AbstractModel extends ArrayObject  implements ModelInterface
 				case '[]':
 				case 'mixed[]':
 				case 'array':
-					if(is_array($value)) $data[$name] = json_encode(array_values($value));
+					if(is_array($value)) $data[$name] = json_encode($value);
 					else $data[$name] = json_encode($value);
 					break;
 				case '\stdClass':
