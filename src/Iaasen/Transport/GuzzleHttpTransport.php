@@ -9,6 +9,10 @@
 namespace Iaasen\Transport;
 
 use GuzzleHttp\Client AS GuzzleClient;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 use Iaasen\Exception\InvalidArgumentException;
 
 /**
@@ -37,6 +41,10 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 	protected $client;
 	/** @var  bool */
 	protected $cookies;
+	/** @var array  */
+	protected $historyContainer = [];
+	/** @var bool  */
+	protected $debug = false;
 
 	/**
 	 * Is run before each request
@@ -81,8 +89,40 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 		];
 		if($this->auth) $guzzleConfig['auth'] = $this->auth;
 
+		// Log requests to $this->historyContainer
+		if($this->debug) {
+			$guzzleConfig['handler'] = $this->createHistoryMiddleware();
+		}
 
 		$this->client = new GuzzleClient($guzzleConfig);
+	}
+
+	protected function createHistoryMiddleware() {
+		$history = Middleware::history($this->historyContainer);
+		$stack = HandlerStack::create();
+		$stack->push($history);
+		return $stack;
+	}
+
+	/**
+	 * Output history to screen
+	 */
+	public function viewHistory() {
+		echo 'Count: ' . count($this->historyContainer) . '<br><br>';
+		/** @var array $transaction */
+		foreach ($this->historyContainer as $transaction) {
+			/** @var Request $request */
+			$request = $transaction['request'];
+			/** @var Response $response */
+			$response = $transaction['response'];
+			echo '---------------------------------------------------' . '<br>';
+			echo $request->getMethod() . ' ' . $request->getUri() . '<br>';
+			echo 'Response: ' . $response->getStatusCode() . ' ' . $response->getReasonPhrase() . '<br>';
+			if(strlen($request->getBody())) {
+				echo 'Body: <pre>' . $request->getBody() . '</pre><br>';
+			}
+			echo '<br><br>';
+		}
 	}
 
 	public function setHeaders(array $headers) {
@@ -141,6 +181,15 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 			if(!in_array($key, $allowedPayload)) throw new InvalidArgumentException("Payload must be 'query', 'json', 'form_params' or 'body'");
 		}
 		$payload['headers'] = $this->headers;
+
+//		$clientHandler = $this->client->getConfig('handler');
+//		$tapMiddleware = Middleware::tap(function ($request) {
+//			echo $request->getHeaderLine('Content-Type');
+//			// application/json
+//			echo $request->getBody();
+//			// {"foo":"bar"}
+//		});
+//		$payload['handler'] = $tapMiddleware($clientHandler);
 
 		$response = $this->client->request($method, $url, $payload);
 
@@ -229,7 +278,6 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 			'form_params' => $post,
 			'query' => $query,
 		]);
-		$this->addHeader('Content-Type', 'application/json');
 		return $data;
 	}
 
