@@ -85,7 +85,8 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 			'cookies' => $this->cookies,
 //			'headers' => $this->headers,
 //			'auth' => [$this->username, $this->password],
-			'verify' => false
+			'verify' => false,
+			'timeout' => 60,
 		];
 		if($this->auth) $guzzleConfig['auth'] = $this->auth;
 
