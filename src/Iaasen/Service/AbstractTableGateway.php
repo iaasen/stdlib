@@ -10,9 +10,9 @@ namespace Iaasen\Service;
 
 
 use Iaasen\Model\ModelInterface;
-use Zend\Db\Adapter\AdapterInterface;
-use Zend\Db\ResultSet\ResultSet;
-use Zend\Db\TableGateway\TableGateway;
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db\ResultSet\ResultSet;
+use Laminas\Db\TableGateway\TableGateway;
 
 class AbstractTableGateway extends TableGateway
 {

@@ -9,7 +9,7 @@
 namespace Oppned\Form\Element;
 
 
-class DateTime extends \Zend\Form\Element\DateTime
+class DateTime extends \Laminas\Form\Element\DateTime
 {
 	public function init() {
 		$this->setOption('format', 'Y-m-d H:i');

@@ -4,17 +4,17 @@ namespace Oppned;
 
 use Iaasen\Initializer\NavigationInitializer;
 use Iaasen\Initializer\ViewRendererInitializer;
-use Zend\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
+use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 
 return [
 	'modules' => [
 	],
 	'service_manager' => [
 		'abstract_factories' => [
-			\Zend\Navigation\Service\NavigationAbstractServiceFactory::class,
+			\Laminas\Navigation\Service\NavigationAbstractServiceFactory::class,
 		],
 		'factories' => [
-			'navigation' => \Zend\Navigation\Service\DefaultNavigationFactory::class,
+			'navigation' => \Laminas\Navigation\Service\DefaultNavigationFactory::class,
 			\Oppned\Log\Logger::class => \Oppned\Log\LoggerFactory::class,
 			\Oppned\Log\LogTable::class => \Oppned\Log\LogTableFactory::class,
 			'Oppned\Log\LogTableGateway' => \Oppned\Log\LogTableGatewayFactory::class,

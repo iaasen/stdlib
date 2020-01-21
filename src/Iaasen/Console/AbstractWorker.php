@@ -13,7 +13,7 @@ abstract class AbstractWorker implements WorkerInterface
 {
 	/** @var array */
 	protected $gearman_config;
-	/** @var \Zend\Console\Adapter\AdapterInterface  */
+	/** @var \Laminas\Console\Adapter\AdapterInterface  */
 	protected $console;
 	/** @var  \GearmanWorker */
 	protected $worker;

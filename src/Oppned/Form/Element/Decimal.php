@@ -2,8 +2,8 @@
 
 namespace Oppned\Form\Element;
 
-use Zend\Form\Element\Number AS ZendNumber;
-use Zend\InputFilter\InputProviderInterface;
+use Laminas\Form\Element\Number AS ZendNumber;
+use Laminas\InputFilter\InputProviderInterface;
 
 class Decimal extends ZendNumber implements InputProviderInterface {
 	

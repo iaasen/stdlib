@@ -9,7 +9,7 @@
 namespace Oppned\Form\Element;
 
 
-class DateTimeLocal extends \Zend\Form\Element\DateTimeLocal
+class DateTimeLocal extends \Laminas\Form\Element\DateTimeLocal
 {
 	const DATETIME_LOCAL_FORMAT = 'Y-m-d H:i';
 	const DATETIME_FORMAT = self::DATETIME_LOCAL_FORMAT;
@@ -26,7 +26,7 @@ class DateTimeLocal extends \Zend\Form\Element\DateTimeLocal
 			'name' => $this->getName(),
 			'required' => true,
 			'filters' => [
-				['name' => 'Zend\Filter\StringTrim'],
+				['name' => 'Laminas\Filter\StringTrim'],
 			],
 		];
 

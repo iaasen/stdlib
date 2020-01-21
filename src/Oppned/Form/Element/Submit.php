@@ -2,7 +2,7 @@
 
 namespace Oppned\Form\Element;
 
-use Zend\Form\Element\Submit AS ZendSubmit;
+use Laminas\Form\Element\Submit AS ZendSubmit;
 
 class Submit extends ZendSubmit {
 	

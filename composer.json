@@ -2,20 +2,20 @@
     "name": "iaasen/stdlib",
     "description": "A collection of abstract and base classes supporting they way I like to use Zend Framework",
     "license": "proprietary",
-    "keywords": [
-    ],
+    "keywords": [],
     "minimum-stability": "dev",
     "require": {
-        "php" : "^7.1",
+        "php": "^7.1",
         "ext-intl": "*",
         "ext-json": "*",
-        "zendframework/zend-db": "^2",
-        "zendframework/zend-modulemanager": "^2",
-        "zendframework/zend-view": "^2",
+        "laminas/laminas-db": "^2",
+        "laminas/laminas-modulemanager": "^2",
+        "laminas/laminas-view": "^2",
         "digitalnature/php-ref": "^1",
         "guzzlehttp/guzzle": "^6",
         "swiftmailer/swiftmailer": "^6",
-        "phpdocumentor/reflection-docblock" : "^4"
+        "phpdocumentor/reflection-docblock": "^4",
+        "laminas/laminas-dependency-plugin": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^7"

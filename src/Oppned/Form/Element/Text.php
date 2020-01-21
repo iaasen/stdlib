@@ -2,18 +2,18 @@
 
 namespace Oppned\Form\Element;
 
-use Zend\Form\Element\Text AS ZendText;
-use Zend\InputFilter\InputProviderInterface;
+use Laminas\Form\Element\Text AS LaminasText;
+use Laminas\InputFilter\InputProviderInterface;
 
-class Text extends ZendText implements InputProviderInterface {
+class Text extends LaminasText implements InputProviderInterface {
 	
 	public function getInputSpecification() {
 		return array(
 			'name' => $this->getName(),
 			'required' => true,
 			'filters' => array(
-				array('name' => 'Zend\Filter\StringTrim'),
-				array('name' => 'Zend\Filter\StripTags'),
+				array('name' => 'Laminas\Filter\StringTrim'),
+				array('name' => 'Laminas\Filter\StripTags'),
 			),
 			'validators' => array(
 				array(

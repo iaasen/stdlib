@@ -32,8 +32,8 @@ div.message.debugerror {
 }
 */
 
-use Zend\Session\Container;
-use Zend\Stdlib\SplQueue;
+use Laminas\Session\Container;
+use Laminas\Stdlib\SplQueue;
 
 class Message {
 	

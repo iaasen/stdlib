@@ -3,12 +3,12 @@
 namespace Oppned;
 
 use Acl\Model\User;
-use Zend\Form\Fieldset;
-use Zend\Form\Form;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Form\Fieldset;
+use Laminas\Form\Form;
+use Laminas\Mvc\Controller\AbstractActionController;
 //use Priceestimator\View\Helper\MenuWidget;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 
 
 abstract class AbstractController extends AbstractActionController {
@@ -16,7 +16,7 @@ abstract class AbstractController extends AbstractActionController {
 
 	/** @var User|null */
 	protected $currentUser;
-	/** @var  \Zend\Navigation\Navigation */
+	/** @var  \Laminas\Navigation\Navigation */
 	protected $navigation;
 
 
@@ -26,7 +26,7 @@ abstract class AbstractController extends AbstractActionController {
 		$this->navigation = $navigation;
 	}
 
-//	public function onDispatch(\Zend\Mvc\MvcEvent $e) {
+//	public function onDispatch(\Laminas\Mvc\MvcEvent $e) {
 //		return parent::onDispatch($e);
 //	}
 

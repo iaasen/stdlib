@@ -9,9 +9,9 @@ namespace Iaasen\Factory;
 
 
 use Interop\Container\ContainerInterface;
-use Zend\Form\ElementInterface;
+use Laminas\Form\ElementInterface;
 
-class ReflectionBasedAbstractFactory extends \Zend\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory
+class ReflectionBasedAbstractFactory extends \Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory
 {
 	public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
 	{

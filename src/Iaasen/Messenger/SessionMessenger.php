@@ -7,10 +7,10 @@
  */
 
 namespace Iaasen\Messenger;
-use Zend\Mvc\Controller\Plugin\PluginInterface;
-use Zend\Session\Container;
-use Zend\Session\ManagerInterface;
-use Zend\Stdlib\DispatchableInterface;
+use Laminas\Mvc\Controller\Plugin\PluginInterface;
+use Laminas\Session\Container;
+use Laminas\Session\ManagerInterface;
+use Laminas\Stdlib\DispatchableInterface;
 
 /**
  * Making the FlashMessenger work across multiple instances by not deleting the session data on construct.

@@ -8,7 +8,7 @@
 namespace Oppned\Log;
 
 
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 class LogTableFactory
 {

@@ -10,8 +10,8 @@ namespace Iaasen\Initializer;
 
 
 use Interop\Container\ContainerInterface;
-use Zend\Navigation\Navigation;
-use Zend\ServiceManager\Initializer\InitializerInterface;
+use Laminas\Navigation\Navigation;
+use Laminas\ServiceManager\Initializer\InitializerInterface;
 
 class NavigationInitializer implements InitializerInterface
 {

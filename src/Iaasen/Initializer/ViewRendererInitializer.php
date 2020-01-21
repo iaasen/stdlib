@@ -10,8 +10,8 @@ namespace Iaasen\Initializer;
 
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Initializer\InitializerInterface;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\ServiceManager\Initializer\InitializerInterface;
+use Laminas\View\Renderer\PhpRenderer;
 
 class ViewRendererInitializer implements InitializerInterface
 {

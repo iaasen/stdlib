@@ -9,7 +9,7 @@
 namespace Oppned\Log;
 
 
-use Zend\Db\TableGateway\TableGateway;
+use Laminas\Db\TableGateway\TableGateway;
 
 class LogTableGateway extends TableGateway
 {

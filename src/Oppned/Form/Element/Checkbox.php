@@ -2,8 +2,8 @@
 
 namespace Oppned\Form\Element;
 
-use Zend\Form\Element\Checkbox AS ZendCheckbox;
-use Zend\InputFilter\InputProviderInterface;
+use Laminas\Form\Element\Checkbox AS ZendCheckbox;
+use Laminas\InputFilter\InputProviderInterface;
 
 class Checkbox extends ZendCheckbox implements InputProviderInterface {
 	

@@ -9,8 +9,8 @@
 namespace Oppned\Factory;
 
 
-use Zend\ServiceManager\AbstractFactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\AbstractFactoryInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 class ModelAbstractFactory implements AbstractFactoryInterface
 {

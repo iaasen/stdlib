@@ -9,7 +9,7 @@
 namespace Iaasen\Initializer;
 
 
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\View\Renderer\PhpRenderer;
 
 interface ViewRendererAwareInterface
 {

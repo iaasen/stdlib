@@ -11,14 +11,14 @@ namespace Iaasen\Controller;
 
 use Iaasen\Initializer\NavigationAwareInterface;
 use Iaasen\Initializer\ViewRendererAwareInterface;
-use Zend\Http\Header\Referer;
-use Zend\Http\Request;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Navigation\Navigation;
-use Zend\Uri\Uri;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\Http\Header\Referer;
+use Laminas\Http\Request;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Navigation\Navigation;
+use Laminas\Uri\Uri;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Renderer\PhpRenderer;
 
 class AbstractController extends AbstractActionController implements NavigationAwareInterface, ViewRendererAwareInterface
 {
@@ -61,7 +61,7 @@ class AbstractController extends AbstractActionController implements NavigationA
 
 	public function appendToQuery(string $key, string $value, ?Uri $uri = null) : Uri {
 		if(!$uri) {
-			/** @var \Zend\Http\PhpEnvironment\Request $request */
+			/** @var \Laminas\Http\PhpEnvironment\Request $request */
 			$request = $this->getRequest();
 			$uri = $request->getUri();
 		}
@@ -77,7 +77,7 @@ class AbstractController extends AbstractActionController implements NavigationA
 	protected function setAttributesForNavigationPagesRecursive(string $search, ?array $attributes = null, ?bool $visible = null, ?array $pages = null) {
 		if($pages === null) $pages = $this->navigation->getPages();
 		foreach($pages AS $page) {
-			if($page instanceof \Zend\Navigation\Page\Mvc && strpos($page->getRoute(), $search) !== false) {
+			if($page instanceof \Laminas\Navigation\Page\Mvc && strpos($page->getRoute(), $search) !== false) {
 				if($attributes !== null) $page->setParams($attributes);
 				if($visible !== null) $page->setVisible($visible);
 			}

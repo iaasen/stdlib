@@ -9,8 +9,8 @@
 namespace Iaasen\Service;
 
 
-use ZF\ApiProblem\ApiProblem;
-use ZF\Rest\AbstractResourceListener;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Laminas\ApiTools\Rest\AbstractResourceListener;
 
 abstract class AbstractRestResource extends AbstractResourceListener
 {

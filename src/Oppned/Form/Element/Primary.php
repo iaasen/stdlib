@@ -2,8 +2,8 @@
 
 namespace Oppned\Form\Element;
 
-use Zend\Form\Element\Hidden AS ZendHidden;
-use Zend\InputFilter\InputProviderInterface;
+use Laminas\Form\Element\Hidden AS ZendHidden;
+use Laminas\InputFilter\InputProviderInterface;
 
 class Primary extends ZendHidden implements InputProviderInterface {
 

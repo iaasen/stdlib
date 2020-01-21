@@ -10,10 +10,10 @@ namespace Oppned\Navigation;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 class MainMenuFactory implements FactoryInterface
 {
@@ -43,7 +43,7 @@ class MainMenuFactory implements FactoryInterface
 	 */
 	public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
 	{
-		$menu = new \Zend\View\Helper\Navigation\Menu();
+		$menu = new \Laminas\View\Helper\Navigation\Menu();
 		$menu->setUlClass('nav navbar-nav');
 		$menu->setMaxDepth(0);
 		return $menu;

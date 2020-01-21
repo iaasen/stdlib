@@ -9,7 +9,7 @@
 namespace Iaasen\Initializer;
 
 
-use Zend\Navigation\Navigation;
+use Laminas\Navigation\Navigation;
 
 interface NavigationAwareInterface
 {

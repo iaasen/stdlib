@@ -1,11 +1,11 @@
 <?php
 namespace Oppned\Log;
 
-use Zend\Db\TableGateway\TableGateway;
-use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Sql;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Laminas\Db\TableGateway\TableGateway;
+use Laminas\Db\Sql\Select;
+use Laminas\Db\Sql\Sql;
+use Laminas\ServiceManager\ServiceLocatorAwareInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 
 
@@ -86,7 +86,7 @@ abstract class DbTable implements ServiceLocatorAwareInterface
 	 * 
 	 * @param Select $select
 	 * @param bool $outputSqlString
-	 * @return \Zend\Db\Adapter\Driver\ResultInterface
+	 * @return \Laminas\Db\Adapter\Driver\ResultInterface
 	 */
 	protected function query($select, $outputSqlString = false) {
 		if($outputSqlString) echo $select->getSqlString($this->tableGateway->getAdapter()->getPlatform());

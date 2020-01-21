@@ -252,7 +252,7 @@ abstract class AbstractModel extends ArrayObject  implements ModelInterface
 	}
 
 	/**
-	 * Called by \Zend\Form::bind()
+	 * Called by \Laminas\Form::bind()
 	 * @return array
 	 */
 	public function getArrayCopy() {

@@ -4,13 +4,13 @@ namespace Iaasen\Service;
 use Iaasen\Model\AbstractModel;
 use Iaasen\Exception\NotFoundException;
 use Iaasen\Model\ModelInterface;
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\Sql\AbstractPreparableSql;
-use Zend\Db\Sql\Where;
-use Zend\Db\TableGateway\TableGateway;
-use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Sql;
-use Zend\Db\TableGateway\TableGatewayInterface;
+use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Sql\AbstractPreparableSql;
+use Laminas\Db\Sql\Where;
+use Laminas\Db\TableGateway\TableGateway;
+use Laminas\Db\Sql\Select;
+use Laminas\Db\Sql\Sql;
+use Laminas\Db\TableGateway\TableGatewayInterface;
 
 
 abstract class AbstractTable
@@ -139,7 +139,7 @@ abstract class AbstractTable
 	 * 
 	 * @param AbstractPreparableSql $select
 	 * @param bool $outputSqlString
-	 * @return \Zend\Db\Adapter\Driver\ResultInterface
+	 * @return \Laminas\Db\Adapter\Driver\ResultInterface
 	 */
 	protected function query($select, $outputSqlString = false) {
 		if($outputSqlString) echo $this->getSqlString($select);

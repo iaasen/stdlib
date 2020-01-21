@@ -1,14 +1,14 @@
 <?php
 namespace Oppned\View\Helper;
 
-use Zend\Form\Element;
-use Zend\Form\Fieldset;
-use Zend\View\Helper\AbstractHelper;
+use Laminas\Form\Element;
+use Laminas\Form\Fieldset;
+use Laminas\View\Helper\AbstractHelper;
 
 class BootstrapFormHorizontal extends AbstractHelper
 {
 	/**
-	 * @param \Zend\Form\Form $form
+	 * @param \Laminas\Form\Form $form
 	 * @return mixed
 	 */
 	public function __invoke($form) {

@@ -9,7 +9,7 @@ namespace Iaasen\Messenger;
 
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class EmailServiceFactory implements FactoryInterface
 {

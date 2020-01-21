@@ -2,8 +2,8 @@
 namespace Oppned\Log;
 
 use Iaasen\Service\AbstractTable;
-use Zend\Db\Sql\Expression;
-use Zend\Db\Sql\Select;
+use Laminas\Db\Sql\Expression;
+use Laminas\Db\Sql\Select;
 
 class LogTable extends AbstractTable
 {

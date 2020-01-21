@@ -9,8 +9,8 @@
 namespace Iaasen\Controller\Plugin;
 
 
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
-use Zend\Navigation\Navigation;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Navigation\Navigation;
 
 class NavigationPlugin extends AbstractPlugin
 {

@@ -8,8 +8,8 @@
 namespace Oppned\Log;
 
 
-use Zend\Db\ResultSet\ResultSet;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Laminas\Db\ResultSet\ResultSet;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 class LogTableGatewayFactory
 {

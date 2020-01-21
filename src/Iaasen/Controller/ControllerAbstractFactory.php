@@ -10,10 +10,10 @@ namespace Iaasen\Controller;
 
 
 use Interop\Container\ContainerInterface;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Navigation\Navigation;
-use Zend\ServiceManager\Factory\AbstractFactoryInterface;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Navigation\Navigation;
+use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
+use Laminas\View\Renderer\PhpRenderer;
 
 class ControllerAbstractFactory implements AbstractFactoryInterface
 {

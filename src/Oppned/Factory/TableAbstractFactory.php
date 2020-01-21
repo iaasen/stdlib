@@ -10,8 +10,8 @@ namespace Oppned\Factory;
 
 
 use Priceestimator\Service\AbstractTable;
-use Zend\ServiceManager\AbstractFactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\AbstractFactoryInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 class TableAbstractFactory implements AbstractFactoryInterface
 {

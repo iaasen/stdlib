@@ -8,8 +8,8 @@
 namespace Oppned\Navigation;
 
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\FactoryInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 class MenuFactory implements FactoryInterface
 {
@@ -22,7 +22,7 @@ class MenuFactory implements FactoryInterface
 	 */
 	public function createService(ServiceLocatorInterface $serviceLocator)
 	{
-		$menu = new \Zend\View\Helper\Navigation\Menu();
+		$menu = new \Laminas\View\Helper\Navigation\Menu();
 		$menu->setUlClass('nav nav-pills nav-stacked');
 		$menu->setOnlyActiveBranch(true);
 		$menu->setRenderParents(false);

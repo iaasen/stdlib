@@ -8,7 +8,7 @@
 namespace Iaasen\Form\Element;
 
 
-class Date extends \Zend\Form\Element\Date
+class Date extends \Laminas\Form\Element\Date
 {
 	public function init() {
 		$this->setAttribute('class', 'datePicker');

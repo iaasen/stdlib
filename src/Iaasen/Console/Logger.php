@@ -8,10 +8,10 @@
 namespace Iaasen\Console;
 
 
-use Zend\Console\ColorInterface AS Color;
-use Zend\Console\Console;
-use Zend\Log\Writer\Stream AS ZendStream;
-use Zend\Log\Logger AS ZendLogger;
+use Laminas\Console\ColorInterface AS Color;
+use Laminas\Console\Console;
+use Laminas\Log\Writer\Stream AS ZendStream;
+use Laminas\Log\Logger AS LaminasLogger;
 
 class Logger
 {
@@ -32,7 +32,7 @@ class Logger
 		$stream = @fopen($logFileName, 'a');
 		if(!$stream) throw new \DomainException("Unable to open log-file: " . $logFileName);
 		$writer = new ZendStream($stream);
-		self::$loggerInstance = new ZendLogger();
+		self::$loggerInstance = new LaminasLogger();
 		self::$loggerInstance->addWriter($writer);
 		return self::$loggerInstance;
 	}
@@ -47,51 +47,51 @@ class Logger
 	}
 
 	public static function debug($message) {
-		self::log($message, ZendLogger::DEBUG);
+		self::log($message, LaminasLogger::DEBUG);
 	}
 
 	public static function info($message) {
-		self::log($message, ZendLogger::INFO);
+		self::log($message, LaminasLogger::INFO);
 	}
 
 	public static function notice($message) {
-		self::log($message, ZendLogger::NOTICE);
+		self::log($message, LaminasLogger::NOTICE);
 	}
 
 	public static function warn($message) {
-		self::log($message, ZendLogger::WARN);
+		self::log($message, LaminasLogger::WARN);
 	}
 
 	public static function err($message) {
-		self::log($message, ZendLogger::ERR);
+		self::log($message, LaminasLogger::ERR);
 	}
 
 	public static function crit($message) {
-		self::log($message, ZendLogger::CRIT);
+		self::log($message, LaminasLogger::CRIT);
 	}
 
 	public static function alert($message) {
-		self::log($message, ZendLogger::ALERT);
+		self::log($message, LaminasLogger::ALERT);
 	}
 
 	public static function emerg($message) {
-		self::log($message, ZendLogger::EMERG);
+		self::log($message, LaminasLogger::EMERG);
 	}
 
 	public static function log($message, $severity) {
 		self::getInstance()->log($severity, $message);
 
 		switch($severity) {
-			case ZendLogger::NOTICE:
+			case LaminasLogger::NOTICE:
 				$color = Color::CYAN;
 				break;
-			case ZendLogger::WARN:
+			case LaminasLogger::WARN:
 				$color = Color::LIGHT_YELLOW;
 				break;
-			case ZendLogger::ERR:
-			case ZendLogger::CRIT:
-			case ZendLogger::ALERT:
-			case ZendLogger::EMERG:
+			case LaminasLogger::ERR:
+			case LaminasLogger::CRIT:
+			case LaminasLogger::ALERT:
+			case LaminasLogger::EMERG:
 				$color = Color::RED;
 				break;
 			default:

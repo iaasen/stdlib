@@ -1,8 +1,8 @@
 <?php
 namespace Oppned\View\Helper;
 
-use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
-use Zend\View\Helper\AbstractHelper;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\View\Helper\AbstractHelper;
 use Oppned\Message;
 
 class MessageWidget extends AbstractHelper
