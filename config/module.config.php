@@ -58,8 +58,8 @@ return [
     ],
 	'navigation_helpers' => [
 		'factories' => [
-			'mainMenu' => \Oppned\Navigation\MainMenuFactory::class,
-			'menu' => \Oppned\Navigation\MenuFactory::class,
+			'mainMenu' => \Iaasen\Navigation\MainMenuFactory::class,
+			'subMenu' => \Iaasen\Navigation\SubMenuFactory::class,
 		],
 	],
 	'form_elements' => [

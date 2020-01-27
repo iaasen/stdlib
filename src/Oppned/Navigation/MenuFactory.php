@@ -11,6 +11,11 @@ namespace Oppned\Navigation;
 use Laminas\ServiceManager\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 
+/**
+ * Class MenuFactory
+ * @package Oppned\Navigation
+ * @deprecated Use \Iaasen\Navigation\SubMenuNavigation
+ */
 class MenuFactory implements FactoryInterface
 {
 

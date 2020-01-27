@@ -5,7 +5,7 @@
  * Time: 06.01
  */
 
-namespace Oppned\Navigation;
+namespace Iaasen\Navigation;
 
 
 use Interop\Container\ContainerInterface;
@@ -13,34 +13,18 @@ use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\ServiceManager;
+use Laminas\View\Helper\Navigation\Menu;
 
-/**
- * Class MainMenuFactory
- * @package Oppned\Navigation
- * @deprecated Use \Iaasen\Navigation\MainMenuFactory
- */
 class MainMenuFactory implements FactoryInterface
 {
 
 	/**
-	 * Create service
 	 *
-	 * @param ServiceLocatorInterface $serviceLocator
-	 * @return mixed
-	 */
-	public function createService(ServiceLocatorInterface $serviceLocator)
-	{
-		return  $this->__invoke($serviceLocator);
-	}
-
-	/**
-	 * Create an object
-	 *
-	 * @param  ContainerInterface $container
+	 * @param  ServiceManager $container
 	 * @param  string $requestedName
 	 * @param  null|array $options
-	 * @return object
+	 * @return Menu|object
 	 * @throws ServiceNotFoundException if unable to resolve the service.
 	 * @throws ServiceNotCreatedException if an exception is raised when
 	 *     creating a service.
