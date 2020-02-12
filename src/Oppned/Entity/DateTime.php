@@ -10,8 +10,8 @@ namespace Oppned\Entity;
 
 
 /**
- * @deprecated Use Iaasen\Entity\DateTime
+ * @deprecated Use Iaasen\DateTime
  */
-class DateTime extends \Iaasen\Entity\DateTime
+class DateTime extends \Iaasen\DateTime
 {
 }

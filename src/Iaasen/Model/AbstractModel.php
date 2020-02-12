@@ -10,7 +10,7 @@ namespace Iaasen\Model;
 
 use ArrayObject;
 use Exception;
-use Iaasen\Entity\DateTime;
+use Iaasen\DateTime;
 use Iaasen\Exception\InvalidArgumentException;
 use Iaasen\Exception\LogicException;
 use phpDocumentor\Reflection\DocBlockFactory;
@@ -22,8 +22,8 @@ use ReflectionProperty;
 /**
  * Class AbstractModel
  * @package Iaasen\Model
- * @property \DateTime $timestamp_created
- * @property \DateTime $timestamp_updated
+ * @property DateTime $timestamp_created
+ * @property DateTime $timestamp_updated
  */
 abstract class AbstractModel extends ArrayObject  implements ModelInterface
 {
