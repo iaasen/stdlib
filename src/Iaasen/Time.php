@@ -44,4 +44,17 @@ class Time
 		if($ucFirst) return ucfirst(self::MONTH_NAMES[$month]);
 		else return self::MONTH_NAMES[$month];
 	}
+
+	public static function getStartOfLastWeek() : DateTime {
+		return new DateTime('monday -2 week');
+	}
+
+	public static function getStartOfThisWeek() : DateTime {
+		return new DateTime('monday -1 week');
+	}
+
+	public static function getStartOfNextWeek() : DateTime {
+		return new DateTime('monday');
+	}
+
 }
