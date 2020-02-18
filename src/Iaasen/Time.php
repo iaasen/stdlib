@@ -46,15 +46,15 @@ class Time
 	}
 
 	public static function getStartOfLastWeek() : DateTime {
-		return new DateTime('monday -1 week');
+		return new DateTime('monday last week');
 	}
 
 	public static function getStartOfThisWeek() : DateTime {
-		return new DateTime('monday');
+		return new DateTime('monday this week');
 	}
 
 	public static function getStartOfNextWeek() : DateTime {
-		return new DateTime('monday +1 week');
+		return new DateTime('monday next week');
 	}
 
 }
