@@ -235,4 +235,12 @@ class DateTime extends \DateTime implements \JsonSerializable
 		}
 		return $this;
 	}
+
+
+	public function addToEndOfNextWorkday() : self {
+		if($this->format('G') >= $this->workdayStart) {
+			$this->addDays(1, true);
+		}
+		return $this->setTime(16, 0);
+	}
 }
