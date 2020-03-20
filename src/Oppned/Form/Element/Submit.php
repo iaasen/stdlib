@@ -2,14 +2,9 @@
 
 namespace Oppned\Form\Element;
 
-use Laminas\Form\Element\Submit AS ZendSubmit;
-
-class Submit extends ZendSubmit {
-	
-	public function __construct($name = null, $options = []) {
-		$this->label = 'Save';
-		//$this->attributes['id'] = 'submitbutton';
-		return parent::__construct($name, $options);
-	}
-	
-}
+/**
+ * Class Submit
+ * @package Oppned\Form\Element
+ * @deprecated Use \Iaasen\Form\Element\Submit
+ */
+class Submit extends \Iaasen\Form\Element\Submit {}

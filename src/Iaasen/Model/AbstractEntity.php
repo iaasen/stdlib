@@ -8,7 +8,7 @@
 
 namespace Iaasen\Model;
 
-use \Iaasen\Entity\DateTime;
+use \Iaasen\DateTime;
 use Exception;
 use Iaasen\Exception\InvalidArgumentException;
 use phpDocumentor\Reflection\DocBlockFactory;
@@ -28,7 +28,7 @@ use ReflectionProperty;
  * Setter functionality only available through __construct, __set and exchangeArray
  *
  */
-class AbstractEntity implements \Iaasen\Model\ModelInterface
+class AbstractEntity implements ModelInterface
 {
 	/** @var array */
 	private static $docBlockData;
@@ -103,11 +103,11 @@ class AbstractEntity implements \Iaasen\Model\ModelInterface
 	public function getArrayCopy() {
 		$reflection = new ReflectionObject($this);
 		$properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
-
 		$data = [];
 		foreach($properties AS $property) {
 			$propertyName = $property->name;
-			$data[$propertyName] = $this->$propertyName;
+			if($property->isStatic()) $data[$propertyName] = $this::$$propertyName;
+			else $data[$propertyName] = $this->$propertyName;
 		}
 		return $data;
 	}
@@ -274,7 +274,7 @@ class AbstractEntity implements \Iaasen\Model\ModelInterface
 			if(!$property->isStatic()) {
 				$name = $property->getName();
 				$value = $this->__get($name);
-				$factory  = \phpDocumentor\Reflection\DocBlockFactory::createInstance();
+				$factory  = DocBlockFactory::createInstance();
 				$annotation = $factory->create($property->getDocComment());
 				/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
 				$tag = $annotation->getTagsByName('var')[0];
