@@ -2,19 +2,10 @@
 
 namespace Oppned\Form\Element;
 
-use Laminas\Form\Element\Checkbox AS ZendCheckbox;
-use Laminas\InputFilter\InputProviderInterface;
 
-class Checkbox extends ZendCheckbox implements InputProviderInterface {
-	
-	public function getInputSpecification() {
-		return [
-			'name' => $this->getName(),
-			'required' => true,
-			'allow_empty' => true,
-			'filters' => [
-				['name' => 'Boolean']
-			],
-		];
-	}
-}
+/**
+ * Class Checkbox
+ * @package Oppned\Form\Element
+ * @deprecated Use \Iaasen\Form\Element\Checkbox
+ */
+class Checkbox extends \Iaasen\Form\Element\Checkbox {}
