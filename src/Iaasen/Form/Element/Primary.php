@@ -14,8 +14,13 @@ class Primary extends Hidden implements InputProviderInterface {
 			'name' => $this->getName(),
 			'required' => true,
 			'filters' => [
-				[new ToInt()],
-				[new ToNull('integer')],
+				['name' => ToInt::class],
+				[
+					'name' => ToNull::class,
+					'options' => [
+						'type' => 'integer',
+					],
+				],
 			],
 		];
 	}
