@@ -8,7 +8,7 @@
 namespace IaasenTest\Model;
 
 
-use Iaasen\Entity\DateTime;
+use Iaasen\DateTime;
 use PHPUnit\Framework\TestCase;
 
 class AbstractModel extends TestCase

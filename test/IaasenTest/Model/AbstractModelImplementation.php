@@ -8,7 +8,7 @@
 namespace IaasenTest\Model;
 
 
-use Iaasen\Entity\DateTime;
+use Iaasen\DateTime;
 
 /**
  * Class AbstractModelImplementation
