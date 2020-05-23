@@ -5,6 +5,11 @@ use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
 use Laminas\View\Helper\AbstractHelper;
 
+/**
+ * Class BootstrapFormHorizontal
+ * @package Oppned\View\Helper
+ * @deprecated Use \Iaasen\View\Helper\FormRowHorizontal
+ */
 class BootstrapFormHorizontal extends AbstractHelper
 {
 	/**
