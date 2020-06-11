@@ -8,7 +8,7 @@ use Laminas\View\Helper\AbstractHelper;
 /**
  * Class BootstrapFormHorizontal
  * @package Oppned\View\Helper
- * @deprecated Use \Iaasen\View\Helper\FormRowHorizontal
+ * @deprecated Convert to \Iaasen\View\Helper\FormRowHorizontal
  */
 class BootstrapFormHorizontal extends AbstractHelper
 {

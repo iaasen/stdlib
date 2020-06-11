@@ -21,6 +21,7 @@ return [
 			\Iaasen\Messenger\EmailService::class => \Iaasen\Messenger\EmailServiceFactory::class,
 		],
 		'invokables' => [
+			\Iaasen\Geonorge\AddressService::class => \Iaasen\Geonorge\AddressService::class,
 			\Iaasen\Messenger\SessionMessenger::class => \Iaasen\Messenger\SessionMessenger::class,
 		],
 		'aliases' => [
@@ -66,7 +67,7 @@ return [
 	],
 	'form_elements' => [
 		'invokables' => [
-			'Primary' => \Oppned\Form\Element\Primary::class,
+			'Primary' => \Iaasen\Form\Element\Primary::class,
 		],
 		'factories' => [
 

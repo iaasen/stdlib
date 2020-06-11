@@ -5,17 +5,18 @@
     "keywords": [],
     "minimum-stability": "dev",
     "require": {
-        "php": "^7.1",
+        "php": "^7.3",
         "ext-intl": "*",
         "ext-json": "*",
         "laminas/laminas-db": "^2",
+        "laminas/laminas-dependency-plugin": "^1.0",
         "laminas/laminas-modulemanager": "^2",
+        "laminas/laminas-navigation": "^2",
         "laminas/laminas-view": "^2",
         "digitalnature/php-ref": "^1",
         "guzzlehttp/guzzle": "^6",
         "swiftmailer/swiftmailer": "^6",
-        "phpdocumentor/reflection-docblock": "^4",
-        "laminas/laminas-dependency-plugin": "^1.0"
+        "phpdocumentor/reflection-docblock": "^4"
     },
     "require-dev": {
         "phpunit/phpunit": "^7"
