@@ -23,11 +23,14 @@ class AddressService
 
 	/** @var Transport */
 	protected $transport;
+	/** @var TranscodeService */
+	protected $transcodeService;
 
 
 	public function __construct()
 	{
 		$this->transport = new Transport(['base_url' => Transport::BASE_URL . self::BASE_URL]);
+		$this->transcodeService = new TranscodeService();
 	}
 
 
@@ -45,7 +48,7 @@ class AddressService
 		$addresses = [];
 		foreach($data->adresser AS $row) {
 			$address = new Address($row);
-			$address->location_utm32 = $this->generateLocationUtm32($address);
+			$address->location_utm32 = $this->generateLocationUtm($address);
 			$address->id = base64_encode($address->getMatrikkel());
 			$addresses[] = $address;
 		}
@@ -73,7 +76,8 @@ class AddressService
 		if(count($data->adresser)) {
 			$row = array_pop($data->adresser);
 			$address = new Address($row);
-			$address->location_utm32 = $this->generateLocationUtm32($address);
+			//$address->location_utm = $this->transcodeService->transcodeGRS80toUTM32($address->representasjonspunkt->lat, $address->representasjonspunkt->lon); // Using Geonorge
+			$address->location_utm = $this->transcodeGRS80ToUTM($address->representasjonspunkt->lat, $address->representasjonspunkt->lon); // Using Geotools
 			$address->id = base64_encode($address->getMatrikkel());
 			return $address;
 		}
@@ -81,14 +85,17 @@ class AddressService
 	}
 
 
-	protected function generateLocationUtm32(Address $address) : array {
+	protected function transcodeGRS80ToUTM(string $latitude, string $longitude) : array {
 		$geotools = new Geotools();
 		$GRS80 = new GRS80Ellipsoid();
-		$coordinate = new Coordinate([$address->representasjonspunkt->lat, $address->representasjonspunkt->lon], $GRS80);
+		$coordinate = new Coordinate([$latitude, $longitude], $GRS80);
 		$coordinate = explode(' ', $geotools->convert($coordinate)->toUTM());
 		return [
-			'latitude' => $coordinate[1],
-			'longitude' => $coordinate[2],
+			'utm_zone' => $coordinate[0],
+			'utm_north' => $coordinate[1],
+			'utm_east' => $coordinate[2],
 		];
 	}
+
+
 }

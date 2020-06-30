@@ -64,7 +64,7 @@ class Address extends AbstractEntity
 
 	// Locally generated data, not from Geonorge
 	/** @var string[] */
-	public $location_utm32;
+	public $location_utm;
 
 
 	public function getMatrikkel() : string {
