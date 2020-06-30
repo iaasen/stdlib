@@ -8,6 +8,7 @@
 namespace Iaasen\Geonorge;
 
 
+use Iaasen\Exception\InvalidArgumentException;
 use Iaasen\GRS80Ellipsoid;
 use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
@@ -20,6 +21,7 @@ use Iaasen\Geonorge\Entity\Address;
 class AddressService
 {
 	const BASE_URL = 'adresser/v1/';
+	const DEFAULT_TRANSCODE_SERVICE = 'geotools';
 
 	/** @var Transport */
 	protected $transport;
@@ -48,7 +50,7 @@ class AddressService
 		$addresses = [];
 		foreach($data->adresser AS $row) {
 			$address = new Address($row);
-			$address->location_utm32 = $this->generateLocationUtm($address);
+			$address->location_utm = $this->transcodeGRS80ToUTM($address->representasjonspunkt->lat, $address->representasjonspunkt->lon);
 			$address->id = base64_encode($address->getMatrikkel());
 			$addresses[] = $address;
 		}
@@ -76,16 +78,20 @@ class AddressService
 		if(count($data->adresser)) {
 			$row = array_pop($data->adresser);
 			$address = new Address($row);
-			//$address->location_utm = $this->transcodeService->transcodeGRS80toUTM32($address->representasjonspunkt->lat, $address->representasjonspunkt->lon); // Using Geonorge
-			$address->location_utm = $this->transcodeGRS80ToUTM($address->representasjonspunkt->lat, $address->representasjonspunkt->lon); // Using Geotools
+			$address->location_utm = $this->transcodeGRS80ToUTM($address->representasjonspunkt->lat, $address->representasjonspunkt->lon);
 			$address->id = base64_encode($address->getMatrikkel());
 			return $address;
 		}
 		return null;
 	}
 
-
 	protected function transcodeGRS80ToUTM(string $latitude, string $longitude) : array {
+		if(self::DEFAULT_TRANSCODE_SERVICE == 'geotools') return $this->transcodeGRS80ToUtmUsingGeotools($latitude, $longitude);
+		elseif(self::DEFAULT_TRANSCODE_SERVICE == 'geonorge') return $this->transcodeService->transcodeGRS80toUTM32($latitude, $longitude);
+		else throw new InvalidArgumentException('Unknown transcode service: ' . self::DEFAULT_TRANSCODE_SERVICE);
+	}
+
+	protected function transcodeGRS80ToUtmUsingGeotools(string $latitude, string $longitude) : array {
 		$geotools = new Geotools();
 		$GRS80 = new GRS80Ellipsoid();
 		$coordinate = new Coordinate([$latitude, $longitude], $GRS80);
