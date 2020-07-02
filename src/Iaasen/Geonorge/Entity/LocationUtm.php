@@ -22,13 +22,14 @@ class LocationUtm
 	{
 		if(is_object($utm_north) || is_array($utm_north)) {
 			foreach($utm_north AS $key => $value) {
-				$this->$key = $value;
+				if(in_array($key, ['utm_north', 'utm_east'])) $this->$key = (int) $value;
+				else $this->$key = $value;
 			}
 		}
 		else {
 			$this->utm_zone = $utm_zone;
-			$this->utm_north = $utm_north;
-			$this->utm_east = $utm_east;
+			$this->utm_north = (int) $utm_north;
+			$this->utm_east = (int) $utm_east;
 		}
 	}
 }
