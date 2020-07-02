@@ -20,7 +20,7 @@ class LocationUtm
 
 	public function __construct($utm_north = null, ?int $utm_east = null, ?string $utm_zone = '32N')
 	{
-		if(is_array($utm_north)) {
+		if(is_object($utm_north) || is_array($utm_north)) {
 			foreach($utm_north AS $key => $value) {
 				$this->$key = $value;
 			}
