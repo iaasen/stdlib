@@ -80,18 +80,18 @@ class Address extends AbstractEntity
 
 
 	public function getMapUrlGoogle() : string {
-		return 'https://www.google.no/maps/search/' . $this->adressetekst . ', ' . $this->poststed;
+		return 'https://www.google.no/maps/search/' . str_replace([' '], ['+'], $this->adressetekst) . ',+' . str_replace([' '], ['+'], $this->poststed);
 		// https://www.google.com/maps/place/64°00'40.4"N+11°29'14.8"E
 	}
 
 
 	public function getMapUrl1881() : string {
-		return 'https://kart.1881.no/?query=' . $this->adressetekst . ', ' . $this->poststed;
+		return 'https://kart.1881.no/?query=' . str_replace([' '], ['+'], $this->adressetekst) . ',+' . str_replace([' '], ['+'], $this->poststed);
 	}
 
 
 	public function getMapUrlKartserver() : string {
-		return 'https://www.kartserver.no/?google_address=' . $this->adressetekst . ', ' . $this->poststed;
+		return 'https://www.kartserver.no/?google_address=' . str_replace([' '], ['+'], $this->adressetekst) . ',+' . str_replace([' '], ['+'], $this->poststed);
 	}
 
 }
