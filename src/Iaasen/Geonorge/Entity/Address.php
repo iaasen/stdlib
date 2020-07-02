@@ -94,4 +94,5 @@ class Address extends AbstractEntity
 		return 'https://www.kartserver.no/?google_address=' . str_replace([' '], ['+'], $this->adressetekst) . ',+' . str_replace([' '], ['+'], $this->poststed);
 	}
 
+
 }
