@@ -22,7 +22,10 @@ use Iaasen\Geonorge\Entity\Address;
 class AddressService
 {
 	const BASE_URL = 'adresser/v1/';
-	const DEFAULT_TRANSCODE_SERVICE = 'geotools';
+	const DEFAULT_TRANSCODE_SERVICE = 'geotools'; // Options: geotools, geonorge
+	// A third possible option is PhpCoord. See \Partnernett\Model\LatLng for example
+	// $latLong = new LatLng($telematorAddress->latitude, $telematorAddress->longitude, 0, RefEll::wgs84());
+	// I have commented earlier that geotools misses target by 1-3 meters and PhpCoord get it right. I don't remember when I discovered that.
 
 	/** @var Transport */
 	protected $transport;
@@ -58,6 +61,11 @@ class AddressService
 			$addresses[] = $address;
 		}
 		return $addresses;
+	}
+
+
+	public function getById(string $id) : ?Address {
+		return $this->getByMatrikkel(base64_decode($id));
 	}
 
 
