@@ -26,13 +26,15 @@ class AddressService
 	/** @var Transport */
 	protected $transport;
 	/** @var TranscodeService */
-	protected $transcodeService;
+	protected $geonorgeTranscodeService;
+	/** @var string  */
+	public $transcodeServiceToUse = self::DEFAULT_TRANSCODE_SERVICE;
 
 
 	public function __construct()
 	{
 		$this->transport = new Transport(['base_url' => Transport::BASE_URL . self::BASE_URL]);
-		$this->transcodeService = new TranscodeService();
+		$this->geonorgeTranscodeService = new TranscodeService();
 	}
 
 
@@ -86,9 +88,9 @@ class AddressService
 	}
 
 	protected function transcodeGRS80ToUTM(string $latitude, string $longitude) : array {
-		if(self::DEFAULT_TRANSCODE_SERVICE == 'geotools') return $this->transcodeGRS80ToUtmUsingGeotools($latitude, $longitude);
-		elseif(self::DEFAULT_TRANSCODE_SERVICE == 'geonorge') return $this->transcodeService->transcodeGRS80toUTM32($latitude, $longitude);
-		else throw new InvalidArgumentException('Unknown transcode service: ' . self::DEFAULT_TRANSCODE_SERVICE);
+		if($this->transcodeServiceToUse == 'geotools') return $this->transcodeGRS80ToUtmUsingGeotools($latitude, $longitude);
+		elseif($this->transcodeServiceToUse == 'geonorge') return $this->geonorgeTranscodeService->transcodeGRS80toUTM32($latitude, $longitude);
+		else throw new InvalidArgumentException('Unknown transcode service: ' . $this->transcodeServiceToUse);
 	}
 
 	protected function transcodeGRS80ToUtmUsingGeotools(string $latitude, string $longitude) : array {
