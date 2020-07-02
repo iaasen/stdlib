@@ -9,6 +9,7 @@ namespace Iaasen\Geonorge;
 
 
 use Iaasen\Exception\InvalidArgumentException;
+use Iaasen\Geonorge\Entity\LocationUtm;
 use Iaasen\GRS80Ellipsoid;
 use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
@@ -87,22 +88,18 @@ class AddressService
 		return null;
 	}
 
-	protected function transcodeGRS80ToUTM(string $latitude, string $longitude) : array {
+	protected function transcodeGRS80ToUTM(string $latitude, string $longitude) : LocationUtm {
 		if($this->transcodeServiceToUse == 'geotools') return $this->transcodeGRS80ToUtmUsingGeotools($latitude, $longitude);
 		elseif($this->transcodeServiceToUse == 'geonorge') return $this->geonorgeTranscodeService->transcodeGRS80toUTM32($latitude, $longitude);
 		else throw new InvalidArgumentException('Unknown transcode service: ' . $this->transcodeServiceToUse);
 	}
 
-	protected function transcodeGRS80ToUtmUsingGeotools(string $latitude, string $longitude) : array {
+	protected function transcodeGRS80ToUtmUsingGeotools(string $latitude, string $longitude) : LocationUtm {
 		$geotools = new Geotools();
 		$GRS80 = new GRS80Ellipsoid();
 		$coordinate = new Coordinate([$latitude, $longitude], $GRS80);
 		$coordinate = explode(' ', $geotools->convert($coordinate)->toUTM());
-		return [
-			'utm_zone' => $coordinate[0],
-			'utm_north' => $coordinate[1],
-			'utm_east' => $coordinate[2],
-		];
+		return new LocationUtm($coordinate[1], $coordinate[2], $coordinate[0]);
 	}
 
 

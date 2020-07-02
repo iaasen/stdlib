@@ -63,7 +63,7 @@ class Address extends AbstractEntity
 	public $undernummer;
 
 	// Locally generated data, not from Geonorge
-	/** @var string[] */
+	/** @var LocationUtm */
 	public $location_utm;
 
 

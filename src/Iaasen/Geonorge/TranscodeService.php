@@ -9,6 +9,8 @@ namespace Iaasen\Geonorge;
 
 
 
+use Iaasen\Geonorge\Entity\LocationUtm;
+
 /**
  * Source:
  * https://ws.geonorge.no/transApi/
@@ -26,7 +28,7 @@ class TranscodeService
 		$this->transport = new Transport(['base_url' => self::BASE_URL]);
 	}
 
-	public function transcodeGRS80toUTM32(string $latitude, string $longitude) {
+	public function transcodeGRS80toUTM32(string $latitude, string $longitude) : LocationUtm {
 		$url = self::BASE_URL;
 		$query = [
 			'ost' => $longitude,
@@ -36,11 +38,7 @@ class TranscodeService
 		];
 		$data = json_decode($this->transport->sendGet($url, $query));
 
-		return [
-			'utm_zone' => '32N',
-			'utm_north' => $data->ost,
-			'utm_east' => $data->nord,
-		];
+		return new LocationUtm($data->ost, $data->nord, '32N');
 	}
 
 }
