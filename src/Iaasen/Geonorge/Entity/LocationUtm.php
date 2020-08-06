@@ -10,12 +10,12 @@ namespace Iaasen\Geonorge\Entity;
 
 class LocationUtm
 {
-	/** @var string */
-	public $utm_zone = '32N';
 	/** @var float */
 	public $utm_north;
 	/** @var float */
 	public $utm_east;
+	/** @var string */
+	public $utm_zone = '32N';
 
 
 	public function __construct($utm_north, ?float $utm_east = null, ?string $utm_zone = '32N')
@@ -27,9 +27,9 @@ class LocationUtm
 			}
 		}
 		else {
-			$this->utm_zone = (float) $utm_zone;
-			$this->utm_north = $utm_north;
+			$this->utm_north = (float) $utm_north;
 			$this->utm_east = $utm_east;
+			$this->utm_zone = $utm_zone;
 		}
 	}
 }
