@@ -95,4 +95,16 @@ class Address extends AbstractEntity
 	}
 
 
+	public function generateUniqueId() : string {
+		$this->id = base64_encode(implode('-', [
+			$this->kommunenummer,
+			$this->gardsnummer,
+			$this->bruksnummer,
+			$this->festenummer,
+			$this->nummer,
+			$this->bokstav,
+		]));
+		return $this->id;
+	}
+
 }
