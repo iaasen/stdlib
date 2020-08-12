@@ -64,6 +64,8 @@ class AddressService
 
 	public function getById(string $id) : ?Address {
 		$fields = explode('-', base64_decode($id));
+		if(count($fields) != 6) return null;
+
 		$query = [
 			'kommunenummer' => $fields[0],
 			'gardsnummer' => $fields[1],
