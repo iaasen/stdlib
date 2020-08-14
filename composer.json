@@ -16,7 +16,7 @@
         "digitalnature/php-ref": "^1",
         "guzzlehttp/guzzle": "^6",
         "swiftmailer/swiftmailer": "^6",
-        "phpdocumentor/reflection-docblock": "^4"
+        "phpdocumentor/reflection-docblock": "^5"
     },
     "require-dev": {
         "phpunit/phpunit": "^7"
