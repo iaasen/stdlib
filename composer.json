@@ -3,7 +3,6 @@
     "description": "A collection of abstract and base classes supporting they way I like to use Zend Framework",
     "license": "proprietary",
     "keywords": [],
-    "minimum-stability": "dev",
     "require": {
         "php": "^7.3",
         "ext-intl": "*",
