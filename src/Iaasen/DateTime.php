@@ -243,4 +243,9 @@ class DateTime extends \DateTime implements \JsonSerializable
 		}
 		return $this->setTime(16, 0);
 	}
+
+
+	public function getArrayCopy() {
+		return $this->jsonSerialize();
+	}
 }

@@ -11,11 +11,11 @@ namespace Iaasen\Model;
 use \Iaasen\DateTime;
 use Exception;
 use Iaasen\Exception\InvalidArgumentException;
+use Laminas\Stdlib\ArraySerializableInterface;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\Object_;
 use ReflectionClass;
-use ReflectionObject;
 use ReflectionProperty;
 
 /**
@@ -27,7 +27,7 @@ use ReflectionProperty;
  * Properties should be defined as protected to ensure automatic setters and getters
  *
  */
-class AbstractEntityV2 implements ModelInterface
+class AbstractEntityV2 implements ModelInterfaceV2, ArraySerializableInterface
 {
 	/** @var array */
 	private static $docBlockData;
@@ -99,14 +99,28 @@ class AbstractEntityV2 implements ModelInterface
 		}
 	}
 
+	/**
+	 * We don't include static variables. Should we?
+	 * @return array
+	 */
 	public function getArrayCopy() {
-		$reflection = new ReflectionObject($this);
-		$properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
+		$doc = self::$docBlockData[get_class($this)];
+
 		$data = [];
-		foreach($properties AS $property) {
-			$propertyName = $property->name;
-			if($property->isStatic()) $data[$propertyName] = $this::$$propertyName;
-			else $data[$propertyName] = $this->$propertyName;
+		foreach($doc AS $key => $property) {
+			$value = $this->__get($key);
+			if(is_null($value)) $data[$key] = $value;
+			elseif($property['type'] == 'objectArray') {
+				foreach($value AS $rowNumber => $row) {
+					$data[$key][$rowNumber] = $row->getArrayCopy();
+				}
+			}
+			elseif($property['type'] == 'object') {
+				$data[$key] = $value->getArrayCopy();
+			}
+			else {
+				$data[$key] = $value;
+			}
 		}
 		return $data;
 	}
@@ -148,12 +162,6 @@ class AbstractEntityV2 implements ModelInterface
 			else return;
 		}
 
-
-
-//		if($doc['type'] == 'setter') {
-//			$setterName = $doc['value'];
-//			$this->$setterName($value);
-//		}
 		if($doc['type'] == 'objectArray') {
 			$this->setObjectArray($doc['value'], $name, $value);
 		}
