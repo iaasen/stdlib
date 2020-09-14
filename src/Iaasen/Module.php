@@ -8,13 +8,14 @@
 namespace Iaasen;
 
 
+use Laminas\Loader\StandardAutoloader;
 use Laminas\ModuleManager\Feature\AutoloaderProviderInterface;
 
 class Module implements AutoloaderProviderInterface
 {
 	public function getAutoloaderConfig() {
 		return [
-			'Laminas\Loader\StandardAutoloader' => [
+			StandardAutoloader::class => [
 				'namespaces' => [
 					__NAMESPACE__ => __DIR__ . '/../src/' . __NAMESPACE__
 				]

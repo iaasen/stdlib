@@ -1,5 +1,5 @@
 <?php
-namespace Oppned;
+namespace Iaasen;
 
 
 use Iaasen\Initializer\NavigationInitializer;
@@ -17,7 +17,7 @@ return [
 			'navigation' => \Laminas\Navigation\Service\DefaultNavigationFactory::class,
 			\Oppned\Log\Logger::class => \Oppned\Log\LoggerFactory::class,
 			\Oppned\Log\LogTable::class => \Oppned\Log\LogTableFactory::class,
-			'Oppned\Log\LogTableGateway' => \Oppned\Log\LogTableGatewayFactory::class,
+			\Oppned\Log\LogTableGateway::class => \Oppned\Log\LogTableGatewayFactory::class,
 			\Iaasen\Messenger\EmailService::class => \Iaasen\Messenger\EmailServiceFactory::class,
 		],
 		'invokables' => [
