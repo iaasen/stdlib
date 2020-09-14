@@ -23,8 +23,8 @@ use ReflectionProperty;
  * @package Iaasen
  *
  * Intended to be the simplest possible object with possibility for type casting and setters.
- * Intended to be used with REST services where an object with public attributes are expected
- * Properties should be defined as protected to ensure automatic setters and getters
+ * Intended to be used with REST services. The API server vil get properties from getArrayCopy()
+ * Properties should be defined as protected to ensure automatic setters and getters.
  *
  */
 class AbstractEntityV2 implements ModelInterfaceV2, ArraySerializableInterface
@@ -199,6 +199,8 @@ class AbstractEntityV2 implements ModelInterfaceV2, ArraySerializableInterface
 	}
 
 	protected function setObject($className, $name, $value) {
+		if(isset($value->_class)) $className = $value->_class;
+
 		switch($className) {
 			case 'object':
 				$this->$name = $value;
@@ -222,6 +224,7 @@ class AbstractEntityV2 implements ModelInterfaceV2, ArraySerializableInterface
 		$this->$name = [];
 		if(is_array($value)) {
 			foreach($value AS $row) {
+				if(isset($value->_class)) $className = $value->_class;
 				switch($className) {
 					case 'object':
 						$this->$name[] = $row;
