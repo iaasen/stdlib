@@ -277,20 +277,14 @@ class AbstractEntityV2 implements ModelInterfaceV2, ArraySerializableInterface
 
 	public function databaseSaveArray()
 	{
-		$reflection = new ReflectionClass($this);
-		$properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
-		$data = [];
-		foreach($properties AS $property) {
-			if(!$property->isStatic()) {
-				$name = $property->getName();
-				$value = $this->__get($name);
-				$factory  = DocBlockFactory::createInstance();
-				$annotation = $factory->create($property->getDocComment());
-				/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
-				$tag = $annotation->getTagsByName('var')[0];
-				switch($tag->getType()) {
+		$doc = self::$docBlockData[get_class($this)];
+		$data = $this->getArrayCopy();
+
+		foreach($doc AS $key => $property) {
+			if($property['type'] == 'primitive') {
+				switch($property['value']) {
 					case 'bool':
-						$data[$name] = ($value) ? 1 : 0;
+						$data[$key] = ($data[$key]) ? 1 : 0;
 						break;
 					case '\DateTime':
 					case 'DateTime';
@@ -298,12 +292,39 @@ class AbstractEntityV2 implements ModelInterfaceV2, ArraySerializableInterface
 						if($value) $data[$name] = $value->format('Y-m-d H:i:s');
 						else $data[$name] = null;
 						break;
-					default:
-						$data[$name] = $value;
-						break;
 				}
 			}
 		}
 		return $data;
+
+
+//		$reflection = new ReflectionClass($this);
+//		$properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
+//		$data = [];
+//		foreach($properties AS $property) {
+//			if(!$property->isStatic()) {
+//				$name = $property->getName();
+//				$value = $this->__get($name);
+//				$factory  = DocBlockFactory::createInstance();
+//				$annotation = $factory->create($property->getDocComment());
+//				/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
+//				$tag = $annotation->getTagsByName('var')[0];
+//				switch($tag->getType()) {
+//					case 'bool':
+//						$data[$name] = ($value) ? 1 : 0;
+//						break;
+//					case '\DateTime':
+//					case 'DateTime';
+//						/** @var DateTime $value */
+//						if($value) $data[$name] = $value->format('Y-m-d H:i:s');
+//						else $data[$name] = null;
+//						break;
+//					default:
+//						$data[$name] = $value;
+//						break;
+//				}
+//			}
+//		}
+//		return $data;
 	}
 }
