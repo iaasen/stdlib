@@ -170,7 +170,7 @@ class AbstractEntity implements ModelInterface
 					$this->$name = strlen($value) ? (int) $value : null;
 					break;
 				case 'float':
-					$this->$name = (float) $value;
+					$this->$name = !is_null($value) ? (float) $value : null;
 					break;
 				case 'string':
 					$this->$name = (string) $value;
