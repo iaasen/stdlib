@@ -289,8 +289,8 @@ class AbstractEntityV2 implements ModelInterfaceV2, ArraySerializableInterface
 					case '\DateTime':
 					case 'DateTime';
 						/** @var DateTime $value */
-						if($value) $data[$name] = $value->format('Y-m-d H:i:s');
-						else $data[$name] = null;
+						if($value) $data[$key] = $value->format('Y-m-d H:i:s');
+						else $data[$key] = null;
 						break;
 				}
 			}

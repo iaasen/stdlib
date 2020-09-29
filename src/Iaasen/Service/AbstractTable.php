@@ -1,6 +1,7 @@
 <?php
 namespace Iaasen\Service;
 
+use Iaasen\Model\AbstractEntityV2;
 use Iaasen\Model\AbstractModel;
 use Iaasen\Exception\NotFoundException;
 use Iaasen\Model\ModelInterface;
@@ -87,7 +88,7 @@ abstract class AbstractTable
 	}
 
 	/**
-	 * @param AbstractModel $model
+	 * @param AbstractModel|AbstractEntityV2 $model
 	 * @return int
 	 */
 	protected function save($model) {
