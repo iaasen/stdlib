@@ -279,6 +279,7 @@ class AbstractEntityV2 implements ModelInterfaceV2, ArraySerializableInterface
 	{
 		$doc = self::$docBlockData[get_class($this)];
 		$data = $this->getArrayCopy();
+		unset($data['throwExceptionOnMissingProperty']);
 
 		foreach($doc AS $key => $property) {
 			if($property['type'] == 'primitive') {
