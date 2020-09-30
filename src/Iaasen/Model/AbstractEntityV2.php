@@ -11,7 +11,6 @@ namespace Iaasen\Model;
 use \Iaasen\DateTime;
 use Exception;
 use Iaasen\Exception\InvalidArgumentException;
-use Laminas\Stdlib\ArraySerializableInterface;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\Object_;
@@ -27,7 +26,7 @@ use ReflectionProperty;
  * Properties should be defined as protected to ensure automatic setters and getters.
  *
  */
-class AbstractEntityV2 implements ModelInterfaceV2, ArraySerializableInterface
+class AbstractEntityV2 implements ModelInterfaceV2
 {
 	/** @var array */
 	private static $docBlockData;
@@ -129,7 +128,7 @@ class AbstractEntityV2 implements ModelInterfaceV2, ArraySerializableInterface
 	 * @param string $name
 	 * @return mixed
 	 */
-	public function __get($name)
+	public function __get(string $name)
 	{
 		// Look for getter method (getField())
 		$getterName = 'get' . ucfirst($name);
@@ -146,7 +145,7 @@ class AbstractEntityV2 implements ModelInterfaceV2, ArraySerializableInterface
 	 * @param mixed $value
 	 * @throws Exception
 	 */
-	public function __set($name, $value)
+	public function __set(string $name, $value) : void
 	{
 		// Look for setter method (setField())
 		$setterName = 'set' . ucfirst($name);
@@ -241,7 +240,7 @@ class AbstractEntityV2 implements ModelInterfaceV2, ArraySerializableInterface
 	 * @param string $name
 	 * @return bool
 	 */
-	public function __isset($name)
+	public function __isset(string $name) : bool
 	{
 		if(!property_exists($this, $name)) return false;
 		$reflection = new ReflectionProperty($this, $name);
@@ -253,7 +252,7 @@ class AbstractEntityV2 implements ModelInterfaceV2, ArraySerializableInterface
 	 * @param string $name
 	 * @return void
 	 */
-	public function __unset($name)
+	public function __unset(string $name) : void
 	{
 		if(property_exists($this, $name)) {
 			$reflection = new ReflectionProperty($this, $name);
@@ -262,20 +261,21 @@ class AbstractEntityV2 implements ModelInterfaceV2, ArraySerializableInterface
 	}
 
 	/**
+	 * __clone() is run on the copied object when making a clone using the 'clone' keyword
 	 * @return void
 	 */
 	public function __clone()
 	{
 	}
 
-	public function __toString()
+	public function __toString() : string
 	{
 		$data = get_class($this) . PHP_EOL;
 		$data .= @rt($this->databaseSaveArray());
 		return $data;
 	}
 
-	public function databaseSaveArray()
+	public function databaseSaveArray() : array
 	{
 		$doc = self::$docBlockData[get_class($this)];
 		$data = $this->getArrayCopy();

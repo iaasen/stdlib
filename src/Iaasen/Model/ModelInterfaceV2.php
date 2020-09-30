@@ -8,24 +8,23 @@
 
 namespace Iaasen\Model;
 
-interface ModelInterfaceV2
+use Laminas\Stdlib\ArraySerializableInterface;
+
+interface ModelInterfaceV2 extends ArraySerializableInterface
 {
-    public function __get($name);
-    public function __set($name, $value);
-    public function __isset($name);
-    public function __unset($name);
+    public function __get(string $name);
+    public function __set(string $name, $value) : void;
+    public function __isset(string $name) : bool;
+    public function __unset(string $name) : void;
+
+	/**
+	 * When an object is cloned using keyword 'clone'
+	 * the __clone() function will be run on the copy.
+	 * @return void
+	 */
 	public function __clone();
-    public function __toString();
 
-	/**
-	 * @param array $data
-	 * @return array
-	 */
-    public function exchangeArray(array $data);
+    public function __toString() : string;
 
-	/**
-	 * @return array
-	 */
-    public function getArrayCopy();
-    public function databaseSaveArray();
+    public function databaseSaveArray() : array;
 }
