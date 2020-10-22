@@ -17,6 +17,7 @@ class Time
 		1 => "EEEE dd.MM.YYYY HH':'mm", // onsdag 17.10.2018 15:01
 		2 => "dd.MM.YYYY HH':'mm EEEE", // 17.10.2018 15:01 onsdag
 		3 => "dd.MM.YYYY HH':'mm", // 17.10.2018 15:01
+		4 => "dd.MM.YYYY", // 17.10.2018
 	];
 
 	const MONTH_NAMES = [
