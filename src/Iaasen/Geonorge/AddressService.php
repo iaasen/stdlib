@@ -66,14 +66,18 @@ class AddressService
 		$fields = explode('-', base64_decode($id));
 		if(count($fields) != 6) return null;
 
-		$query = [
-			'kommunenummer' => $fields[0],
-			'gardsnummer' => $fields[1],
-			'bruksnummer' => $fields[2],
-			'festenummer' => $fields[3],
-			'nummer' => $fields[4],
-			'bokstav' => $fields[5],
+		$fieldNames = [
+			0 => 'kommunenummer',
+			1 => 'gardsnummer',
+			2 => 'bruksnummer',
+			3 => 'festenummer',
+			4 => 'nummer',
+			5 => 'bokstav',
 		];
+		$query = [];
+		foreach($fieldNames AS $key => $fieldName) {
+			if(isset($fields[$key]) && strlen($fields[$key])) $query[$fieldName] = $fields[$key];
+		}
 
 		$url = 'sok';
 		$data = json_decode($this->transport->sendGet($url, $query));
