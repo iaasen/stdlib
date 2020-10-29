@@ -73,10 +73,18 @@ class AbstractEntityV2 implements ModelInterfaceV2
 				}
 				// Object
 				elseif($type instanceof Object_) {
-					$doc = [
-						'type' => 'object',
-						'value' => $type->__toString(),
-					];
+					if($type->__toString() == '\stdClass') {
+						$doc = [
+							'type' => 'stdClass',
+							'value' => $type->__toString(),
+						];
+					}
+					else {
+						$doc = [
+							'type' => 'object',
+							'value' => $type->__toString(),
+						];
+					}
 				}
 				// Primitive type
 				else {
@@ -113,6 +121,9 @@ class AbstractEntityV2 implements ModelInterfaceV2
 				foreach($value AS $rowNumber => $row) {
 					$data[$key][$rowNumber] = $row->getArrayCopy();
 				}
+			}
+			elseif($property['type'] == 'stdClass') {
+				$data[$key] = (array) $value;
 			}
 			elseif($property['type'] == 'object') {
 				$data[$key] = $value->getArrayCopy();
