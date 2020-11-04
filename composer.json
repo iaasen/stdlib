@@ -8,7 +8,7 @@
         "ext-intl": "*",
         "ext-json": "*",
         "laminas/laminas-db": "^2",
-        "laminas/laminas-dependency-plugin": "^1.0",
+        "laminas/laminas-dependency-plugin": "^2",
         "laminas/laminas-modulemanager": "^2",
         "laminas/laminas-navigation": "^2",
         "laminas/laminas-view": "^2",
