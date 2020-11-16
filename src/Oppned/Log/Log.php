@@ -2,7 +2,7 @@
 
 namespace Oppned\Log;
 
-use Oppned\AbstractModel;
+use Iaasen\Model\AbstractModel;
 
 /**
  * Class Log
