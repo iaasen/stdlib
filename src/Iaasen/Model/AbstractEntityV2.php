@@ -29,7 +29,10 @@ use ReflectionProperty;
 class AbstractEntityV2 implements ModelInterfaceV2
 {
 	/** @var array */
-	private static $docBlockData;
+	protected static $docBlockData;
+	/** @var string  */
+	const MYSQL_TIME_FORMAT = 'Y-m-d H:i:s';
+
 	/**
 	 * if set to true an Exception will be sent when trying to set a property that is not defined
 	 * @var bool  */
@@ -39,7 +42,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	 * AbstractEntity constructor.
 	 * @param array $data
 	 */
-	public function __construct($data = [])
+	public function __construct(array $data = [])
 	{
 		$this->generateDocBlockData();
 		if($data instanceof \stdClass) $data = (array) $data;
@@ -48,14 +51,13 @@ class AbstractEntityV2 implements ModelInterfaceV2
 
 	private function generateDocBlockData() {
 		if(!isset(self::$docBlockData[get_class($this)])) {
-
-
 			$docBlockFactory = DocBlockFactory::createInstance();
 			$reflection = new ReflectionClass($this);
 			$publicProperties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC + ReflectionProperty::IS_PROTECTED);
 
 			foreach($publicProperties AS $property) {
 				if($property->isStatic()) continue;
+				if($property->name == 'throwExceptionOnMissingProperty') continue;
 
 				// Read docBlock
 				$annotation = $docBlockFactory->create($property->getDocComment());
@@ -99,6 +101,12 @@ class AbstractEntityV2 implements ModelInterfaceV2
 			}
 		}
 	}
+
+
+	protected function getDocBlock(string $name) : ?array {
+		return (isset(self::$docBlockData[get_class($this)][$name])) ? self::$docBlockData[get_class($this)][$name] : null;
+	}
+
 
 	public function exchangeArray($data) {
 		foreach($data AS $key => $value) {
@@ -193,6 +201,9 @@ class AbstractEntityV2 implements ModelInterfaceV2
 					$this->$name = (string) $value;
 					break;
 				case 'string[]':
+				case 'int[]':
+				case 'mixed[]':
+				case 'array':
 					if(is_object($value)) $this->$name = (array) $value;
 					elseif(is_string($value)) {
 						if(in_array(substr($value, 0, 1), ['{', '['])) $this->$name = (array) json_decode($value);
@@ -247,28 +258,19 @@ class AbstractEntityV2 implements ModelInterfaceV2
 		}
 	}
 
-	/**
-	 * @param string $name
-	 * @return bool
-	 */
 	public function __isset(string $name) : bool
 	{
 		if(!property_exists($this, $name)) return false;
-		$reflection = new ReflectionProperty($this, $name);
-		if(!$reflection->isPublic()) return false;
-		return true;
+		$doc = self::$docBlockData[get_class($this)];
+		if(isset($doc[$name])) return isset($this->$name);
+		return false; // Anything else is not set
 	}
 
-	/**
-	 * @param string $name
-	 * @return void
-	 */
+
 	public function __unset(string $name) : void
 	{
-		if(property_exists($this, $name)) {
-			$reflection = new ReflectionProperty($this, $name);
-			if($reflection->isPublic()) unset($this->$name);
-		}
+		$doc = self::$docBlockData[get_class($this)];
+		if(isset($doc[$name])) $this->$name = null;
 	}
 
 	/**
@@ -278,6 +280,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	public function __clone()
 	{
 	}
+
 
 	public function __toString() : string
 	{
@@ -310,33 +313,11 @@ class AbstractEntityV2 implements ModelInterfaceV2
 		return $data;
 
 
-//		$reflection = new ReflectionClass($this);
-//		$properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
-//		$data = [];
-//		foreach($properties AS $property) {
-//			if(!$property->isStatic()) {
-//				$name = $property->getName();
-//				$value = $this->__get($name);
-//				$factory  = DocBlockFactory::createInstance();
-//				$annotation = $factory->create($property->getDocComment());
-//				/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
-//				$tag = $annotation->getTagsByName('var')[0];
-//				switch($tag->getType()) {
-//					case 'bool':
-//						$data[$name] = ($value) ? 1 : 0;
-//						break;
-//					case '\DateTime':
-//					case 'DateTime';
-//						/** @var DateTime $value */
-//						if($value) $data[$name] = $value->format('Y-m-d H:i:s');
-//						else $data[$name] = null;
-//						break;
-//					default:
-//						$data[$name] = $value;
-//						break;
-//				}
-//			}
-//		}
-//		return $data;
 	}
+
+
+	public function setThrowExceptionOnMissingProperty(bool $throw) {
+		$this->throwExceptionOnMissingProperty = $throw;
+	}
+
 }
