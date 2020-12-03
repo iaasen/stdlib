@@ -9,6 +9,7 @@
 namespace Iaasen\Controller;
 
 
+use Iaasen\Controller\Plugin\NavigationPlugin;
 use Iaasen\Initializer\NavigationAwareInterface;
 use Iaasen\Initializer\ViewRendererAwareInterface;
 use Laminas\Http\Header\Referer;
@@ -20,6 +21,11 @@ use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
 
+/**
+ * Class AbstractController
+ * @package Iaasen\Controller
+ * @method NavigationPlugin navigation()
+ */
 class AbstractController extends AbstractActionController implements NavigationAwareInterface, ViewRendererAwareInterface
 {
 	/** @var string */
