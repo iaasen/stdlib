@@ -191,38 +191,32 @@ class AbstractEntity implements ModelInterface
 		}
 	}
 
-	protected function setObject($className, $name, $value) {
+	protected function getNewObject($className, $value) {
 		switch($className) {
 			case 'object':
-				$this->$name = $value;
-				break;
+				return $value;
 			case '\DateTime':
 			case 'DateTime':
-				if(is_null($value)) $this->$name = null;
-				elseif(is_string($value)) $this->$name = (strlen($value)) ? new DateTime($value) : null;
-				elseif($value instanceof \DateTime) $this->$name = new DateTime($value->format('c'));
-				elseif($value instanceof DateTime) $this->$name = $value;
+				if(is_null($value)) return null;
+				elseif(is_string($value)) return (strlen($value)) ? new DateTime($value) : null;
+				elseif($value instanceof \DateTime) return new DateTime($value->format('c'));
+				elseif($value instanceof DateTime) return $value;
 				else throw new \InvalidArgumentException("Property '$name' must be a string or an instance of \\DateTime in " . get_class($this));
-				break;
 			default:
-				if(is_null($value)) $this->$name = null;
-				else $this->$name = ($value instanceof $className) ? $value : new $className($value);
-				break;
+				if(is_null($value)) return null;
+				else return ($value instanceof $className) ? $value : new $className($value);
 		}
+	}
+
+	protected function setObject($className, $name, $value) {
+		$this->$name = $this->getNewObject($className, $value);
 	}
 
 	protected function setObjectArray($className, $name, $value) {
 		$this->$name = [];
 		if(is_array($value)) {
 			foreach($value AS $row) {
-				switch($className) {
-					case 'object':
-						$this->$name[] = $row;
-						break;
-					default:
-						$this->$name[] = ($row instanceof $className) ? $row : new $className($row);
-						break;
-				}
+				$this->$name[] = $this->getNewObject($className, $row);
 			}
 		}
 	}
