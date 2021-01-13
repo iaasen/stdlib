@@ -40,9 +40,9 @@ class AbstractEntityV2 implements ModelInterfaceV2
 
 	/**
 	 * AbstractEntity constructor.
-	 * @param array $data
+	 * @param array|\stdClass $data
 	 */
-	public function __construct(array $data = [])
+	public function __construct($data = [])
 	{
 		$this->generateDocBlockData();
 		if($data instanceof \stdClass) $data = (array) $data;
