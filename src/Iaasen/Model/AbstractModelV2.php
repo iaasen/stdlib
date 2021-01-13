@@ -32,8 +32,10 @@ abstract class AbstractModelV2 extends AbstractEntityV2
 	/** @var DateTime */
 	protected $timestamp_updated;
 
-
-	public function __construct(array $data = [])
+	/**
+	 * @param array|\stdClass $data
+	 */
+	public function __construct($data = [])
 	{
 		$this->timestamp_created = new DateTime();
 		$this->timestamp_updated = $this->timestamp_created;
