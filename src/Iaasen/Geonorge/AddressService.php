@@ -14,6 +14,8 @@ use Iaasen\GRS80Ellipsoid;
 use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
 use Iaasen\Geonorge\Entity\Address;
+use GuzzleHttp\Exception\ConnectException;
+use Nteb\ApiEntities\Exception\GatewayTimeoutException;
 
 /**
  * Documentation:
@@ -53,7 +55,20 @@ class AddressService
 		$query = [
 			'sok' => $search,
 		];
-		$data = json_decode($this->transport->sendGet($url, $query));
+		try {
+//			// Test of the error ConnectionException error
+//			throw new ConnectException('message', new \GuzzleHttp\Psr7\Request('GET', '/uri'), null, ['error' => 'Failed to connectasdfsdaf']);
+
+			$data = json_decode($this->transport->sendGet($url, $query));
+		}
+		catch (ConnectException $e) {
+			if(
+				isset($e->getHandlerContext()['error']) &&
+				strpos($e->getHandlerContext()['error'], 'Failed to connect') !== null) {
+				throw new GatewayTimeoutException($e->getHandlerContext()['error']);
+			}
+			else throw $e;
+		}
 		$addresses = [];
 		foreach($data->adresser AS $row) {
 			$addresses[] = $this->createObject($row);
