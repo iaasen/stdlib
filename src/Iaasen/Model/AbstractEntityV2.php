@@ -126,9 +126,12 @@ class AbstractEntityV2 implements ModelInterfaceV2
 			$value = $this->__get($key);
 			if(is_null($value)) $data[$key] = $value;
 			elseif($property['type'] == 'objectArray') {
-				foreach($value AS $rowNumber => $row) {
-					$data[$key][$rowNumber] = $row->getArrayCopy();
+				if(count($value)) {
+					foreach($value AS $rowNumber => $row) {
+						$data[$key][$rowNumber] = $row->getArrayCopy();
+					}
 				}
+				else $data[$key] = $value;
 			}
 			elseif($property['type'] == 'stdClass') {
 				$data[$key] = (array) $value;
@@ -301,18 +304,20 @@ class AbstractEntityV2 implements ModelInterfaceV2
 					case 'bool':
 						$data[$key] = ($data[$key]) ? 1 : 0;
 						break;
+				}
+			}
+			elseif($property['type'] == 'object') {
+				switch($property['value']) {
 					case '\DateTime':
-					case 'DateTime';
+					case 'DateTime':
 						/** @var DateTime $value */
-						if($value) $data[$key] = $value->format('Y-m-d H:i:s');
+						if($property['value']) $data[$key] = $this->$key->format('Y-m-d H:i:s');
 						else $data[$key] = null;
 						break;
 				}
 			}
 		}
 		return $data;
-
-
 	}
 
 
