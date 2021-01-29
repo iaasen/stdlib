@@ -78,6 +78,7 @@ class AddressService
 
 
 	public function getById(string $id) : ?Address {
+		$url = 'sok';
 		$fields = explode('-', base64_decode($id));
 		if(count($fields) != 6) return null;
 
@@ -94,8 +95,20 @@ class AddressService
 			if(isset($fields[$key]) && strlen($fields[$key])) $query[$fieldName] = $fields[$key];
 		}
 
-		$url = 'sok';
-		$data = json_decode($this->transport->sendGet($url, $query));
+
+		try {
+//			// Test of the error ConnectionException error
+//			throw new ConnectException('message', new \GuzzleHttp\Psr7\Request('GET', '/uri'), null, ['error' => 'Failed to connectasdfsdaf']);
+			$data = json_decode($this->transport->sendGet($url, $query));
+		}
+		catch (ConnectException $e) {
+			if(
+				isset($e->getHandlerContext()['error']) &&
+				strpos($e->getHandlerContext()['error'], 'Failed to connect') !== null) {
+				throw new GatewayTimeoutException($e->getHandlerContext()['error']);
+			}
+			else throw $e;
+		}
 		if(count($data->adresser)) return $this->createObject(array_pop($data->adresser));
 		else return null;
 	}
