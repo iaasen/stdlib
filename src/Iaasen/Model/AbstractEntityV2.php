@@ -103,7 +103,9 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	}
 
 
-	protected function getDocBlock(string $name) : ?array {
+	protected function getDocBlock(?string $name = null) : ?array {
+		if(!$name) $name = get_class($this);
+		if(!isset(self::$docBlockData[get_class($this)])) $this->generateDocBlockData();
 		return (isset(self::$docBlockData[get_class($this)][$name])) ? self::$docBlockData[get_class($this)][$name] : null;
 	}
 
@@ -119,7 +121,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	 * @return array
 	 */
 	public function getArrayCopy() {
-		$doc = self::$docBlockData[get_class($this)];
+		$doc = $this->getDocBlock();
 
 		$data = [];
 		foreach($doc AS $key => $property) {
@@ -176,7 +178,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 			return;
 		}
 
-		$doc = self::$docBlockData[get_class($this)];
+		$doc = $this->getDocBlock();
 		if(isset($doc[$name])) $doc = $doc[$name];
 		else {
 			if($this->throwExceptionOnMissingProperty) throw new InvalidArgumentException("Property '$name' not found in " . get_class($this), 400);
@@ -264,15 +266,15 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	public function __isset(string $name) : bool
 	{
 		if(!property_exists($this, $name)) return false;
-		$doc = self::$docBlockData[get_class($this)];
-		if(isset($doc[$name])) return isset($this->$name);
+		$doc = $this->getDocBlock();
+		if(isset($doc[$name])) return isset($this->$name); // Why go by $doc, isn't it enough to check the property?
 		return false; // Anything else is not set
 	}
 
 
 	public function __unset(string $name) : void
 	{
-		$doc = self::$docBlockData[get_class($this)];
+		$doc = $this->getDocBlock();
 		if(isset($doc[$name])) $this->$name = null;
 	}
 
@@ -294,7 +296,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 
 	public function databaseSaveArray() : array
 	{
-		$doc = self::$docBlockData[get_class($this)];
+		$doc = $this->getDocBlock();
 		$data = $this->getArrayCopy();
 		unset($data['throwExceptionOnMissingProperty']);
 
