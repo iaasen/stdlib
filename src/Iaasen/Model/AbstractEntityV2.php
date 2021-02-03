@@ -49,8 +49,10 @@ class AbstractEntityV2 implements ModelInterfaceV2
 		if(!is_null($data) && count($data)) $this->exchangeArray($data);
 	}
 
-	private function generateDocBlockData() {
-		if(!isset(self::$docBlockData[get_class($this)])) {
+
+	private function generateDocBlockData($class = null) {
+		if(!$class) $class = get_class($this);
+		if(!isset(self::$docBlockData[$class])) {
 			$docBlockFactory = DocBlockFactory::createInstance();
 			$reflection = new ReflectionClass($this);
 			$publicProperties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC + ReflectionProperty::IS_PROTECTED);
@@ -97,16 +99,17 @@ class AbstractEntityV2 implements ModelInterfaceV2
 				}
 
 				// Save to static
-				self::$docBlockData[get_class($this)][$property->name] = $doc;
+				self::$docBlockData[$class][$property->name] = $doc;
 			}
 		}
 	}
 
 
-	protected function getDocBlock(?string $name = null) : ?array {
-		if(!$name) $name = get_class($this);
-		if(!isset(self::$docBlockData[get_class($this)])) $this->generateDocBlockData();
-		return (isset(self::$docBlockData[get_class($this)][$name])) ? self::$docBlockData[get_class($this)][$name] : null;
+	protected function getDocBlock(?string $class = null) : ?array {
+		if(!$class) $class = get_class($this);
+		if(isset(self::$docBlockData[$class])) return self::$docBlockData[$class];
+		else return $this->generateDocBlockData();
+
 	}
 
 
