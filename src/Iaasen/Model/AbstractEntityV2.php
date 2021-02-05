@@ -316,7 +316,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 					case '\DateTime':
 					case 'DateTime':
 						/** @var DateTime $value */
-						if($property['value']) $data[$key] = $this->$key->format('Y-m-d H:i:s');
+						if(isset($this->$key) && $this->$key) $data[$key] = $this->$key->format('Y-m-d H:i:s');
 						else $data[$key] = null;
 						break;
 				}
