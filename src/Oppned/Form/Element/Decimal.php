@@ -2,10 +2,10 @@
 
 namespace Oppned\Form\Element;
 
-use Laminas\Form\Element\Number AS ZendNumber;
+use Laminas\Form\Element\Number AS LaminasNumber;
 use Laminas\InputFilter\InputProviderInterface;
 
-class Decimal extends ZendNumber implements InputProviderInterface {
+class Decimal extends LaminasNumber implements InputProviderInterface {
 	
 	public function getInputSpecification() {
 		return array(

@@ -2,10 +2,10 @@
 
 namespace Oppned\Form\Element;
 
-use Laminas\Form\Element\Number AS ZendNumber;
+use Laminas\Form\Element\Number AS LaminasNumber;
 use Laminas\InputFilter\InputProviderInterface;
 
-class Number extends ZendNumber implements InputProviderInterface {
+class Number extends LaminasNumber implements InputProviderInterface {
 	public function getInputSpecification() {
 		return array(
 			'name' => $this->getName(),

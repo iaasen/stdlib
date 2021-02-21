@@ -2,9 +2,9 @@
 
 namespace Iaasen\Form\Element;
 
-use Laminas\Form\Element\Submit AS ZendSubmit;
+use Laminas\Form\Element\Submit AS LaminasSubmit;
 
-class Submit extends ZendSubmit {
+class Submit extends LaminasSubmit {
 	
 	public function __construct($name = null, $options = []) {
 		$this->label = 'Save'; // TwbBundle requires a label to be set
