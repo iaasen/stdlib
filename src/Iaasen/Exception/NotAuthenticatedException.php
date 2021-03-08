@@ -13,9 +13,11 @@ use Throwable;
 
 class NotAuthenticatedException extends \DomainException
 {
-	public function __construct(string $message = "", int $code = 0, Throwable $previous = null)
-	{
-		if($code === 0) $code = 401;
+	public function __construct(
+		string $message = "Authentication is required and has failed or has not yet been provided",
+		int $code = 401,
+		Throwable $previous = null
+	) {
 		parent::__construct($message, $code, $previous);
 	}
 }

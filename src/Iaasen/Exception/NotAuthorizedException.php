@@ -13,9 +13,11 @@ use Throwable;
 
 class NotAuthorizedException extends \DomainException
 {
-	public function __construct(string $message = "", int $code = 0, Throwable $previous = null)
-	{
-		if($code === 0) $code = 403;
+	public function __construct(
+		string $message = "Forbidden",
+		int $code = 403,
+		Throwable $previous = null
+	) {
 		parent::__construct($message, $code, $previous);
 	}
 }

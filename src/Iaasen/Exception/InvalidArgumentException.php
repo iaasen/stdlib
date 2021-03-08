@@ -10,9 +10,11 @@ namespace Iaasen\Exception;
 
 class InvalidArgumentException extends \InvalidArgumentException
 {
-	public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
-	{
-		if($code === 0) $code = 400;
+	public function __construct(
+		string $message = "Bad request",
+		int $code = 400,
+		\Throwable $previous = null
+	) {
 		parent::__construct($message, $code, $previous);
 	}
 

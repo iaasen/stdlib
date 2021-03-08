@@ -11,6 +11,11 @@ namespace Iaasen\Exception;
 
 use Throwable;
 
+/**
+ * Class AuthenticationException
+ * @package Iaasen\Exception
+ * @deprecated Should use NotAuthorizedException or NotAuthenticatedException
+ */
 class AuthenticationException extends \DomainException
 {
 	public function __construct(string $message = "", int $code = 0, Throwable $previous = null)

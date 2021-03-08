@@ -13,9 +13,11 @@ use Throwable;
 
 class NotFoundException extends \DomainException
 {
-	public function __construct(string $message = "", int $code = 0, Throwable $previous = null)
-	{
-		if($code === 0) $code = 404;
+	public function __construct(
+		string $message = "The requested resource could not be found",
+		int $code = 404,
+		Throwable $previous = null
+	) {
 		parent::__construct($message, $code, $previous);
 	}
 }
