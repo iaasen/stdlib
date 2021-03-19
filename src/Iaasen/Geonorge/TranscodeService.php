@@ -21,7 +21,7 @@ class TranscodeService
 	const BASE_URL = 'https://ws.geonorge.no/transApi/';
 
 	public static $latitudeBands = [
-		'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'X'
+		'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X'
 	];
 
 	// See https://www.kartverket.no/Kart/transformere-koordinater/
@@ -52,7 +52,7 @@ class TranscodeService
 		];
 		$data = json_decode($this->transport->sendGet($url, $query));
 		$latitudeBand = self::$latitudeBands[($latitude + 80) / 8];
-		return new LocationUtm($data->ost, $data->nord, $zone . $latitudeBand);
+		return new LocationUtm($data->nord, $data->ost, $zone . $latitudeBand);
 	}
 
 }
