@@ -11,8 +11,8 @@ use Laminas\Form\View\Helper\FormElementErrors;
 
 class FormRowHorizontal extends AbstractHelper
 {
-	public $rowClass = 'form-group';
-	public $labelClass = 'col-sm-3 control-label';
+	public $rowClass = 'form-group row';
+	public $labelClass = 'col-sm-3 control-label col-form-label';
 	public $elementDivClass = 'col-sm-9';
 	public $inputClass = 'form-control';
 	public $submitDivClass = 'col-sm-9 col-sm-offset-3 text-right';
