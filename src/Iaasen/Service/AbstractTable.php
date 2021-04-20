@@ -158,7 +158,7 @@ abstract class AbstractTable
 	}
 
 	protected function selectToObjects(Select $select) : array {
-		return $this->convertRowSetToArray($rows = $this->primaryGateway->selectWith($select));
+		return $this->convertRowSetToArray($this->primaryGateway->selectWith($select));
 	}
 
 	protected function whereToObjects(Where $where) : array {
@@ -221,6 +221,13 @@ abstract class AbstractTable
 //			$objectKeyMatrix[$object->$key][] = $object;
 //		}
 //		return $objectKeyMatrix;
+	}
+
+	protected function getArrayKeyMatrix(array $array, string $key = 'id') : array {
+		return array_reduce($array, function($carry, $item) use($key) {
+			$carry[$item[$key]][] = $item;
+			return $carry;
+		}, []);
 	}
 
 	/**
