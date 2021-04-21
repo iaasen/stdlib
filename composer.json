@@ -1,6 +1,6 @@
 {
     "name": "iaasen/stdlib",
-    "description": "A collection of abstract and base classes supporting they way I like to use Zend Framework",
+    "description": "An adaption to Laminas framework",
     "license": "proprietary",
     "keywords": [],
     "require": {

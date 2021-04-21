@@ -10,7 +10,7 @@ namespace Iaasen\Console;
 
 use Laminas\Console\ColorInterface AS Color;
 use Laminas\Console\Console;
-use Laminas\Log\Writer\Stream AS ZendStream;
+use Laminas\Log\Writer\Stream AS LaminasStream;
 use Laminas\Log\Logger AS LaminasLogger;
 
 class Logger
@@ -31,7 +31,7 @@ class Logger
 
 		$stream = @fopen($logFileName, 'a');
 		if(!$stream) throw new \DomainException("Unable to open log-file: " . $logFileName);
-		$writer = new ZendStream($stream);
+		$writer = new LaminasStream($stream);
 		self::$loggerInstance = new LaminasLogger();
 		self::$loggerInstance->addWriter($writer);
 		return self::$loggerInstance;
