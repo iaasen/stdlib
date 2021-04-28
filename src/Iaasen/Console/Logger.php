@@ -49,61 +49,61 @@ class Logger
 	/**
 	 * Color: white
 	 */
-	public static function debug($message) {
-		self::log($message, LaminasLogger::DEBUG);
+	public static function debug(string $message, bool $rewriteLastLine = false) {
+		self::log($message, LaminasLogger::DEBUG, $rewriteLastLine);
 	}
 
 	/**
 	 * Color: white
 	 */
-	public static function info($message, $rewriteLastLine = false) {
+	public static function info(string $message, bool $rewriteLastLine = false) {
 		self::log($message, LaminasLogger::INFO, $rewriteLastLine);
 	}
 
 	/**
 	 * Color: cyan
 	 */
-	public static function notice($message) {
-		self::log($message, LaminasLogger::NOTICE);
+	public static function notice(string $message, bool $rewriteLastLine = false) {
+		self::log($message, LaminasLogger::NOTICE, $rewriteLastLine);
 	}
 
 	/**
 	 * Color: yellow
 	 */
-	public static function warn($message) {
-		self::log($message, LaminasLogger::WARN);
+	public static function warn(string $message, bool $rewriteLastLine = false) {
+		self::log($message, LaminasLogger::WARN, $rewriteLastLine);
 	}
 
 	/**
 	 * Color: red
 	 */
-	public static function err($message) {
-		self::log($message, LaminasLogger::ERR);
+	public static function err(string $message, bool $rewriteLastLine = false) {
+		self::log($message, LaminasLogger::ERR, $rewriteLastLine);
 	}
 
 	/**
 	 * Color: red
 	 */
-	public static function crit($message) {
-		self::log($message, LaminasLogger::CRIT);
+	public static function crit(string $message, bool $rewriteLastLine = false) {
+		self::log($message, LaminasLogger::CRIT, $rewriteLastLine);
 	}
 
 	/**
 	 * Color: red
 	 */
 
-	public static function alert($message) {
-		self::log($message, LaminasLogger::ALERT);
+	public static function alert(string $message, bool $rewriteLastLine = false) {
+		self::log($message, LaminasLogger::ALERT, $rewriteLastLine);
 	}
 
 	/**
 	 * Color: red
 	 */
-	public static function emerg(string $message) : void {
-		self::log($message, LaminasLogger::EMERG);
+	public static function emerg(string $message, bool $rewriteLastLine = false) : void {
+		self::log($message, LaminasLogger::EMERG, $rewriteLastLine);
 	}
 
-	public static function log($message, $severity, $rewriteLastLine = false) {
+	public static function log(string $message, int $severity, bool $rewriteLastLine = false) {
 		self::getInstance()->log($severity, $message);
 
 		switch($severity) {
