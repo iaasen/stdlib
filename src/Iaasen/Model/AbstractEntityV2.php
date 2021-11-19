@@ -50,6 +50,12 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	}
 
 
+	public function __wakeup()
+	{
+		self::generateDocBlockData();
+	}
+
+
 	private function generateDocBlockData($class = null) {
 		if(!$class) $class = get_class($this);
 		if(!isset(self::$docBlockData[$class])) {
@@ -107,8 +113,8 @@ class AbstractEntityV2 implements ModelInterfaceV2
 
 	protected function getDocBlock(?string $class = null) : ?array {
 		if(!$class) $class = get_class($this);
-		if(isset(self::$docBlockData[$class])) return self::$docBlockData[$class];
-		else return $this->generateDocBlockData();
+		if(!isset(self::$docBlockData[$class])) $this->generateDocBlockData();
+		return self::$docBlockData[$class];
 
 	}
 
