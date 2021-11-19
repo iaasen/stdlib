@@ -35,9 +35,15 @@ class Time
 		12 => 'desember',
 	];
 
-	public static function format(\DateTime $dateTime, int $format = 1) : string {
+	/**
+	 * @param \DateTime $dateTime
+	 * @param int|string $format
+	 * @return string
+	 */
+	public static function format(\DateTime $dateTime, $format = 1) : string {
 		$dateFormatter = new IntlDateFormatter('nb_NO', IntlDateFormatter::SHORT, IntlDateFormatter::SHORT);
-		$dateFormatter->setPattern(self::DATE_FORMATS[$format]);
+		if(is_string($format)) $dateFormatter->setPattern($format);
+		else $dateFormatter->setPattern(self::DATE_FORMATS[$format]);
 		return $dateFormatter->format($dateTime);
 	}
 
