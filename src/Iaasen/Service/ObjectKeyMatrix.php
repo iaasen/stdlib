@@ -38,4 +38,21 @@ class ObjectKeyMatrix
 			}
 		}
 	}
+
+
+	/**
+	 * @param array $objectKeyMatrix The object matrix given by getObjectKeyMatrix()
+	 * @param string $attribute The attribute to populate to in the parent object
+	 * @param array $childObjects The child objects to populate
+	 * @param string $childKey The child object key used to match against the object matrix
+	 */
+	public static function populateObjectKeyMatrixWithAttribute(array $objectKeyMatrix, string $attribute, array $childObjects, string $childKey) : void {
+		foreach($childObjects AS $childObject) {
+			if(isset($objectKeyMatrix[$childObject->$childKey])) {
+				foreach($objectKeyMatrix[$childObject->$childKey] AS $object) {
+					$object->$attribute = $childObject;
+				}
+			}
+		}
+	}
 }
