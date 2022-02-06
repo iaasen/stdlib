@@ -4,7 +4,7 @@
     "license": "proprietary",
     "keywords": [],
     "require": {
-        "php": "^7.3|^8",
+        "php": "^7.4|^8",
         "ext-intl": "*",
         "ext-json": "*",
         "laminas/laminas-db": "^2",
