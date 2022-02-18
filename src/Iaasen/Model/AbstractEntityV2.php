@@ -1,6 +1,5 @@
 <?php
 /**
- * Created by PhpStorm.
  * User: ingvar.aasen
  * Date: 08.03.2016
  * Time: 15:27
@@ -67,45 +66,63 @@ class AbstractEntityV2 implements ModelInterfaceV2
 				if($property->isStatic()) continue;
 				if($property->name == 'throwExceptionOnMissingProperty') continue;
 
-				// Read docBlock
-				$annotation = $docBlockFactory->create($property->getDocComment());
-				if(!$annotation->hasTag('var')) throw new \LogicException("Property '$property->name' must have a @var tag in " . get_class($this), 500);
-				/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
-				$tag = $annotation->getTagsByName('var')[0];
-				$type = $tag->getType();
+				// Get by docBlock
+				$annotation = $property->getDocComment();
+				if($annotation) $annotation = $docBlockFactory->create($property->getDocComment());
+				if($annotation && $annotation->hasTag('var')) {
+					/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
+					$tag = $annotation->getTagsByName('var')[0];
+					$type = $tag->getType();
 
-				// Array of objects
-				if($type instanceof Array_ && $type->getValueType() instanceof Object_) {
-					$doc = [
-						'type' => 'objectArray',
-						'value' => $type->getValueType()->__toString(),
-					];
-				}
-				// Object
-				elseif($type instanceof Object_) {
-					if($type->__toString() == '\stdClass') {
+					// Array of objects
+					if($type instanceof Array_ && $type->getValueType() instanceof Object_) {
 						$doc = [
-							'type' => 'stdClass',
+							'type' => 'objectArray',
+							'value' => $type->getValueType()->__toString(),
+						];
+					}
+					// Object
+					elseif($type instanceof Object_) {
+						$doc = [
+							'type' => $type->__toString() == '\stdClass' ? 'stdClass' : 'object',
 							'value' => $type->__toString(),
 						];
 					}
+					// Primitive type
 					else {
 						$doc = [
-							'type' => 'object',
+							'type' => 'primitive',
 							'value' => $type->__toString(),
 						];
 					}
-				}
-				// Primitive type
-				else {
-					$doc = [
-						'type' => 'primitive',
-						'value' => $type->__toString(),
-					];
+					// Save to static
+					self::$docBlockData[$class][$property->name] = $doc;
 				}
 
-				// Save to static
-				self::$docBlockData[$class][$property->name] = $doc;
+
+				// Get by property type
+				else {
+					$reflection = new ReflectionProperty(get_class($this), $property->name);
+					if(!$reflection->hasType()) throw new \LogicException("Property '$property->name' must have a @var tag or property type declaration in " . get_class($this), 500);
+
+					$reflection = $reflection->getType();
+//					if($reflection->getName() == 'object') throw new \LogicException("'object' property is not allowed", 500);
+//					if($reflection->getName() == 'array') throw new \LogicException("'array' property must be specified in a @var comment", 500);
+
+					if($reflection->getName() == 'object') $doc = [
+						'type' => 'object',
+						'value' => $reflection->getName(),
+					];
+					elseif($reflection->isBuiltin()) $doc = [
+						'type' => 'primitive',
+						'value' => $reflection->getName(),
+					];
+					else $doc = [
+						'type' => 'object',
+						'value' => '\\' . $reflection->getName(),
+					];
+					self::$docBlockData[$class][$property->name] = $doc;
+				}
 			}
 		}
 	}
