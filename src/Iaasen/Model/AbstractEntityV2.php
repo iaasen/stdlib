@@ -27,18 +27,16 @@ use ReflectionProperty;
  */
 class AbstractEntityV2 implements ModelInterfaceV2
 {
-	/** @var array */
-	protected static $docBlockData;
+	protected static array $docBlockData;
 	/** @var string  */
 	const MYSQL_TIME_FORMAT = 'Y-m-d H:i:s';
 
 	/**
 	 * if set to true an Exception will be sent when trying to set a property that is not defined
-	 * @var bool  */
-	protected $throwExceptionOnMissingProperty = false;
+	 */
+	protected bool $throwExceptionOnMissingProperty = false;
 
 	/**
-	 * AbstractEntity constructor.
 	 * @param array|\stdClass $data
 	 */
 	public function __construct($data = [])
@@ -136,6 +134,10 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	}
 
 
+	/**
+ 	 * Called when object is created from database by TableGateway
+	 * Called when form is validated
+	 */
 	public function exchangeArray($data) {
 		foreach($data AS $key => $value) {
 			$this->__set($key, $value);
@@ -143,6 +145,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	}
 
 	/**
+	 * Called by \Laminas\Form::bind()
 	 * We don't include static variables. Should we?
 	 * @return array
 	 */
@@ -182,11 +185,13 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	{
 		// Look for getter method (getField())
 		$getterName = 'get' . ucfirst($name);
-		if(method_exists($this, $getterName)) {
-			return $this->$getterName();
-		}
-		// Default behaviour
-		return $this->$name;
+		if(method_exists($this, $getterName)) return $this->$getterName();
+		// Property exists
+		if(isset(self::$docBlockData[get_class($this)][$name])) return $this->$name;
+		// Property missing
+		if($this->throwExceptionOnMissingProperty)
+			throw new InvalidArgumentException("Property '$name' not found or is private in " . get_class($this));
+		else return null;
 	}
 
 
@@ -334,15 +339,8 @@ class AbstractEntityV2 implements ModelInterfaceV2
 						break;
 				}
 			}
-			elseif($property['type'] == 'object') {
-				switch($property['value']) {
-					case '\DateTime':
-					case 'DateTime':
-						/** @var DateTime $value */
-						if(isset($this->$key) && $this->$key) $data[$key] = $this->$key->format('Y-m-d H:i:s');
-						else $data[$key] = null;
-						break;
-				}
+			elseif($this->$key instanceof \DateTime) {
+				$data[$key] = $this->$key->format(self::MYSQL_TIME_FORMAT);
 			}
 		}
 		return $data;
