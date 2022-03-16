@@ -43,11 +43,12 @@ abstract class AbstractModel extends ArrayObject  implements ModelInterface
 
 
 
-	public function __construct()
+	public function __construct(?array $data = null)
 	{
 		$this->generateDocBlockData();
 		$this->timestamp_created = new DateTime();
 		$this->timestamp_updated = $this->timestamp_created;
+		if($data) $this->exchangeArray($data);
 		parent::__construct();
 	}
 
