@@ -138,7 +138,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
  	 * Called when object is created from database by TableGateway
 	 * Called when form is validated
 	 */
-	public function exchangeArray($data) {
+	public function exchangeArray($data) : void {
 		foreach($data AS $key => $value) {
 			$this->__set($key, $value);
 		}
