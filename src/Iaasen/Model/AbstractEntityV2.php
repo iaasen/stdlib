@@ -12,7 +12,9 @@ use Exception;
 use Iaasen\Exception\InvalidArgumentException;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Types\Array_;
+use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\Object_;
+use phpDocumentor\Reflection\Types\String_;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -71,27 +73,34 @@ class AbstractEntityV2 implements ModelInterfaceV2
 					/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
 					$tag = $annotation->getTagsByName('var')[0];
 					$type = $tag->getType();
+					$doc = ['nullable' => false];
+					if($type instanceof Nullable) $doc['nullable'] = true;
 
 					// Array of objects
-					if($type instanceof Array_ && $type->getValueType() instanceof Object_) {
-						$doc = [
-							'type' => 'objectArray',
-							'value' => $type->getValueType()->__toString(),
-						];
+					if($type instanceof Array_) {
+						$type = $type->getValueType();
+						if($type instanceof Nullable) {
+							$doc['nullable'] = true;
+							$type = $type->getActualType();
+						}
+						if($type instanceof Object_) {
+							$doc['type'] = 'objectArray';
+							$doc['value'] = $type->__toString();
+						}
+						else {
+							$doc['type'] = 'array';
+							$doc['value'] = 'mixed';
+						}
 					}
 					// Object
 					elseif($type instanceof Object_) {
-						$doc = [
-							'type' => $type->__toString() == '\stdClass' ? 'stdClass' : 'object',
-							'value' => $type->__toString(),
-						];
+						$doc['type'] = $type->__toString() == '\stdClass' ? 'stdClass' : 'object';
+						$doc['value'] = $type->__toString();
 					}
 					// Primitive type
 					else {
-						$doc = [
-							'type' => 'primitive',
-							'value' => $type->__toString(),
-						];
+						$doc['type'] = 'primitive';
+						$doc['value'] = $type->__toString();
 					}
 					// Save to static
 					self::$docBlockData[$class][$property->name] = $doc;
@@ -104,10 +113,11 @@ class AbstractEntityV2 implements ModelInterfaceV2
 					if(!$reflection->hasType()) throw new \LogicException("Property '$property->name' must have a @var tag or property type declaration in " . get_class($this), 500);
 
 					$reflection = $reflection->getType();
-//					if($reflection->getName() == 'object') throw new \LogicException("'object' property is not allowed", 500);
-//					if($reflection->getName() == 'array') throw new \LogicException("'array' property must be specified in a @var comment", 500);
-
-					if($reflection->getName() == 'object') $doc = [
+					if($reflection->getName() == 'array') $doc = [
+						'type' => 'array',
+						'value' => 'mixed',
+					];
+					elseif($reflection->getName() == 'object') $doc = [
 						'type' => 'object',
 						'value' => $reflection->getName(),
 					];
@@ -119,6 +129,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 						'type' => 'object',
 						'value' => '\\' . $reflection->getName(),
 					];
+					$doc['nullable'] = $reflection->allowsNull();
 					self::$docBlockData[$class][$property->name] = $doc;
 				}
 			}
@@ -216,11 +227,22 @@ class AbstractEntityV2 implements ModelInterfaceV2
 			else return;
 		}
 
-		if($doc['type'] == 'objectArray') {
+		if(is_null($value) && $doc['nullable']) $this->$name = $value;
+		elseif($doc['type'] == 'objectArray') {
 			$this->setObjectArray($doc['value'], $name, $value);
 		}
 		elseif($doc['type'] == 'object') {
 			$this->setObject($doc['value'], $name, $value);
+		}
+		elseif($doc['type'] == 'array') {
+			if(is_object($value)) $this->$name = (array) $value;
+			elseif(
+				is_string($value) &&
+				in_array(substr($value, 0, 1), ['{', '['])
+			) {
+				$this->$name = (array) json_decode($value);
+			}
+			else $this->$name = $value;
 		}
 		else {
 			switch($doc['value']) {
@@ -236,9 +258,6 @@ class AbstractEntityV2 implements ModelInterfaceV2
 				case 'string':
 					$this->$name = (string) $value;
 					break;
-				case 'string[]':
-				case 'int[]':
-				case 'mixed[]':
 				case 'array':
 					if(is_object($value)) $this->$name = (array) $value;
 					elseif(is_string($value)) {
