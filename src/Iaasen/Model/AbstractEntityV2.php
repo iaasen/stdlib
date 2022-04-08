@@ -165,24 +165,26 @@ class AbstractEntityV2 implements ModelInterfaceV2
 
 		$data = [];
 		foreach($doc AS $key => $property) {
-			$value = $this->__get($key);
-			if(is_null($value)) $data[$key] = $value;
-			elseif($property['type'] == 'objectArray') {
-				if(count($value)) {
-					foreach($value AS $rowNumber => $row) {
-						$data[$key][$rowNumber] = $row->getArrayCopy();
+			if($this->isInitialized($key)) {
+				$value = $this->__get($key);
+				if(is_null($value)) $data[$key] = $value;
+				elseif($property['type'] == 'objectArray') {
+					if(count($value)) {
+						foreach($value AS $rowNumber => $row) {
+							$data[$key][$rowNumber] = $row->getArrayCopy();
+						}
 					}
+					else $data[$key] = $value;
 				}
-				else $data[$key] = $value;
-			}
-			elseif($property['type'] == 'stdClass') {
-				$data[$key] = (array) $value;
-			}
-			elseif($property['type'] == 'object') {
-				$data[$key] = $value->getArrayCopy();
-			}
-			else {
-				$data[$key] = $value;
+				elseif($property['type'] == 'stdClass') {
+					$data[$key] = (array) $value;
+				}
+				elseif($property['type'] == 'object') {
+					$data[$key] = $value->getArrayCopy();
+				}
+				else {
+					$data[$key] = $value;
+				}
 			}
 		}
 		return $data;
@@ -203,6 +205,12 @@ class AbstractEntityV2 implements ModelInterfaceV2
 		if($this->throwExceptionOnMissingProperty)
 			throw new InvalidArgumentException("Property '$name' not found or is private in " . get_class($this));
 		else return null;
+	}
+
+
+	public function isInitialized(string $name) : bool {
+		if(method_exists($this, 'get' . ucfirst($name))) return true;
+		else return isset($this->$name);
 	}
 
 
