@@ -2,19 +2,17 @@
 /**
  * User: ingvar.aasen
  * Date: 08.03.2016
- * Time: 15:27
  */
 
 namespace Iaasen\Model;
 
-use \Iaasen\DateTime;
+use Iaasen\DateTime;
 use Exception;
 use Iaasen\Exception\InvalidArgumentException;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\Object_;
-use phpDocumentor\Reflection\Types\String_;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -22,7 +20,9 @@ use ReflectionProperty;
  * Class AbstractEntityV2
  * @package Iaasen
  *
- * Intended to be the simplest possible object with possibility for type casting and setters.
+ * Will enforce type casting without having to make getters and setters for every attributes
+ * Will follow Docblock if set, otherwise follow property types.
+ * Any getters/setters will override default behaviour
  * Intended to be used with REST services. The API server vil get properties from getArrayCopy()
  * Properties should be defined as protected to ensure automatic setters and getters.
  *
@@ -186,6 +186,12 @@ class AbstractEntityV2 implements ModelInterfaceV2
 					$data[$key] = $value;
 				}
 			}
+			elseif($property['nullable']) {
+				try {
+					if(is_null($this->$key)) $data[$key] = null;
+				}
+				catch(\Error $e) {}
+			}
 		}
 		return $data;
 	}
@@ -291,6 +297,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 				break;
 			case '\DateTime':
 			case 'DateTime':
+			case '\Iaasen\DateTime':
 				if(is_null($value)) $this->$name = null;
 				elseif(is_string($value)) $this->$name = (strlen($value)) ? new DateTime($value) : null;
 				elseif($value instanceof \DateTime) $this->$name = new DateTime($value->format('c'));
@@ -366,8 +373,8 @@ class AbstractEntityV2 implements ModelInterfaceV2
 						break;
 				}
 			}
-			elseif($this->$key instanceof \DateTime) {
-				$data[$key] = $this->$key->format(self::MYSQL_TIME_FORMAT);
+			elseif(in_array($property['value'], ['\DateTime', 'DateTime', '\Iaasen\DateTime'])) {
+				if(isset($data[$key])) $data[$key] = $this->$key->format(self::MYSQL_TIME_FORMAT);
 			}
 		}
 		return $data;
