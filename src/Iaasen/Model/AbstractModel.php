@@ -29,12 +29,15 @@ abstract class AbstractModel extends ArrayObject  implements ModelInterface
 {
 	/** @var array */
 	protected static $docBlockData;
+    /** @var string  */
+    const MYSQL_TIME_FORMAT = 'Y-m-d H:i:s';
+
+    /** @var int */
+    protected $id;
 	/** @var DateTime */
 	protected $timestamp_created;
 	/** @var DateTime */
 	protected $timestamp_updated;
-	/** @var string  */
-	const MYSQL_TIME_FORMAT = 'Y-m-d H:i:s';
 
 	/**
 	 * if set to true an Exception will be sent when trying to set a property that is not defined

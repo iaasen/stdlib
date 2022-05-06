@@ -23,6 +23,15 @@ class ObjectKeyMatrix
 		}, []);
 	}
 
+
+    public static function getArrayKeyMatrix(array $array, string $key = 'id') : array {
+        return array_reduce($array, function($carry, $item) use($key) {
+            $carry[$item[$key]][] = $item;
+            return $carry;
+        }, []);
+    }
+
+
 	/**
 	 * @param array $objectKeyMatrix The object matrix given by getObjectKeyMatrix()
 	 * @param string $objectFunction What function to call on parent object to add child object

@@ -208,6 +208,7 @@ abstract class AbstractTable
 	 * @param mixed[] $objects
 	 * @param string $key
 	 * @return mixed[]
+     * @deprecated Use ObjectKeyMatrix class
 	 */
 	protected function getObjectKeyMatrix(array $objects, string $key = 'id') : array {
 		return array_reduce($objects, function($carry, $item) use($key) {
@@ -223,6 +224,9 @@ abstract class AbstractTable
 //		return $objectKeyMatrix;
 	}
 
+    /**
+     * @deprecated Use ObjectMatrixClass
+     */
 	protected function getArrayKeyMatrix(array $array, string $key = 'id') : array {
 		return array_reduce($array, function($carry, $item) use($key) {
 			$carry[$item[$key]][] = $item;
@@ -235,6 +239,7 @@ abstract class AbstractTable
 	 * @param string $objectFunction What function to call on parent object
 	 * @param mixed[] $childObjects The child objects to populate from
 	 * @param string $childKey The child object attribute used to match against the object matrix
+     * @deprecated Use ObjectKeyMatrix class
 	 */
 	protected function populateObjectKeyMatrixWithFunctionCall(array $objectKeyMatrix, string $objectFunction, array $childObjects, string $childKey) : void {
 		foreach($childObjects AS $childObject) {
