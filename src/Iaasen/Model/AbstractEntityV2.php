@@ -1,18 +1,17 @@
 <?php
 /**
- * Created by PhpStorm.
  * User: ingvar.aasen
  * Date: 08.03.2016
- * Time: 15:27
  */
 
 namespace Iaasen\Model;
 
-use \Iaasen\DateTime;
+use Iaasen\DateTime;
 use Exception;
 use Iaasen\Exception\InvalidArgumentException;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Types\Array_;
+use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\Object_;
 use ReflectionClass;
 use ReflectionProperty;
@@ -21,25 +20,25 @@ use ReflectionProperty;
  * Class AbstractEntityV2
  * @package Iaasen
  *
- * Intended to be the simplest possible object with possibility for type casting and setters.
+ * Will enforce type casting without having to make getters and setters for every attributes
+ * Will follow Docblock if set, otherwise follow property types.
+ * Any getters/setters will override default behaviour
  * Intended to be used with REST services. The API server vil get properties from getArrayCopy()
  * Properties should be defined as protected to ensure automatic setters and getters.
  *
  */
 class AbstractEntityV2 implements ModelInterfaceV2
 {
-	/** @var array */
-	protected static $docBlockData;
+	protected static array $docBlockData;
 	/** @var string  */
 	const MYSQL_TIME_FORMAT = 'Y-m-d H:i:s';
 
 	/**
 	 * if set to true an Exception will be sent when trying to set a property that is not defined
-	 * @var bool  */
-	protected $throwExceptionOnMissingProperty = false;
+	 */
+	protected bool $throwExceptionOnMissingProperty = false;
 
 	/**
-	 * AbstractEntity constructor.
 	 * @param array|\stdClass $data
 	 */
 	public function __construct($data = [])
@@ -67,45 +66,72 @@ class AbstractEntityV2 implements ModelInterfaceV2
 				if($property->isStatic()) continue;
 				if($property->name == 'throwExceptionOnMissingProperty') continue;
 
-				// Read docBlock
-				$annotation = $docBlockFactory->create($property->getDocComment());
-				if(!$annotation->hasTag('var')) throw new \LogicException("Property '$property->name' must have a @var tag in " . get_class($this), 500);
-				/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
-				$tag = $annotation->getTagsByName('var')[0];
-				$type = $tag->getType();
+				// Get by docBlock
+				$annotation = $property->getDocComment();
+				if($annotation) $annotation = $docBlockFactory->create($property->getDocComment());
+				if($annotation && $annotation->hasTag('var')) {
+					/** @var \phpDocumentor\Reflection\DocBlock\Tags\Var_ $tag */
+					$tag = $annotation->getTagsByName('var')[0];
+					$type = $tag->getType();
+					$doc = ['nullable' => false];
+					if($type instanceof Nullable) $doc['nullable'] = true;
 
-				// Array of objects
-				if($type instanceof Array_ && $type->getValueType() instanceof Object_) {
-					$doc = [
-						'type' => 'objectArray',
-						'value' => $type->getValueType()->__toString(),
-					];
-				}
-				// Object
-				elseif($type instanceof Object_) {
-					if($type->__toString() == '\stdClass') {
-						$doc = [
-							'type' => 'stdClass',
-							'value' => $type->__toString(),
-						];
+					// Array of objects
+					if($type instanceof Array_) {
+						$type = $type->getValueType();
+						if($type instanceof Nullable) {
+							$doc['nullable'] = true;
+							$type = $type->getActualType();
+						}
+						if($type instanceof Object_) {
+							$doc['type'] = 'objectArray';
+							$doc['value'] = $type->__toString();
+						}
+						else {
+							$doc['type'] = 'array';
+							$doc['value'] = 'mixed';
+						}
 					}
+					// Object
+					elseif($type instanceof Object_) {
+						$doc['type'] = $type->__toString() == '\stdClass' ? 'stdClass' : 'object';
+						$doc['value'] = $type->__toString();
+					}
+					// Primitive type
 					else {
-						$doc = [
-							'type' => 'object',
-							'value' => $type->__toString(),
-						];
+						$doc['type'] = 'primitive';
+						$doc['value'] = $type->__toString();
 					}
-				}
-				// Primitive type
-				else {
-					$doc = [
-						'type' => 'primitive',
-						'value' => $type->__toString(),
-					];
+					// Save to static
+					self::$docBlockData[$class][$property->name] = $doc;
 				}
 
-				// Save to static
-				self::$docBlockData[$class][$property->name] = $doc;
+
+				// Get by property type
+				else {
+					$reflection = new ReflectionProperty(get_class($this), $property->name);
+					if(!$reflection->hasType()) throw new \LogicException("Property '$property->name' must have a @var tag or property type declaration in " . get_class($this), 500);
+
+					$reflection = $reflection->getType();
+					if($reflection->getName() == 'array') $doc = [
+						'type' => 'array',
+						'value' => 'mixed',
+					];
+					elseif($reflection->getName() == 'object') $doc = [
+						'type' => 'object',
+						'value' => $reflection->getName(),
+					];
+					elseif($reflection->isBuiltin()) $doc = [
+						'type' => 'primitive',
+						'value' => $reflection->getName(),
+					];
+					else $doc = [
+						'type' => 'object',
+						'value' => '\\' . $reflection->getName(),
+					];
+					$doc['nullable'] = $reflection->allowsNull();
+					self::$docBlockData[$class][$property->name] = $doc;
+				}
 			}
 		}
 	}
@@ -119,13 +145,18 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	}
 
 
-	public function exchangeArray($data) {
+	/**
+ 	 * Called when object is created from database by TableGateway
+	 * Called when form is validated
+	 */
+	public function exchangeArray($data) : void {
 		foreach($data AS $key => $value) {
 			$this->__set($key, $value);
 		}
 	}
 
 	/**
+	 * Called by \Laminas\Form::bind()
 	 * We don't include static variables. Should we?
 	 * @return array
 	 */
@@ -134,24 +165,32 @@ class AbstractEntityV2 implements ModelInterfaceV2
 
 		$data = [];
 		foreach($doc AS $key => $property) {
-			$value = $this->__get($key);
-			if(is_null($value)) $data[$key] = $value;
-			elseif($property['type'] == 'objectArray') {
-				if(count($value)) {
-					foreach($value AS $rowNumber => $row) {
-						$data[$key][$rowNumber] = $row->getArrayCopy();
+			if($this->isInitialized($key)) {
+				$value = $this->__get($key);
+				if(is_null($value)) $data[$key] = $value;
+				elseif($property['type'] == 'objectArray') {
+					if(count($value)) {
+						foreach($value AS $rowNumber => $row) {
+							$data[$key][$rowNumber] = $row->getArrayCopy();
+						}
 					}
+					else $data[$key] = $value;
 				}
-				else $data[$key] = $value;
+				elseif($property['type'] == 'stdClass') {
+					$data[$key] = (array) $value;
+				}
+				elseif($property['type'] == 'object') {
+					$data[$key] = $value->getArrayCopy();
+				}
+				else {
+					$data[$key] = $value;
+				}
 			}
-			elseif($property['type'] == 'stdClass') {
-				$data[$key] = (array) $value;
-			}
-			elseif($property['type'] == 'object') {
-				$data[$key] = $value->getArrayCopy();
-			}
-			else {
-				$data[$key] = $value;
+			elseif($property['nullable']) {
+				try {
+					if(is_null($this->$key)) $data[$key] = null;
+				}
+				catch(\Error $e) {}
 			}
 		}
 		return $data;
@@ -165,11 +204,19 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	{
 		// Look for getter method (getField())
 		$getterName = 'get' . ucfirst($name);
-		if(method_exists($this, $getterName)) {
-			return $this->$getterName();
-		}
-		// Default behaviour
-		return $this->$name;
+		if(method_exists($this, $getterName)) return $this->$getterName();
+		// Property exists
+		if(isset(self::$docBlockData[get_class($this)][$name])) return $this->$name;
+		// Property missing
+		if($this->throwExceptionOnMissingProperty)
+			throw new InvalidArgumentException("Property '$name' not found or is private in " . get_class($this));
+		else return null;
+	}
+
+
+	public function isInitialized(string $name) : bool {
+		if(method_exists($this, 'get' . ucfirst($name))) return true;
+		else return isset($this->$name);
 	}
 
 
@@ -194,11 +241,22 @@ class AbstractEntityV2 implements ModelInterfaceV2
 			else return;
 		}
 
-		if($doc['type'] == 'objectArray') {
+		if(is_null($value) && $doc['nullable']) $this->$name = $value;
+		elseif($doc['type'] == 'objectArray') {
 			$this->setObjectArray($doc['value'], $name, $value);
 		}
 		elseif($doc['type'] == 'object') {
 			$this->setObject($doc['value'], $name, $value);
+		}
+		elseif($doc['type'] == 'array') {
+			if(is_object($value)) $this->$name = (array) $value;
+			elseif(
+				is_string($value) &&
+				in_array(substr($value, 0, 1), ['{', '['])
+			) {
+				$this->$name = (array) json_decode($value);
+			}
+			else $this->$name = $value;
 		}
 		else {
 			switch($doc['value']) {
@@ -214,9 +272,6 @@ class AbstractEntityV2 implements ModelInterfaceV2
 				case 'string':
 					$this->$name = (string) $value;
 					break;
-				case 'string[]':
-				case 'int[]':
-				case 'mixed[]':
 				case 'array':
 					if(is_object($value)) $this->$name = (array) $value;
 					elseif(is_string($value)) {
@@ -242,6 +297,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 				break;
 			case '\DateTime':
 			case 'DateTime':
+			case '\Iaasen\DateTime':
 				if(is_null($value)) $this->$name = null;
 				elseif(is_string($value)) $this->$name = (strlen($value)) ? new DateTime($value) : null;
 				elseif($value instanceof \DateTime) $this->$name = new DateTime($value->format('c'));
@@ -317,15 +373,8 @@ class AbstractEntityV2 implements ModelInterfaceV2
 						break;
 				}
 			}
-			elseif($property['type'] == 'object') {
-				switch($property['value']) {
-					case '\DateTime':
-					case 'DateTime':
-						/** @var DateTime $value */
-						if(isset($this->$key) && $this->$key) $data[$key] = $this->$key->format('Y-m-d H:i:s');
-						else $data[$key] = null;
-						break;
-				}
+			elseif(in_array($property['value'], ['\DateTime', 'DateTime', '\Iaasen\DateTime'])) {
+				if(isset($data[$key])) $data[$key] = $this->$key->format(self::MYSQL_TIME_FORMAT);
 			}
 		}
 		return $data;

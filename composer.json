@@ -4,11 +4,10 @@
     "license": "proprietary",
     "keywords": [],
     "require": {
-        "php": "^7.3|^8",
+        "php": "^7.4|^8",
         "ext-intl": "*",
         "ext-json": "*",
         "laminas/laminas-db": "^2",
-        "laminas/laminas-dependency-plugin": "^2",
         "laminas/laminas-modulemanager": "^2",
         "laminas/laminas-navigation": "^2",
         "laminas/laminas-view": "^2",

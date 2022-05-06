@@ -35,6 +35,9 @@ div.message.debugerror {
 use Laminas\Session\Container;
 use Laminas\Stdlib\SplQueue;
 
+/**
+ * @deprecated Use \Iaasen\Messenger\SessionMessenger
+ */
 class Message {
 	
 	private static $messages;
@@ -100,7 +103,7 @@ class Message {
 			}
 		}
 		
-		if(strlen($answer)) $answer = '<div class=messagebox>' . $answer . '</div>';
+		if(strlen($answer)) $answer = '<div class="messagebox">' . $answer . '</div>';
 		return $answer;
 	}
 	
