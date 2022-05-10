@@ -4,6 +4,8 @@ namespace Iaasen;
 
 use Iaasen\Initializer\NavigationInitializer;
 use Iaasen\Initializer\ViewRendererInitializer;
+use Iaasen\Service\LaminasMvcConfig;
+use Iaasen\Mvc\LaminasMvcConfigFactory;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 
 return [
@@ -19,6 +21,7 @@ return [
 			\Oppned\Log\LogTable::class => \Oppned\Log\LogTableFactory::class,
 			\Oppned\Log\LogTableGateway::class => \Oppned\Log\LogTableGatewayFactory::class,
 			\Iaasen\Messenger\EmailService::class => \Iaasen\Messenger\EmailServiceFactory::class,
+			\Iaasen\Service\LaminasMvcConfig::class => \Iaasen\Service\LaminasMvcConfigFactory::class
 		],
 		'invokables' => [
 			\Iaasen\Geonorge\AddressService::class => \Iaasen\Geonorge\AddressService::class,
