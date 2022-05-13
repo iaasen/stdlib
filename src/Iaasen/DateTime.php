@@ -191,6 +191,11 @@ class DateTime extends \DateTime implements \JsonSerializable
 		return isset(self::HOLIDAYS[$this->format('Y-m-d')]);
 	}
 
+
+	public function getHolidayName() : string {
+		return self::HOLIDAYS[$this->format('Y-m-d')] ?? '';
+	}
+
 	public function isWeekend() : bool {
 		return $this->format('N') > 5;
 	}
