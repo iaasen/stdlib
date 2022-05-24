@@ -358,7 +358,7 @@ class AbstractEntity implements ModelInterface
 	}
 
 
-	public function __toString() : string
+	public function __toString()
 	{
 		$data = get_class($this) . PHP_EOL;
 		$data .= @rt($this->databaseSaveArray());
