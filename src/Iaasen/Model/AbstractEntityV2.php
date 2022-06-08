@@ -284,7 +284,15 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	}
 
 
-	protected function setObjectInternal($className, $name, $value) {
+	/**
+	 * @deprecated Use setObjectInternal()
+	 */
+	protected function setObject($className, $name, $value) {
+		$this->setObjectInternal($className, $name, $value);
+	}
+
+
+	protected function setObjectInternal(string $className, string $name, $value) {
 		if(isset($value->_class)) $className = $value->_class;
 
 		switch($className) {
@@ -308,7 +316,15 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	}
 
 
-	protected function setObjectArrayInternal($className, $name, $value) {
+	/**
+	 * @deprecated Use setObjectArrayInternal()
+	 */
+	protected function setObjectArray($className, $name, $value) {
+		$this->setObjectArrayInternal($className, $name, $value);
+	}
+
+
+	protected function setObjectArrayInternal(string $className, string $name, $value) {
 		$this->$name = [];
 		if(is_array($value)) {
 			foreach($value AS $row) {
