@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Ingvar
- * Date: 08.11.2015
- * Time: 14.48
- */
 
 namespace Iaasen\Model;
 
@@ -25,6 +19,5 @@ interface ModelInterfaceV2 extends ArraySerializableInterface
 	public function __clone();
 
     public function __toString() : string;
-
     public function databaseSaveArray() : array;
 }

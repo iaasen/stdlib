@@ -1,12 +1,8 @@
 <?php
-/**
- * User: ingvar.aasen
- * Date: 08.03.2016
- */
 
 namespace Iaasen\Model;
 
-use \Iaasen\DateTime;
+use Iaasen\DateTime;
 use Exception;
 use Iaasen\Exception\InvalidArgumentException;
 use phpDocumentor\Reflection\DocBlockFactory;
@@ -17,21 +13,19 @@ use ReflectionClass;
 use ReflectionProperty;
 
 /**
- * Class AbstractEntity
  * @deprecated Implement Iaasen\Model\AbstractEntityV2
  *
  * This is a copy of AbstractEntityV2 except some function signatures
- * getArrayCopy() is now recursive
- * Protected attributes are now possible
- * Setter functionality is also available on protected attributes
- * Classes extending AbstractEntity and AbstractEntityV2 kan now be linked to each other
+ * Protected attributes are possible
+ * Setter functionality is available on protected attributes
+ * Classes extending AbstractEntity and AbstractEntityV2 can be linked to each other
  *
- * Original functionality:
- * Intended to be the simplest possible object with possibility for type casting and setters.
- * Intended to be used with REST services where an object with public attributes are expected
- * Properties should be defined as public
- * Setter functionality only available through __construct, __set and exchangeArray
- *
+ * Will enforce type casting without having to make getters and setters for every attributes
+ * Will follow Docblock if set, otherwise follow property types.
+ * Any getters/setters will override default behaviour
+ * Intended to be used with REST services. The API server vil get properties from getArrayCopy()
+ * Properties should be defined as protected to ensure automatic setters and getters.
+ * getArrayCopy() is recursive
  */
 class AbstractEntity implements ModelInterface
 {
@@ -43,6 +37,7 @@ class AbstractEntity implements ModelInterface
 	 * if set to true an Exception will be sent when trying to set a property that is not defined
 	 */
 	protected bool $throwExceptionOnMissingProperty = false;
+
 
 	/**
 	 * @param array|\stdClass $data
@@ -112,7 +107,6 @@ class AbstractEntity implements ModelInterface
 					self::$docBlockData[$class][$property->name] = $doc;
 				}
 
-
 				// Get by property type
 				else {
 					$reflection = new ReflectionProperty(get_class($this), $property->name);
@@ -155,11 +149,12 @@ class AbstractEntity implements ModelInterface
 	 * Called when object is created from database by TableGateway
 	 * Called when form is validated
 	 */
-	public function exchangeArray($data) {
-		foreach($data AS $key => $value) {
+	public function exchangeArray($array) {
+		foreach($array AS $key => $value) {
 			$this->__set($key, $value);
 		}
 	}
+
 
 	/**
 	 * Called by \Laminas\Form::bind()
@@ -201,6 +196,7 @@ class AbstractEntity implements ModelInterface
 		}
 		return $data;
 	}
+
 
 	/**
 	 * @param string $name
@@ -294,6 +290,7 @@ class AbstractEntity implements ModelInterface
 		}
 	}
 
+
 	protected function setObject($className, $name, $value) {
 		if(isset($value->_class)) $className = $value->_class;
 
@@ -317,6 +314,7 @@ class AbstractEntity implements ModelInterface
 		}
 	}
 
+
 	protected function setObjectArray($className, $name, $value) {
 		$this->$name = [];
 		if(is_array($value)) {
@@ -334,6 +332,7 @@ class AbstractEntity implements ModelInterface
 		}
 	}
 
+
 	public function __isset($name) : bool
 	{
 		if(!property_exists($this, $name)) return false;
@@ -349,13 +348,12 @@ class AbstractEntity implements ModelInterface
 		if(isset($doc[$name])) $this->$name = null;
 	}
 
+
 	/**
 	 * __clone() is run on the copied object when making a clone using the 'clone' keyword
 	 * @return void
 	 */
-	public function __clone()
-	{
-	}
+	public function __clone() {}
 
 
 	public function __toString()
@@ -364,6 +362,7 @@ class AbstractEntity implements ModelInterface
 		$data .= @rt($this->databaseSaveArray());
 		return $data;
 	}
+
 
 	public function databaseSaveArray()
 	{

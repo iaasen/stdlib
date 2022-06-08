@@ -1,8 +1,4 @@
 <?php
-/**
- * User: ingvar.aasen
- * Date: 08.03.2016
- */
 
 namespace Iaasen\Model;
 
@@ -17,15 +13,12 @@ use ReflectionClass;
 use ReflectionProperty;
 
 /**
- * Class AbstractEntityV2
- * @package Iaasen
- *
  * Will enforce type casting without having to make getters and setters for every attributes
  * Will follow Docblock if set, otherwise follow property types.
  * Any getters/setters will override default behaviour
  * Intended to be used with REST services. The API server vil get properties from getArrayCopy()
  * Properties should be defined as protected to ensure automatic setters and getters.
- *
+ * getArrayCopy() is recursive
  */
 class AbstractEntityV2 implements ModelInterfaceV2
 {
@@ -37,6 +30,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	 * if set to true an Exception will be sent when trying to set a property that is not defined
 	 */
 	protected bool $throwExceptionOnMissingProperty = false;
+
 
 	/**
 	 * @param array|\stdClass $data
@@ -106,7 +100,6 @@ class AbstractEntityV2 implements ModelInterfaceV2
 					self::$docBlockData[$class][$property->name] = $doc;
 				}
 
-
 				// Get by property type
 				else {
 					$reflection = new ReflectionProperty(get_class($this), $property->name);
@@ -146,14 +139,15 @@ class AbstractEntityV2 implements ModelInterfaceV2
 
 
 	/**
- 	 * Called when object is created from database by TableGateway
+	 * Called when object is created from database by TableGateway
 	 * Called when form is validated
 	 */
-	public function exchangeArray($data) : void {
-		foreach($data AS $key => $value) {
+	public function exchangeArray(array $array) : void {
+		foreach($array AS $key => $value) {
 			$this->__set($key, $value);
 		}
 	}
+
 
 	/**
 	 * Called by \Laminas\Form::bind()
@@ -195,6 +189,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 		}
 		return $data;
 	}
+
 
 	/**
 	 * @param string $name
@@ -288,6 +283,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 		}
 	}
 
+
 	protected function setObject($className, $name, $value) {
 		if(isset($value->_class)) $className = $value->_class;
 
@@ -311,6 +307,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 		}
 	}
 
+
 	protected function setObjectArray($className, $name, $value) {
 		$this->$name = [];
 		if(is_array($value)) {
@@ -328,6 +325,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 		}
 	}
 
+
 	public function __isset(string $name) : bool
 	{
 		if(!property_exists($this, $name)) return false;
@@ -343,13 +341,12 @@ class AbstractEntityV2 implements ModelInterfaceV2
 		if(isset($doc[$name])) $this->$name = null;
 	}
 
+
 	/**
 	 * __clone() is run on the copied object when making a clone using the 'clone' keyword
 	 * @return void
 	 */
-	public function __clone()
-	{
-	}
+	public function __clone() {}
 
 
 	public function __toString() : string
@@ -358,6 +355,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 		$data .= @rt($this->databaseSaveArray());
 		return $data;
 	}
+
 
 	public function databaseSaveArray() : array
 	{

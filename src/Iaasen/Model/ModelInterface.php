@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Ingvar
- * Date: 08.11.2015
- * Time: 14.48
- */
 
 namespace Iaasen\Model;
 
@@ -14,9 +8,17 @@ interface ModelInterface
     public function __set($name, $value);
     public function __isset($name);
     public function __unset($name);
+
+	/**
+	 * When an object is cloned using keyword 'clone'
+	 * the __clone() function will be run on the copy.
+	 * @return void
+	 */
 	public function __clone();
+
     public function __toString();
-    public function exchangeArray($data);
-    public function getArrayCopy();
-    public function databaseSaveArray();
+	public function databaseSaveArray();
+
+	public function exchangeArray($data);
+	public function getArrayCopy();
 }
