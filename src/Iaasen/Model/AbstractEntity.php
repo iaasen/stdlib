@@ -245,10 +245,10 @@ class AbstractEntity implements ModelInterface
 
 		if(is_null($value) && $doc['nullable']) $this->$name = $value;
 		elseif($doc['type'] == 'objectArray') {
-			$this->setObjectArray($doc['value'], $name, $value);
+			$this->setObjectArrayInternal($doc['value'], $name, $value);
 		}
 		elseif($doc['type'] == 'object') {
-			$this->setObject($doc['value'], $name, $value);
+			$this->setObjectInternal($doc['value'], $name, $value);
 		}
 		elseif($doc['type'] == 'array') {
 			if(is_object($value)) $this->$name = (array) $value;
@@ -291,7 +291,7 @@ class AbstractEntity implements ModelInterface
 	}
 
 
-	protected function setObject($className, $name, $value) {
+	protected function setObjectInternal($className, $name, $value) {
 		if(isset($value->_class)) $className = $value->_class;
 
 		switch($className) {
@@ -315,7 +315,7 @@ class AbstractEntity implements ModelInterface
 	}
 
 
-	protected function setObjectArray($className, $name, $value) {
+	protected function setObjectArrayInternal($className, $name, $value) {
 		$this->$name = [];
 		if(is_array($value)) {
 			foreach($value AS $row) {
