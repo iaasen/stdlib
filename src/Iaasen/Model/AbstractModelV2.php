@@ -1,32 +1,20 @@
 <?php
 /**
- * Created by PhpStorm.
  * User: Ingvar
  * Date: 11.11.2015
- * Time: 19.19
  */
 
 namespace Iaasen\Model;
 
-use ArrayObject;
-use Exception;
 use Iaasen\DateTime;
-use Iaasen\Exception\InvalidArgumentException;
-use Iaasen\Exception\LogicException;
-use phpDocumentor\Reflection\DocBlockFactory;
-use phpDocumentor\Reflection\Types\Array_;
-use phpDocumentor\Reflection\Types\Object_;
-use ReflectionClass;
-use ReflectionProperty;
 
 /**
- * Class AbstractModel
- * @package Iaasen\Model
  * @property DateTime $timestamp_created
  * @property DateTime $timestamp_updated
  */
 abstract class AbstractModelV2 extends AbstractEntityV2
 {
+	protected ?int $id = null;
 	protected DateTime $timestamp_created;
 	protected DateTime $timestamp_updated;
 
