@@ -170,11 +170,8 @@ class AbstractEntityV2 implements ModelInterfaceV2
 					}
 					else $data[$key] = $value;
 				}
-				elseif($property['type'] == 'stdClass') {
-					$data[$key] = (array) $value;
-				}
 				elseif($property['type'] == 'object') {
-					$data[$key] = $value->getArrayCopy();
+					$data[$key] = $property['value'] == '\stdClass' ? (array) $value : $value->getArrayCopy();
 				}
 				else {
 					$data[$key] = $value;
