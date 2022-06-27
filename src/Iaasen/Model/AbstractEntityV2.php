@@ -258,13 +258,13 @@ class AbstractEntityV2 implements ModelInterfaceV2
 				case 'string':
 					$this->$name = (string) $value;
 					break;
-				case 'array':
-					if(is_object($value)) $this->$name = (array) $value;
-					elseif(is_string($value)) {
-						if(in_array(substr($value, 0, 1), ['{', '['])) $this->$name = (array) json_decode($value);
-					}
-					else $this->$name = $value;
-					break;
+//				case 'array':
+//					if(is_object($value)) $this->$name = (array) $value;
+//					elseif(is_string($value)) {
+//						if(in_array(substr($value, 0, 1), ['{', '['])) $this->$name = (array) json_decode($value);
+//					}
+//					else $this->$name = $value;
+//					break;
 				default:
 					if(is_null($this->$name) || !is_null($value)) { // Make sure default values are not overwritten with null
 						$this->$name = $value;
