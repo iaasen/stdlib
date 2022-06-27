@@ -140,9 +140,10 @@ class AbstractEntityV2 implements ModelInterfaceV2
 
 	/**
 	 * Called when object is created from database by TableGateway
+	 * Called when object is created by api (array type cannot be set because api sends stdClass)
 	 * Called when form is validated
 	 */
-	public function exchangeArray(array $array) : void {
+	public function exchangeArray($array) : void {
 		foreach($array AS $key => $value) {
 			$this->__set($key, $value);
 		}
