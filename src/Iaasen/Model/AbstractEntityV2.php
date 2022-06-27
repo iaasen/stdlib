@@ -241,14 +241,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 			$this->setObjectInternal($doc['value'], $name, $value);
 		}
 		elseif($doc['type'] == 'array') {
-			if(is_object($value)) $this->$name = (array) $value;
-			elseif(
-				is_string($value) &&
-				in_array(substr($value, 0, 1), ['{', '['])
-			) {
-				$this->$name = (array) json_decode($value);
-			}
-			else $this->$name = $value;
+			$this->setArrayInternal($name, $value, $doc['nullable']);
 		}
 		else {
 			switch($doc['value']) {
@@ -281,6 +274,21 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	}
 
 
+	protected function setArrayInternal(string $name, $value, bool $nullable = true) : void {
+		if(is_object($value)) $this->$name = (array) $value;
+		elseif(
+			is_string($value) &&
+			in_array(substr($value, 0, 1), ['{', '['])
+		) {
+			$this->$name = (array) json_decode($value);
+		}
+		elseif(is_null($value) && !$nullable) {
+			$this->$name = [];
+		}
+		else $this->$name = $value;
+	}
+
+
 	/**
 	 * @deprecated Use setObjectInternal()
 	 */
@@ -289,7 +297,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	}
 
 
-	protected function setObjectInternal(string $className, string $name, $value) {
+	protected function setObjectInternal(string $className, string $name, $value) : void {
 		if(isset($value->_class)) $className = $value->_class;
 
 		switch($className) {
