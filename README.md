@@ -11,3 +11,14 @@ echo $this->form()->openTag($form);
 echo $this->formCollection($form);
 echo $this->form()->closeTag();
 ```
+Replace a view helper in current view
+```
+$this->getHelperPluginManager()->setService('formRow', $this->formRowHorizontal());
+```
+Format select in bootstrap v3
+```
+Add to less-template:
+select.form-select {
+	.form-control
+}
+```

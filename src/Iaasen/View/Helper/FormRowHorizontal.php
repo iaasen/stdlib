@@ -30,7 +30,6 @@ class FormRowHorizontal extends AbstractHelper
 	{
 		if(!$element) return $this;
 
-		$element->setAttribute('class', $this->inputClass);
 		$errorHelper = $this->getElementErrorsHelper();
 		$elementHelper = $this->getElementHelper();
 
@@ -39,7 +38,8 @@ class FormRowHorizontal extends AbstractHelper
 				return $errorHelper($element) . $elementHelper($element);
 
 			case 'submit':
-				$element->setAttribute('class', $this->submitClass);
+				if(strpos($element->getAttribute('class'), 'btn-primary') !== null) $element->setOption('variant', 'primary');
+				if(!$element->getAttribute('class')) $element->setAttribute('class', $this->submitClass);
 				$element->setValue($element->getLabel());
 				return <<<EOT
 					<div class="$this->rowClass">
@@ -69,6 +69,7 @@ EOT;
 EOT;
 
 			default:
+				$element->setAttribute('class', implode(' ', [$this->inputClass, $element->getAttribute('class')]));
 				return <<<EOT
 					<div class="$this->rowClass">
 						<label class="$this->labelClass" for="{$element->getName()}">{$element->getLabel()}</label>
