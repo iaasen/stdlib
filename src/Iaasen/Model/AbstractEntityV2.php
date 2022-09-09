@@ -299,7 +299,8 @@ class AbstractEntityV2 implements ModelInterfaceV2
 
 
 	protected function setObjectInternal(string $className, string $name, $value) : void {
-		if(isset($value->_class)) $className = $value->_class;
+		if(is_object($value) && isset($value->_class)) $className = $value->_class;
+		if(is_array($value) && isset($value['_class'])) $className = $value['_class'];
 
 		switch($className) {
 			case 'object':
