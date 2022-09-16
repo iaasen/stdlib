@@ -8,6 +8,7 @@ namespace Iaasen\Service;
 
 
 use Laminas\ApiTools\Rest\AbstractResourceListener;
+use Nteb\ApiEntities\Exception\InvalidArgumentException;
 
 abstract class AbstractRestResource extends AbstractResourceListener
 {
@@ -61,6 +62,22 @@ abstract class AbstractRestResource extends AbstractResourceListener
 		$year = (bool) $event->getRouteParam('year', $event->getQueryParam('year'));
 		$month = (bool) $event->getRouteParam('month', $event->getQueryParam('month'));
 		return $year && $month;
+	}
+
+
+	/**
+	 * @param array|string|null $withString
+	 * @return ?array
+	 */
+	public static function extractWith($withString) : ?array {
+		if(is_null($withString)) return null;
+		if(is_array($withString)) return $withString;
+		if(preg_match('/([{\[])/', $withString) >= 1) {
+			$with = json_decode($withString, 1);
+			if(is_null($with)) throw new InvalidArgumentException("Invalid format of 'with' attribute (is this correct json?)");
+			return (array) $with;
+		}
+		else return explode(',', $withString);
 	}
 
 }
