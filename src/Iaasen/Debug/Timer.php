@@ -35,4 +35,20 @@ class Timer
 		if($tag) echo $elapsed . ' - ' . $tag . ' - ' . date('c') . '<br>' . PHP_EOL;
 		if($stop) exit();
 	}
+
+
+	/**
+	 * Requires symfony/var-dumper
+	 */
+	public static function dumpElapsed(string $tag = '') : void {
+		dump(($tag ? $tag . ': ' : '') . self::getElapsed());
+	}
+
+
+	/**
+	 * Requires symfony/var-dumper
+	 */
+	public static function ddElapsed(string $tag = '') : void {
+		dd(($tag ? $tag . ': ' : '') . self::getElapsed());
+	}
 }
