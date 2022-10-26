@@ -30,12 +30,9 @@ class AddressService
 	// $latLong = new LatLng($telematorAddress->latitude, $telematorAddress->longitude, 0, RefEll::wgs84());
 	// I have commented earlier that geotools misses target by 1-3 meters and PhpCoord get it right. I don't remember when I discovered that.
 
-	/** @var Transport */
-	protected $transport;
-	/** @var TranscodeService */
-	protected $geonorgeTranscodeService;
-	/** @var string  */
-	public $transcodeServiceToUse = self::DEFAULT_TRANSCODE_SERVICE;
+	protected Transport $transport;
+	protected TranscodeService $geonorgeTranscodeService;
+	public string $transcodeServiceToUse = self::DEFAULT_TRANSCODE_SERVICE;
 
 
 	public function __construct()
@@ -139,6 +136,11 @@ class AddressService
 	}
 
 
+	/**
+	 * @param string $latitude
+	 * @param string $longitude
+	 * @return LocationUtm
+	 */
 	protected function transcodeGRS80ToUTM(string $latitude, string $longitude) : LocationUtm {
 		if($this->transcodeServiceToUse == 'geotools') return $this->transcodeGRS80ToUtmUsingGeotools($latitude, $longitude);
 		elseif($this->transcodeServiceToUse == 'geonorge') return $this->geonorgeTranscodeService->transcodeGRS80toUTM32($latitude, $longitude);
@@ -157,7 +159,7 @@ class AddressService
 
 	protected function createObject($data) : Address {
 		$address = new Address($data);
-		$address->location_utm = $this->transcodeGRS80ToUTM($address->representasjonspunkt->lat, $address->representasjonspunkt->lon);
+		$address->location_utm = $this->geonorgeTranscodeService->transcodeLatLongToUTM($address->representasjonspunkt->lat, $address->representasjonspunkt->lon);
 		$address->generateUniqueId();
 		return $address;
 	}

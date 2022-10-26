@@ -2,7 +2,6 @@
 /**
  * User: ingvar
  * Date: 02.07.2020
- * Time: 13.06
  */
 
 namespace Iaasen\Geonorge\Entity;
@@ -10,12 +9,9 @@ namespace Iaasen\Geonorge\Entity;
 
 class LocationUtm
 {
-	/** @var float */
-	public $utm_north;
-	/** @var float */
-	public $utm_east;
-	/** @var string */
-	public $utm_zone = '32N';
+	public float $utm_north;
+	public float$utm_east;
+	public string $utm_zone = '32N';
 
 
 	public function __construct($utm_north, ?float $utm_east = null, ?string $utm_zone = '32N')
