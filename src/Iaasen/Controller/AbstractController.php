@@ -1,9 +1,7 @@
 <?php
 /**
- * Created by PhpStorm.
  * User: iaase
  * Date: 05.05.2018
- * Time: 21:37
  */
 
 namespace Iaasen\Controller;
@@ -12,8 +10,6 @@ namespace Iaasen\Controller;
 use Iaasen\Controller\Plugin\NavigationPlugin;
 use Iaasen\Initializer\NavigationAwareInterface;
 use Iaasen\Initializer\ViewRendererAwareInterface;
-use Laminas\Http\Header\Referer;
-use Laminas\Http\Request;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Navigation\Navigation;
 use Laminas\Uri\Uri;
@@ -22,35 +18,22 @@ use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
 
 /**
- * Class AbstractController
- * @package Iaasen\Controller
  * @method NavigationPlugin navigation()
  */
 class AbstractController extends AbstractActionController implements NavigationAwareInterface, ViewRendererAwareInterface
 {
-	/** @var string */
-	protected $redirect;
-	/** @var PhpRenderer */
-	protected $viewRenderer;
-	/** @var  Navigation */
-	protected $navigation;
+	protected ?string $redirect = null;
+	protected PhpRenderer $viewRenderer;
+	protected Navigation $navigation;
 
-	public function getRedirect($defaultUrl = false) {
-		if($this->redirect === null) {
-			$redirect = $this->params()->fromQuery('redirect', $this->params()->fromQuery('redirect_uri'));
-			/** @var Request $request */
-			$request = $this->getRequest();
-			if(!$redirect && $request->getHeader('Referer')) {
-				/** @var Referer $header */
-				$header = $request->getHeader('Referer');
-				//$redirect = $header->uri()->getPath();
-				$redirect = $header->uri()->__toString();
-			}
-			if($redirect === null) $redirect = $defaultUrl;
-			$this->redirect = $redirect;
-		}
+
+	public function getRedirect(string $defaultUrl = '/') : string {
+        $redirect = $this->params()->fromQuery('redirect_uri');
+        if(!$redirect) $redirect = $defaultUrl;
+        $this->redirect = $redirect;
 		return $this->redirect;
 	}
+
 
 	public function render($template, $data) {
 		$view = new ViewModel($data);
