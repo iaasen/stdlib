@@ -48,6 +48,16 @@ class TranscodeService
 	}
 
 
+	public function transcodeLocationLatLongTotm(LocationLatLong $locationLatLong) : LocationUtm {
+		return $this->transcodeLatLongToUTM($locationLatLong->latitude, $locationLatLong->longitude);
+	}
+
+
+	public function transcodeLocationUtmToLatLong(LocationUtm $locationUtm) : LocationLatLong {
+		return $this->transcodeUTMtoLatLong($locationUtm->utm_north, $locationUtm->utm_east, $locationUtm->utm_zone);
+	}
+
+
 	public function transcodeLatLongToUTM(float $latitude, float $longitude, int $zone = 32) : LocationUtm {
 		$url = 'transformer';
 		$query = [
@@ -81,8 +91,7 @@ class TranscodeService
 	 * @return LocationLatLong // Using ETRS89
 	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
-	public function transcodeUTM32toLatLong(float $utmNorth, float $utmEast, int $utmZone = 32) : LocationLatLong {
-
+	public function transcodeUTMtoLatLong(float $utmNorth, float $utmEast, int $utmZone = 32) : LocationLatLong {
 		$url = 'transformer';
 		$query = [
 			'x' => $utmEast,
@@ -91,7 +100,7 @@ class TranscodeService
 			'til' => 4326,
 		];
 		$data = json_decode($this->transport->sendGet($url, $query));
-		return new LocationLatLong($data->x, $data->y);
+		return new LocationLatLong($data->y, $data->x);
 	}
 
 

@@ -9,6 +9,7 @@ namespace Iaasen\Geonorge;
 
 
 use Iaasen\Exception\InvalidArgumentException;
+use Iaasen\Geonorge\Entity\LocationLatLong;
 use Iaasen\Geonorge\Entity\LocationUtm;
 use Iaasen\GRS80Ellipsoid;
 use League\Geotools\Coordinate\Coordinate;
@@ -19,7 +20,9 @@ use Nteb\ApiEntities\Exception\GatewayTimeoutException;
 
 /**
  * Documentation:
- * - https://ws.geonorge.no/adresser/v1/
+ * - https://ws.geonorge.no/adresser/v1 - Finn adresser med søk eller matrikkel
+ * - https://ws.geonorge.no/eiendom/v1 - Finn eiendom nær en gitt koordinat
+ * - https://ws.geonorge.no/transformering/v1 - Konverter koordinater
  * - https://www.kartverket.no/Kart/transformere-koordinater/
  */
 class AddressService
@@ -160,6 +163,7 @@ class AddressService
 	protected function createObject($data) : Address {
 		$address = new Address($data);
 		$address->location_utm = $this->geonorgeTranscodeService->transcodeLatLongToUTM($address->representasjonspunkt->lat, $address->representasjonspunkt->lon);
+		$address->location_lat_long = new LocationLatLong($address->representasjonspunkt->lat, $address->representasjonspunkt->lon);
 		$address->generateUniqueId();
 		return $address;
 	}
