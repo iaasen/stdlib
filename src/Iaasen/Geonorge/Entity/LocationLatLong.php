@@ -13,18 +13,25 @@ class LocationLatLong implements ArraySerializableInterface
 {
 	public float $latitude;
 	public float $longitude;
+	public int $epsg = 4258;
 
-	public function __construct($latitude, ?float $longitude = null)
+	const EPSG = [
+		4258 => 'ETRS89 Geografisk 2D', // Almost same as WGS84
+		4326 => 'WGS84 Geografisk 2D', // Almost same as GRS80
+	];
+
+	public function __construct($latitude, ?float $longitude = null, int $epsg = 4258)
 	{
 		if(is_object($latitude) || is_array($latitude)) {
 			foreach($latitude AS $key => $value) {
-				if(in_array($key, ['latitude', 'longitude'])) $this->$key = (float) $value;
+				if(in_array($key, ['latitude', 'longitude', 'epsg'])) $this->$key = (float) $value;
 				else $this->$key = (string) $value;
 			}
 		}
 		else {
 			$this->latitude = (float) $latitude;
 			$this->longitude = $longitude;
+			$this->epsg = $epsg;
 		}
 	}
 

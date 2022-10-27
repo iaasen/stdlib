@@ -40,7 +40,8 @@ class Address extends AbstractEntityV2
 	public ?int $undernummer = null;
 
 	// Locally generated data, not from Geonorge
-	public \Iaasen\Geonorge\Entity\LocationUtm $location_utm;
+	public LocationUtm $location_utm;
+	public LocationLatLong $location_lat_long;
 
 
 	public function __construct($data = []) {
