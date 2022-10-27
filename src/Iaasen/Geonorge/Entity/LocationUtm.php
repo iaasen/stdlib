@@ -7,10 +7,12 @@
 namespace Iaasen\Geonorge\Entity;
 
 
-class LocationUtm
+use Laminas\Stdlib\ArraySerializableInterface;
+
+class LocationUtm implements ArraySerializableInterface
 {
 	public float $utm_north;
-	public float$utm_east;
+	public float $utm_east;
 	public string $utm_zone = '32N';
 
 
@@ -27,5 +29,17 @@ class LocationUtm
 			$this->utm_east = $utm_east;
 			$this->utm_zone = $utm_zone;
 		}
+	}
+
+
+	public function exchangeArray(array $array) {
+		if(isset($array['utm_north'])) $this->utm_north = (float) $array['utm_north'];
+		if(isset($array['utm_east'])) $this->utm_east = (float) $array['utm_east'];
+		if(isset($array['utm_zone'])) $this->utm_zone = (string) $array['utm_zone'];
+	}
+
+
+	public function getArrayCopy() {
+		return (array) $this;
 	}
 }

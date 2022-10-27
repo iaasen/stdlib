@@ -2,69 +2,51 @@
 /**
  * User: ingvar
  * Date: 03.04.2020
- * Time: 11.01
  */
 
 namespace Iaasen\Geonorge\Entity;
 
 
 use Iaasen\DateTime;
-use Iaasen\Model\AbstractEntity;
+use Iaasen\Model\AbstractEntityV2;
 
 /**
  * Based on Geonorge data format
  * https://kartkatalog.geonorge.no/metadata/adresse-rest-api/44eeffdc-6069-4000-a49b-2d6bfc59ac61
- * Class Address
- * @package Iaasen\Geonorge\Entity
  */
-class Address extends AbstractEntity
+class Address extends AbstractEntityV2
 {
-	/** @var string */
-	public $id;
-	/** @var int */
-	public $adressekode;
-	/** @var string */
-	public $adressenavn;
-	/** @var string */
-	public $adressetekst;
-	/** @var string */
-	public $adressetekstutenadressetilleggsnavn;
-	/** @var string */
-	public $adressetillegsnavn;
-	/** @var string */
-	public $bokstav;
+	public string $id;
+	public int $adressekode;
+	public string $adressenavn;
+	public string $adressetekst;
+	public string $adressetekstutenadressetilleggsnavn;
+	public string $adressetillegsnavn;
+	public string $bokstav;
 	/** @var string[] */
-	public $bruksenhetsnummer;
-	/** @var int */
-	public $bruksnummer;
-	/** @var int */
-	public $festenummer;
-	/** @var int */
-	public $gardsnummer;
-	/** @var string */
-	public $kommunenavn;
-	/** @var string */
-	public $kommunenummer;
-	/** @var int */
-	public $nummer;
-	/** @var string */
-	public $objtype;
-	/** @var DateTime */
-	public $oppdateringsdato;
-	/** @var string */
-	public $postnummer;
-	/** @var string */
-	public $poststed;
-	/** @var \stdClass */
-	public $representasjonspunkt;
-	/** @var bool */
-	public $stedfestingverifisert;
-	/** @var int */
-	public $undernummer;
+	public array $bruksenhetsnummer;
+	public int $bruksnummer;
+	public int $festenummer;
+	public int $gardsnummer;
+	public string $kommunenavn;
+	public string $kommunenummer;
+	public int $nummer;
+	public string $objtype;
+	public DateTime $oppdateringsdato;
+	public string $postnummer;
+	public string $poststed;
+	public \stdClass $representasjonspunkt;
+	public bool $stedfestingverifisert;
+	public ?int $undernummer = null;
 
 	// Locally generated data, not from Geonorge
-	/** @var \Iaasen\Geonorge\Entity\LocationUtm */
-	public $location_utm;
+	public \Iaasen\Geonorge\Entity\LocationUtm $location_utm;
+
+
+	public function __construct($data = []) {
+		parent::__construct($data);
+		$this->id = $this->generateUniqueId();
+	}
 
 
 	public function getMatrikkel() : string {

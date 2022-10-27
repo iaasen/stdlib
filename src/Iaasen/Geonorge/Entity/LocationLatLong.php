@@ -7,7 +7,9 @@
 namespace Iaasen\Geonorge\Entity;
 
 
-class LocationLatLong
+use Laminas\Stdlib\ArraySerializableInterface;
+
+class LocationLatLong implements ArraySerializableInterface
 {
 	public float $latitude;
 	public float $longitude;
@@ -24,5 +26,14 @@ class LocationLatLong
 			$this->latitude = (float) $latitude;
 			$this->longitude = $longitude;
 		}
+	}
+
+	public function exchangeArray(array $array) {
+		if(isset($array['latitude'])) $this->latitude = (float) $array['latitude'];
+		if(isset($array['longitude'])) $this->longitude = (float) $array['longitude'];
+	}
+
+	public function getArrayCopy() {
+		return (array) $this;
 	}
 }
