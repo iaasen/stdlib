@@ -335,7 +335,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 		$this->$name = [];
 		if(is_array($value)) {
 			foreach($value AS $row) {
-				if(isset($value->_class)) $className = $value->_class;
+				if(isset($row->_class)) $className = $row->_class;
 				switch($className) {
 					case 'object':
 						$this->$name[] = $row;
