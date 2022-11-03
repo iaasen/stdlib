@@ -247,19 +247,21 @@ abstract class AbstractModel extends ArrayObject  implements ModelInterface
 	 *
 	 * @param array $data
 	 * @throws \Exception
-	 * @return void
+	 * @return array
 	 */
-	public function exchangeArray($data) {
+	public function exchangeArray($data) : array {
+		$old = $this->getArrayCopy();
 		foreach($data AS $key => $value) {
 			$this->__set($key, $value);
 		}
+		return $old;
 	}
 
 	/**
 	 * Called by \Laminas\Form::bind()
 	 * @return array
 	 */
-	public function getArrayCopy() {
+	public function getArrayCopy() : array {
 		$data = [];
 		foreach(self::$docBlockData[get_class($this)] AS $name => $doc) {
 			$value = $this->__get($name);
