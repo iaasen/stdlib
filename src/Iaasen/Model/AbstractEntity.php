@@ -266,7 +266,7 @@ class AbstractEntity implements ModelInterface
 					$this->$name = (!is_null($value)) ? (bool) $value : null;
 					break;
 				case 'int':
-					$this->$name = strlen($value) ? (int) $value : null;
+					$this->$name = is_string($value) && strlen($value) ? (int) $value : null;
 					break;
 				case 'float':
 					$this->$name = (float) $value;
