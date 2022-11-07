@@ -10,8 +10,7 @@ namespace Iaasen;
 
 class DateTimeWithoutTimezone extends DateTime
 {
-	public function jsonSerialize()
-	{
+	public function jsonSerialize() : string {
 		return $this->format('Y-m-d\TH:i:s');
 	}
 }
