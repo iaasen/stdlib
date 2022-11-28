@@ -251,7 +251,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 					break;
 				case 'int':
 					$this->$name = (int) $value;
-					if(is_string($value) && strlen($value)) $this->$name = null;
+					if(is_string($value) && !strlen($value)) $this->$name = null;
 					break;
 				case 'float':
 					$this->$name = (float) $value;
