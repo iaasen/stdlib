@@ -250,7 +250,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 					$this->$name = (!is_null($value)) ? (bool) $value : null;
 					break;
 				case 'int':
-					$this->$name = strlen($value) ? (int) $value : null;
+					$this->$name = is_null($value) ? null : (int) $value;
 					break;
 				case 'float':
 					$this->$name = (float) $value;
