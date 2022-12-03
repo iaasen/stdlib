@@ -1,9 +1,7 @@
 <?php
 /**
- * Created by PhpStorm.
  * User: ingvar.aasen
  * Date: 01.02.2016
- * Time: 12:55
  */
 
 namespace Iaasen\Transport;
@@ -26,26 +24,21 @@ use Iaasen\Exception\InvalidArgumentException;
  */
 abstract class GuzzleHttpTransport implements HttpTransportInterface
 {
-	/** @var  string */
-	public $base_url;
+	public string $base_url;
 	/** @var  string[] */
-	public $headers = [];
+	public array $headers = [];
 	/**
 	 * Format: ['username', 'password', 'type']
 	 * Default type is 'basic'
 	 * Other types are 'digest', 'ntlm'
 	 * @var string[]
 	 */
-	private $auth;
+	private ?array $auth = null;
 
-	/** @var GuzzleClient  */
-	protected $client;
-	/** @var  bool */
-	protected $cookies;
-	/** @var array  */
-	protected $historyContainer = [];
-	/** @var bool  */
-	protected $debug = false;
+	protected GuzzleClient $client;
+	protected ?bool $cookies = null;
+	protected array $historyContainer = [];
+	protected bool $debug = false;
 
 	/**
 	 * Is run before each request
@@ -61,6 +54,7 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 	 */
 	abstract protected function renewSession() : bool;
 
+
 	public function __construct(array $config)
 	{
 
@@ -71,7 +65,7 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 				$authArray = [
 					$value['username'],
 					$value['password'],
-					isset($value['type']) ? $value['type'] : 'basic',
+					$value['type'] ?? 'basic',
 				];
 				$this->auth = $authArray;
 			}
