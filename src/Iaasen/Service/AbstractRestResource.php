@@ -77,7 +77,7 @@ abstract class AbstractRestResource extends AbstractResourceListener
 			if(is_null($with)) throw new InvalidArgumentException("Invalid format of 'with' attribute (is this correct json?)");
 			return (array) $with;
 		}
-		else return explode(',', $withString);
+		else return array_filter(explode(',', $withString));
 	}
 
 }

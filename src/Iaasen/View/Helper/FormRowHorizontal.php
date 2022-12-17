@@ -38,7 +38,7 @@ class FormRowHorizontal extends AbstractHelper
 				return $errorHelper($element) . $elementHelper($element);
 
 			case 'submit':
-				if(strpos($element->getAttribute('class'), 'btn-primary') !== null) $element->setOption('variant', 'primary');
+				if(is_string($element->getAttribute('class')) && strpos($element->getAttribute('class'), 'btn-primary') !== null) $element->setOption('variant', 'primary');
 				if(!$element->getAttribute('class')) $element->setAttribute('class', $this->submitClass);
 				$element->setValue($element->getLabel());
 				return <<<EOT

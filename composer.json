@@ -12,7 +12,7 @@
         "laminas/laminas-navigation": "^2",
         "laminas/laminas-view": "^2",
         "digitalnature/php-ref": "^1",
-        "guzzlehttp/guzzle": "^6",
+        "guzzlehttp/guzzle": "^6|^7",
         "swiftmailer/swiftmailer": "^6",
         "phpdocumentor/reflection-docblock": "^5"
     },

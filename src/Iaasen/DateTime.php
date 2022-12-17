@@ -171,13 +171,13 @@ class DateTime extends \DateTime implements \JsonSerializable
 	 * which is a value of any type other than a resource.
 	 * @since 5.4.0
 	 */
-	public function jsonSerialize()
+	public function jsonSerialize() : string
 	{
 		return $this->format('c');
 	}
 
 
-	public  function formatMysql(){
+	public  function formatMysql() : string {
 		return $this->format('Y-m-d H:i:s');
 	}
 

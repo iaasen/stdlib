@@ -100,7 +100,7 @@ abstract class AbstractTable
 		if ($id == 0) {
 			// New row with autoincrement
 			$this->primaryGateway->insert($data);
-			$id = $this->primaryGateway->getLastInsertValue();
+			$id = (int) $this->primaryGateway->getLastInsertValue();
 		} else {
 			try {
 				// Update existing row
