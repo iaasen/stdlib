@@ -26,26 +26,23 @@ use Iaasen\Exception\InvalidArgumentException;
  */
 abstract class GuzzleHttpTransport implements HttpTransportInterface
 {
-	/** @var  string */
-	public $base_url;
+	public string $base_url;
 	/** @var  string[] */
-	public $headers = [];
+	public array $headers = [];
 	/**
 	 * Format: ['username', 'password', 'type']
 	 * Default type is 'basic'
 	 * Other types are 'digest', 'ntlm'
 	 * @var string[]
 	 */
-	private $auth;
+	private array $auth = [];
 
-	/** @var GuzzleClient  */
-	protected $client;
-	/** @var  bool */
-	protected $cookies;
-	/** @var array  */
-	protected $historyContainer = [];
-	/** @var bool  */
-	protected $debug = false;
+	protected GuzzleClient $client;
+	protected ?bool $cookies = null;
+	protected array $historyContainer = [];
+	protected bool $debug = false;
+
+	protected int $connect_timeout = 30;
 
 	/**
 	 * Is run before each request
@@ -64,7 +61,7 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 	public function __construct(array $config)
 	{
 
-		$permittedConfig = ['base_url', 'headers', 'cookies', 'auth'];
+		$permittedConfig = ['base_url', 'headers', 'cookies', 'auth', 'connect_timeout'];
 		$config = array_intersect_key($config, array_flip($permittedConfig));
 		foreach($config AS $key => $value) {
 			if($key == 'auth') {
@@ -87,7 +84,7 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 //			'headers' => $this->headers,
 //			'auth' => [$this->username, $this->password],
 			'verify' => false,
-			'timeout' => 60,
+			'timeout' => $this->connect_timeout,
 		];
 		if($this->auth) $guzzleConfig['auth'] = $this->auth;
 
@@ -143,6 +140,11 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 		unset($this->headers[$key]);
 	}
 
+
+	public function setConnectTimeout(int $seconds) : void {
+		$this->connect_timeout = $seconds;
+	}
+
 	/**
 	 * @param string $method
 	 * @param string $url
@@ -186,18 +188,9 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 			if(!in_array($key, $allowedPayload)) throw new InvalidArgumentException("Payload must be 'query', 'json', 'form_params' or 'body'");
 		}
 		$payload['headers'] = $this->headers;
-
-//		$clientHandler = $this->client->getConfig('handler');
-//		$tapMiddleware = Middleware::tap(function ($request) {
-//			echo $request->getHeaderLine('Content-Type');
-//			// application/json
-//			echo $request->getBody();
-//			// {"foo":"bar"}
-//		});
-//		$payload['handler'] = $tapMiddleware($clientHandler);
+		$payload['connect_timeout'] = $this->connect_timeout;
 
 		$response = $this->client->request($method, $url, $payload);
-
 		return $response->getBody()->getContents();
 	}
 
