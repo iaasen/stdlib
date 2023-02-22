@@ -55,6 +55,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 			$docBlockFactory = DocBlockFactory::createInstance();
 			$reflection = new ReflectionClass($this);
 			$publicProperties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC + ReflectionProperty::IS_PROTECTED);
+			self::$docBlockData[$class] = [];
 
 			foreach($publicProperties AS $property) {
 				if($property->isStatic()) continue;
