@@ -87,16 +87,17 @@ class TranscodeService
 	 * All three are almost the same
 	 * @param float $utmNorth
 	 * @param float $utmEast
-	 * @param int $utmZone
+	 * @param string $utmZone
 	 * @return LocationLatLong // Using ETRS89
 	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
-	public function transcodeUTMtoLatLong(float $utmNorth, float $utmEast, int $utmZone = 32) : LocationLatLong {
+	public function transcodeUTMtoLatLong(float $utmNorth, float $utmEast, string $utmZone = '32W') : LocationLatLong {
+		$utmZoneInt = (int) substr($utmZone, 0, 2);
 		$url = 'transformer';
 		$query = [
 			'x' => $utmEast,
 			'y' => $utmNorth,
-			'fra' => self::UTM_ZONES[$utmZone], // Check $self::getProjections()
+			'fra' => self::UTM_ZONES[$utmZoneInt], // Check $self::getProjections()
 			'til' => 4326,
 		];
 		$data = json_decode($this->transport->sendGet($url, $query));

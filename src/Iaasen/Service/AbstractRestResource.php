@@ -57,11 +57,32 @@ abstract class AbstractRestResource extends AbstractResourceListener
 	}
 
 
+	/**
+	 * @deprecated
+	 */
 	protected function requestForSingleMonth() {
+		return $this->isRequestForSingleMonth();
+	}
+
+
+	protected function isRequestForSingleMonth() : bool {
 		$event = $this->getEvent();
 		$year = (bool) $event->getRouteParam('year', $event->getQueryParam('year'));
 		$month = (bool) $event->getRouteParam('month', $event->getQueryParam('month'));
 		return $year && $month;
+	}
+
+
+	/**
+	 * @return int[]|null [year, month]
+	 */
+	protected function getRequestForSingleMonth() : ?array {
+		if(!$this->isRequestForSingleMonth()) return null;
+		$event = $this->getEvent();
+		return [
+			(int) $event->getRouteParam('year', $event->getQueryParam('year')),
+			(int) $event->getRouteParam('month', $event->getQueryParam('month')),
+		];
 	}
 
 
