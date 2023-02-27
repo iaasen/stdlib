@@ -391,12 +391,12 @@ class AbstractEntity implements ModelInterface
 			if($property['type'] == 'primitive') {
 				switch($property['value']) {
 					case 'bool':
-						$data[$key] = ($data[$key]) ? 1 : 0;
+						if(isset($data[$key])) $data[$key] = ($data[$key]) ? 1 : 0;
 						break;
 				}
 			}
 			elseif(in_array($property['value'], ['\DateTime', 'DateTime', '\Iaasen\DateTime'])) {
-				if(isset($data[$key])) $data[$key] = $this->$key->format(self::MYSQL_TIME_FORMAT);
+				if(isset($data[$key])) $data[$key] = $this->$key->format($this::MYSQL_TIME_FORMAT);
 			}
 		}
 		return $data;

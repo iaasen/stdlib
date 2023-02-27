@@ -392,12 +392,12 @@ class AbstractEntityV2 implements ModelInterfaceV2
 			if($property['type'] == 'primitive') {
 				switch($property['value']) {
 					case 'bool':
-						$data[$key] = ($data[$key]) ? 1 : 0;
+						if(isset($data[$key])) $data[$key] = ($data[$key]) ? 1 : 0;
 						break;
 				}
 			}
 			elseif($property['type'] == 'array') {
-				$data[$key] = json_encode($data[$key]);
+				if(isset($data[$key])) $data[$key] = json_encode($data[$key]);
 			}
 			elseif(in_array($property['value'], ['\DateTime', 'DateTime', '\Iaasen\DateTime'])) {
 				if(isset($data[$key])) $data[$key] = $this->$key->format(self::MYSQL_TIME_FORMAT);
