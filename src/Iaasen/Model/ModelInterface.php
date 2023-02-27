@@ -19,6 +19,6 @@ interface ModelInterface
     public function __toString();
 	public function databaseSaveArray();
 
-	public function exchangeArray($data);
+	public function exchangeArray($data) : array;
 	public function getArrayCopy();
 }
