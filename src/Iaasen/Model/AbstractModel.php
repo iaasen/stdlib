@@ -1,14 +1,11 @@
 <?php
 /**
- * Created by PhpStorm.
  * User: Ingvar
  * Date: 11.11.2015
- * Time: 19.19
  */
 
 namespace Iaasen\Model;
 
-use ArrayObject;
 use Exception;
 use Iaasen\DateTime;
 use Iaasen\Exception\InvalidArgumentException;
@@ -24,7 +21,7 @@ use ReflectionProperty;
  * @property DateTime $timestamp_created
  * @property DateTime $timestamp_updated
  */
-abstract class AbstractModel extends ArrayObject  implements ModelInterface
+abstract class AbstractModel implements ModelInterface
 {
 	/** @var array */
 	protected static $docBlockData;
@@ -51,7 +48,6 @@ abstract class AbstractModel extends ArrayObject  implements ModelInterface
 		$this->timestamp_created = new DateTime();
 		$this->timestamp_updated = $this->timestamp_created;
 		if($data) $this->exchangeArray($data);
-		parent::__construct();
 	}
 
 	private function generateDocBlockData() {
@@ -249,7 +245,7 @@ abstract class AbstractModel extends ArrayObject  implements ModelInterface
 	 * @throws \Exception
 	 * @return array
 	 */
-	public function exchangeArray($data) : array {
+	public function exchangeArray($data) {
 		$old = $this->getArrayCopy();
 		foreach($data AS $key => $value) {
 			$this->__set($key, $value);
