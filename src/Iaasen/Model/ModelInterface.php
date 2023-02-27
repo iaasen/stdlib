@@ -2,6 +2,9 @@
 
 namespace Iaasen\Model;
 
+/**
+ * @deprecated Use ModelInterfaceV2
+ */
 interface ModelInterface
 {
     public function __get($name);

@@ -20,8 +20,7 @@ use ReflectionClass;
 use ReflectionProperty;
 
 /**
- * Class AbstractModel
- * @package Iaasen\Model
+ * @deprecated Use AbstractModelV2
  * @property DateTime $timestamp_created
  * @property DateTime $timestamp_updated
  */
