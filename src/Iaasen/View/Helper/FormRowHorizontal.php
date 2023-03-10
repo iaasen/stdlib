@@ -9,6 +9,10 @@ use Laminas\Form\View\Helper\AbstractHelper;
 use Laminas\Form\View\Helper\FormElement;
 use Laminas\Form\View\Helper\FormElementErrors;
 
+/**
+ * Add to the view just before $form->prepare():
+ * $this->formCollection()->setElementHelper($this->formRowHorizontal());
+ */
 class FormRowHorizontal extends AbstractHelper
 {
 	public $rowClass = 'form-group row';
