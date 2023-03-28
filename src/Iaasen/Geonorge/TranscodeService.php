@@ -67,7 +67,7 @@ class TranscodeService
 			'til' => self::UTM_ZONES[$zone],
 		];
 		$data = json_decode($this->transport->sendGet($url, $query));
-		$latitudeBand = self::LATITUDE_BANDS[((int) $latitude + 80) / 8];
+		$latitudeBand = self::LATITUDE_BANDS[(int) (($latitude + 80) / 8)];
 		return new LocationUtm($data->y, $data->x, $zone . $latitudeBand);
 	}
 
