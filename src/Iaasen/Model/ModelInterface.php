@@ -19,7 +19,7 @@ interface ModelInterface
 	 */
 	public function __clone();
 
-    public function __toString();
+    //public function __toString();
 	public function databaseSaveArray();
 
 	public function exchangeArray($data);

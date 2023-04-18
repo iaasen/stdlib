@@ -373,14 +373,6 @@ class AbstractEntity implements ModelInterface
 	public function __clone() {}
 
 
-	public function __toString()
-	{
-		$data = get_class($this) . PHP_EOL;
-		$data .= @rt($this->databaseSaveArray());
-		return $data;
-	}
-
-
 	public function databaseSaveArray()
 	{
 		$doc = $this->getDocBlock();

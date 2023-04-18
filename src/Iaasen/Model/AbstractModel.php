@@ -227,15 +227,6 @@ abstract class AbstractModel implements ModelInterface
 		$this->timestamp_updated = $this->timestamp_created;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function __toString()
-	{
-		$data = get_class($this) . PHP_EOL;
-		$data .= @rt($this->databaseSaveArray());
-		return $data;
-	}
 
 	/**
 	 * Called when object is created from database by TableGateway

@@ -18,6 +18,6 @@ interface ModelInterfaceV2 extends ArraySerializableInterface
 	 */
 	public function __clone();
 
-    public function __toString() : string;
+    //public function __toString() : string;
     public function databaseSaveArray() : array;
 }

@@ -374,14 +374,6 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	public function __clone() {}
 
 
-	public function __toString() : string
-	{
-		$data = get_class($this) . PHP_EOL;
-		$data .= @rt($this->databaseSaveArray());
-		return $data;
-	}
-
-
 	public function databaseSaveArray() : array
 	{
 		$doc = $this->getDocBlock();
