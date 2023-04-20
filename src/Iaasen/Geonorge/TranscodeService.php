@@ -48,7 +48,7 @@ class TranscodeService
 	}
 
 
-	public function transcodeLocationLatLongTotm(LocationLatLong $locationLatLong) : LocationUtm {
+	public function transcodeLocationLatLongToUtm(LocationLatLong $locationLatLong) : LocationUtm {
 		return $this->transcodeLatLongToUTM($locationLatLong->latitude, $locationLatLong->longitude);
 	}
 

@@ -12,6 +12,7 @@ use Laminas\Stdlib\ArraySerializableInterface;
 
 class LocationUtm implements ArraySerializableInterface
 {
+	public string $id; // Unique id
 	public float $utm_north;
 	public float $utm_east;
 	public string $utm_zone;
@@ -53,6 +54,7 @@ class LocationUtm implements ArraySerializableInterface
 			$this->utm_east = $utm_east;
 			$this->setUtmZone($utm_zone);
 		}
+		$this->generateUniqueId();
 	}
 
 
@@ -82,5 +84,17 @@ class LocationUtm implements ArraySerializableInterface
 		if(strcasecmp($zonePart2,'S') == 0) return 325 . $zonePart1;
 		if($zone >= 28 && $zone <= 37) return 258 . $zonePart1;
 		return 326 . $zonePart1;
+	}
+
+
+	public function generateUniqueId() : string {
+		$base64fields = [
+			'utm',
+			round($this->utm_north),
+			round($this->utm_east),
+			$this->epsg,
+		];
+		$this->id = base64_encode(implode('-', $base64fields));
+		return $this->id;
 	}
 }

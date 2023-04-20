@@ -11,6 +11,7 @@ use Laminas\Stdlib\ArraySerializableInterface;
 
 class LocationLatLong implements ArraySerializableInterface
 {
+	public string $id; // Unique id
 	public float $latitude;
 	public float $longitude;
 	public int $epsg = 4258;
@@ -33,6 +34,7 @@ class LocationLatLong implements ArraySerializableInterface
 			$this->longitude = $longitude;
 			$this->epsg = $epsg;
 		}
+		$this->generateUniqueId();
 	}
 
 	public function exchangeArray(array $array) {
@@ -42,5 +44,17 @@ class LocationLatLong implements ArraySerializableInterface
 
 	public function getArrayCopy() {
 		return (array) $this;
+	}
+
+
+	public function generateUniqueId() : string {
+		$base64fields = [
+			'latlong',
+			round($this->latitude, 6),
+			round($this->longitude, 5),
+			$this->epsg,
+		];
+		$this->id = base64_encode(implode('-', $base64fields));
+		return $this->id;
 	}
 }
