@@ -7,41 +7,52 @@
 namespace Iaasen\Geonorge\Entity;
 
 
+use Iaasen\Exception\InvalidArgumentException;
 use Laminas\Stdlib\ArraySerializableInterface;
 
 class LocationUtm implements ArraySerializableInterface
 {
 	public float $utm_north;
 	public float $utm_east;
-	public string $utm_zone = '32N';
-	public int $epsg = 25832;
+	public string $utm_zone;
+	public int $epsg;
 
+	/**
+	 * WGS84 : UTM 01N - 60N : EPSG:32601 - EPSG:32660
+	 * WGS84 : UTM 01S - 60S : EPSG:32501 - EPSG:32560
+	 * ETRS89: UTM 28N - 38N : EPSG:25828 - EPSG:25838
+	 */
 	const EPSG = [
-		25831 => 'ETRS89 UTM 31 2D',
-		25832 => 'ETRS89 UTM 32 2D',
-		25833 => 'ETRS89 UTM 33 2D',
-	];
-	const ZONE_TO_EPSG = [
-		31 => 25831,
-		32 => 25832,
-		33 => 25833,
+		25831 => 'ETRS89 / UTM zone 31N',
+		25832 => 'ETRS89 / UTM zone 32N',
+		25833 => 'ETRS89 / UTM zone 33N',
+		32631 => 'WGS 84 / UTM zone 31N',
+		32632 => 'WGS 84 / UTM zone 32N',
+		32633 => 'WGS 84 / UTM zone 33N',
 	];
 
 
+	/**
+	 * Construct has two options:
+	 * - Regenerate object from API response, using only the first parameter
+	 * - Create new object using all fields. The first one being a float
+	 * @param \stdClass|array|float $utm_north
+	 * @param float|null $utm_east
+	 * @param string|null $utm_zone
+	 */
 	public function __construct($utm_north, ?float $utm_east = null, ?string $utm_zone = '32N')
 	{
 		if(is_object($utm_north) || is_array($utm_north)) {
 			foreach($utm_north AS $key => $value) {
 				if(in_array($key, ['utm_north', 'utm_east'])) $this->$key = (float) $value;
-				else $this->$key = (string) $value;
+				elseif($key == 'utm_zone') $this->setUtmZone($value);
 			}
 		}
 		else {
 			$this->utm_north = (float) $utm_north;
 			$this->utm_east = $utm_east;
-			$this->utm_zone = $utm_zone;
+			$this->setUtmZone($utm_zone);
 		}
-		$this->epsg = self::ZONE_TO_EPSG[(int) $utm_zone];
 	}
 
 
@@ -54,5 +65,22 @@ class LocationUtm implements ArraySerializableInterface
 
 	public function getArrayCopy() {
 		return (array) $this;
+	}
+
+
+	public function setUtmZone(string $zone) : void {
+		$this->utm_zone = $zone;
+		$this->epsg = $this->getEpsgFromUtmZone($zone);
+	}
+
+
+	// Example: 32N
+	public function getEpsgFromUtmZone(string $zone) : ?int {
+		$zonePart1 = (int) $zone;
+		$zonePart2 = (string) substr($zone, -1, 1);
+		if($zone < 1 || $zone > 60) throw new InvalidArgumentException('Unknown UTM zone ' . $zone);
+		if(strcasecmp($zonePart2,'S') == 0) return 325 . $zonePart1;
+		if($zone >= 28 && $zone <= 37) return 258 . $zonePart1;
+		return 326 . $zonePart1;
 	}
 }
