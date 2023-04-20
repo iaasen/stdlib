@@ -70,12 +70,12 @@ class LocationUtm implements ArraySerializableInterface
 
 	public function setUtmZone(string $zone) : void {
 		$this->utm_zone = $zone;
-		$this->epsg = $this->getEpsgFromUtmZone($zone);
+		$this->epsg = self::getEpsgFromUtmZone($zone);
 	}
 
 
 	// Example: 32N
-	public function getEpsgFromUtmZone(string $zone) : ?int {
+	public static function getEpsgFromUtmZone(string $zone) : ?int {
 		$zonePart1 = (int) $zone;
 		$zonePart2 = (string) substr($zone, -1, 1);
 		if($zone < 1 || $zone > 60) throw new InvalidArgumentException('Unknown UTM zone ' . $zone);
