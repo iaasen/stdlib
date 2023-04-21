@@ -7,6 +7,7 @@
 namespace Iaasen\Geonorge\Entity;
 
 
+use Iaasen\Exception\InvalidArgumentException;
 use Laminas\Stdlib\ArraySerializableInterface;
 
 class LocationLatLong implements ArraySerializableInterface
@@ -57,4 +58,13 @@ class LocationLatLong implements ArraySerializableInterface
 		$this->id = base64_encode(implode('-', $base64fields));
 		return $this->id;
 	}
+
+
+	public static function getLocationFromUniqueId(string $id) : ?LocationLatLong {
+		$fields = explode('-', base64_decode($id));
+		if(count($fields) !== 4) throw new InvalidArgumentException('Invalid id');
+		if($fields[0] !== 'latlong') throw new InvalidArgumentException('Invalid id');
+		return new self($fields[1], $fields[2], $fields[3]);
+	}
+
 }

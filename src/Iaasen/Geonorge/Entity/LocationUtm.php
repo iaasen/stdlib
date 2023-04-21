@@ -97,4 +97,20 @@ class LocationUtm implements ArraySerializableInterface
 		$this->id = base64_encode(implode('-', $base64fields));
 		return $this->id;
 	}
+
+
+	public static function getLocationFromUniqueId(string $id) : ?LocationUtm {
+		$fields = explode('-', base64_decode($id));
+		if(count($fields) !== 4) throw new InvalidArgumentException('Invalid id');
+		if($fields[0] !== 'utm') throw new InvalidArgumentException('Invalid id');
+		return new self($fields[1], $fields[2], self::getUtmZoneFromEpsg($fields[3]));
+	}
+
+
+	public static function getUtmZoneFromEpsg(int $epsg) : string {
+		if(substr($epsg, 0, 3) == '258') return substr($epsg, 3) . 'N';
+		if(substr($epsg, 0, 3) == '326') return substr($epsg, 3) . 'N';
+		if(substr($epsg, 0, 3) == '325') return substr($epsg, 3) . 'S';
+		throw new InvalidArgumentException('Unknown EPSG');
+	}
 }
