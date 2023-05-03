@@ -24,7 +24,7 @@ use ReflectionProperty;
 abstract class AbstractModel implements ModelInterface
 {
 	/** @var array */
-	protected static $docBlockData;
+	public static $docBlockData;
     /** @var string  */
     const MYSQL_TIME_FORMAT = 'Y-m-d H:i:s';
 
@@ -140,17 +140,17 @@ abstract class AbstractModel implements ModelInterface
 		} else {
 			switch ($doc['value']) {
 				case 'bool':
-					$this->$name = (!is_null($value)) ? (bool)$value : null;
+					$this->$name = is_null($value) ? null : (bool) $value;
 					break;
 				case 'int':
-					$this->$name = (int) $value;
+					$this->$name = is_null($value) ? null : (int) $value;
 					if(is_string($value) && !strlen($value)) $this->$name = null;
 					break;
 				case 'float':
-					$this->$name = (float)$value;
+					$this->$name = is_null($value) ? null : (float) $value;
 					break;
 				case 'string':
-					$this->$name = (string)$value;
+					$this->$name = is_null($value) ? null : (string) $value;
 					break;
 				case 'string[]':
 				case 'int[]':
