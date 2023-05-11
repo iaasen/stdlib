@@ -343,7 +343,12 @@ class AbstractEntityV2 implements ModelInterfaceV2
 						$this->$name[] = $row;
 						break;
 					default:
-						$this->$name[] = ($row instanceof $className) ? $row : new $className($row);
+						try {
+							$this->$name[] = ($row instanceof $className) ? $row : new $className($row);
+						}
+						catch (\Error $e) {
+							throw  new \Exception($e->getMessage() . ' (Class: ' . get_class($this) . ', property: ' . $name . ')', $e->getCode());
+						}
 						break;
 				}
 			}
