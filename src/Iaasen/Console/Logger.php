@@ -13,6 +13,9 @@ use Laminas\Console\Console;
 use Laminas\Log\Writer\Stream AS LaminasStream;
 use Laminas\Log\Logger AS LaminasLogger;
 
+/**
+ * @deprecated laminas/laminas-console is abandoned. Migrate to laminas/laminas-cli
+ */
 class Logger
 {
 	const DEFAULT_PATH = '/var/log/api-workers/';
