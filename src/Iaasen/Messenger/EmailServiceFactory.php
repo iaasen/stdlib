@@ -2,7 +2,6 @@
 /**
  * User: iaase
  * Date: 18.04.2018
- * Time: 21:06
  */
 
 namespace Iaasen\Messenger;
@@ -10,30 +9,30 @@ namespace Iaasen\Messenger;
 
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport;
 
 class EmailServiceFactory implements FactoryInterface
 {
 	/**
-	 * Create an object
-	 *
 	 * @param ContainerInterface $container
 	 * @param  string $requestedName
 	 * @param  null|array $options
-	 * @return object
+	 * @return EmailService
 	 */
 	public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
 	{
 		$config = $container->get('Config')['messenger']['email'];
-		$transport = $config['transport'];
+		$transportConfig = $config['transport'];
 
 		if($config['transport']['method'] == 'smtp') {
-			$swiftTransport = new \Swift_SmtpTransport($transport['host'], $transport['port'], $transport['security']);
+			if($transportConfig['username']) $transport = Transport::fromDsn('smtp://' . $transportConfig['username'] . ':' . $transportConfig['password'] . '@' . $transportConfig['host'] . ':' . $transportConfig['port'] ?? 25);
+			else $transport = Transport::fromDsn('smtp://' . $transportConfig['host'] . ':' . $transportConfig['port'] ?? 25);
 		}
-		else throw new \InvalidArgumentException("Only method 'smtp' is defined");
+		else throw new \InvalidArgumentException("Only method 'smtp' is available");
 
-		if(strlen($transport['username'])) $swiftTransport->setUsername($transport['username']);
-		if(strlen($transport['password'])) $swiftTransport->setPassword($transport['password']);
-
-		return new EmailService($swiftTransport, $config['from']);
+		$mailer = new Mailer($transport);
+		$defaultFrom = (isset($config['from'])) ? $config['from'] : null;
+		return new EmailService($mailer, $defaultFrom);
 	}
 }

@@ -4,8 +4,6 @@ namespace Iaasen;
 
 use Iaasen\Initializer\NavigationInitializer;
 use Iaasen\Initializer\ViewRendererInitializer;
-use Iaasen\Service\LaminasMvcConfig;
-use Iaasen\Mvc\LaminasMvcConfigFactory;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 
 return [

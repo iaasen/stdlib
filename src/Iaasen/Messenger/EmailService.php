@@ -1,57 +1,38 @@
 <?php
 /**
- * Created by PhpStorm.
  * User: iaase
  * Date: 18.04.2018
- * Time: 21:05
  */
 
 namespace Iaasen\Messenger;
 
 
-class EmailService
-{
-	/** @var  \Swift_Transport */
-	protected $transport;
-	/** @var \Swift_Mailer  */
-	protected $mailer;
-	/** @var  string */
-	protected $default_from;
+use Iaasen\Exception\InvalidArgumentException;
+use Symfony\Component\Mailer\Mailer;
 
-	public function __construct(\Swift_Transport $transport, string $defaultFrom)
-	{
-		$this->transport = $transport;
-		$this->mailer = new \Swift_Mailer($transport);
+class EmailService {
+	protected Mailer $mailer;
+	protected ?string $default_from = null;
+
+	public function __construct(Mailer $mailer, ?string $defaultFrom = null) {
+		$this->mailer = $mailer;
 		$this->default_from = $defaultFrom;
 	}
 
-	/**
-	 * @param Email $email
-	 * @return bool
-	 * @throws \Exception
-	 */
-	public function send($email) {
-		$swiftMessage = new \Swift_Message($email->subject);
 
-		if(!strlen($email->from)) $email->from = $this->default_from;
-		$swiftMessage->setFrom($email->from);
+	public function send(Email $email) : bool {
+		if(!$email->from && !$this->default_from) throw new InvalidArgumentException('Email is missing a from address, and there is no default from address');
 
-		$swiftMessage->setBody($email->body);
-		if($email->body_html) $swiftMessage->addPart($email->body_html, 'text/html');
-
-		try {
-			foreach($email->to AS $to) {
-				$swiftMessage->addTo($to);
-			}
-			$result = $this->mailer->send($swiftMessage);
+		$symfonyEmail = new \Symfony\Component\Mime\Email();
+		$symfonyEmail
+			->from($email->from ?? $this->default_from)
+			->subject($email->subject)
+			->text($email->body)
+			->html($email->body_html);
+		foreach($email->to AS $to) {
+			$symfonyEmail->addTo($to);
 		}
-		catch(\Swift_RfcComplianceException  $e) {
-			throw new \InvalidArgumentException('Malformed email address', 400);
-		}
-		catch(\Swift_TransportException $e) {
-			throw new \Exception('Unable to send email. Is the server unavailable?', 503);
-		}
-
-		return ($result > 0);
+		$this->mailer->send($symfonyEmail);
+		return true;
 	}
 }
