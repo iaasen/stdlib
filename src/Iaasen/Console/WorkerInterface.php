@@ -8,6 +8,9 @@
 namespace Iaasen\Console;
 
 
+/**
+ * @deprecated
+ */
 interface WorkerInterface
 {
 

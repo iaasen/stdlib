@@ -8,7 +8,9 @@
 namespace Iaasen\Console;
 
 
-
+/**
+ * @deprecated
+ */
 abstract class AbstractWorker implements WorkerInterface
 {
 	/** @var array */
