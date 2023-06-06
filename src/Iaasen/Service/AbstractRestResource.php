@@ -91,7 +91,7 @@ abstract class AbstractRestResource extends AbstractResourceListener
 	 * @return ?array
 	 */
 	public static function extractWith($withString) : ?array {
-		if(is_null($withString)) return null;
+		if(is_null($withString)) return [];
 		if(is_array($withString)) return $withString;
 		if(preg_match('/([{\[])/', $withString) >= 1) {
 			$with = json_decode($withString, 1);
