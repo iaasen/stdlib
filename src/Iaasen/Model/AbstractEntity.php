@@ -178,7 +178,7 @@ class AbstractEntity implements ModelInterface
 					else $data[$key] = $value;
 				}
 				elseif($property['type'] == 'stdClass') {
-					$data[$key] = (array) $value;
+					$data[$key] = json_decode(json_encode($value), true);
 				}
 				elseif($property['type'] == 'object') {
 					$data[$key] = $value->getArrayCopy();
