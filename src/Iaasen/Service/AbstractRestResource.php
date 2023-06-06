@@ -90,7 +90,8 @@ abstract class AbstractRestResource extends AbstractResourceListener
 	 * @param array|string|null $withString
 	 * @return ?array
 	 */
-	public static function extractWith($withString) : ?array {
+	public static function extractWith($withString, array $allOption = []) : ?array {
+		if($withString == 'all') return $allOption;
 		if(is_null($withString)) return [];
 		if(is_array($withString)) return $withString;
 		if(preg_match('/([{\[])/', $withString) >= 1) {
