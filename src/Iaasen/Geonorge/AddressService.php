@@ -20,9 +20,9 @@ use Nteb\ApiEntities\Exception\GatewayTimeoutException;
 
 /**
  * Documentation:
- * - https://ws.geonorge.no/adresser/v1 - Finn adresser med søk eller matrikkel
- * - https://ws.geonorge.no/eiendom/v1 - Finn eiendom nær en gitt koordinat
- * - https://ws.geonorge.no/transformering/v1 - Konverter koordinater
+ * - https://ws.geonorge.no/adresser/v1/ - Finn adresser med søk eller matrikkel
+ * - https://ws.geonorge.no/eiendom/v1/ - Finn eiendom nær en gitt koordinat
+ * - https://ws.geonorge.no/transformering/v1/ - Konverter koordinater
  * - https://www.kartverket.no/Kart/transformere-koordinater/
  */
 class AddressService
