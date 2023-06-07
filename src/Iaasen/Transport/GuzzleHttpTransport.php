@@ -7,6 +7,7 @@
 namespace Iaasen\Transport;
 
 use GuzzleHttp\Client AS GuzzleClient;
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Request;
@@ -158,12 +159,12 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 		try {
 			return $this->internalSend($method, $url, $payload);
 		}
-		catch(\GuzzleHttp\Exception\GuzzleException $e) {
+		catch (BadResponseException $e) {
 			if($e->getCode() == 401) { // 401 when access token is not accepted
 				if($this->renewSession()) return $this->internalSend($method, $url, $payload);
 			}
 			elseif($e->getCode() == 500) {
-				throw new BadGatewayException($e->getCode() . ' - ' . $e->getMessage());
+				throw new BadGatewayException($e->getResponse()->getStatusCode() . ' - ' . $e->getResponse()->getReasonPhrase());
 			}
 			throw $e;
 		}

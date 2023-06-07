@@ -173,7 +173,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 					else $data[$key] = $value;
 				}
 				elseif($property['type'] == 'object') {
-					$data[$key] = $property['value'] == '\stdClass' ? (array) $value : $value->getArrayCopy();
+					$data[$key] = $property['value'] == '\stdClass' ? json_decode(json_encode($value), true) : $value->getArrayCopy();
 				}
 				else {
 					$data[$key] = $value;
@@ -343,7 +343,12 @@ class AbstractEntityV2 implements ModelInterfaceV2
 						$this->$name[] = $row;
 						break;
 					default:
-						$this->$name[] = ($row instanceof $className) ? $row : new $className($row);
+						try {
+							$this->$name[] = ($row instanceof $className) ? $row : new $className($row);
+						}
+						catch (\Error $e) {
+							throw  new \Exception($e->getMessage() . ' (Class: ' . get_class($this) . ', property: ' . $name . ')', $e->getCode());
+						}
 						break;
 				}
 			}
