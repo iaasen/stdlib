@@ -141,7 +141,7 @@ class SessionMessenger implements PluginInterface
 	{
 		if(!isset(self::$container) || !self::$container instanceof Container) {
             $manager = $this->getSessionManager();
-            self::$container = new Container('SessionMessenger', $manager);
+            self::$container = new Container(self::NAMESPACE_DEFAULT, $manager);
 		}
 		return self::$container;
 	}
@@ -162,5 +162,9 @@ class SessionMessenger implements PluginInterface
 	public function getController() : ?DispatchableInterface
 	{
 		return $this->controller;
+	}
+
+	public function clearContainer() : void {
+		self::$container = null;
 	}
 }
