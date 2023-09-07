@@ -7,6 +7,7 @@
 namespace Iaasen\Service;
 
 
+use Iaasen\WithOptions;
 use Laminas\ApiTools\Rest\AbstractResourceListener;
 use Nteb\ApiEntities\Exception\InvalidArgumentException;
 
@@ -88,18 +89,11 @@ abstract class AbstractRestResource extends AbstractResourceListener
 
 	/**
 	 * @param array|string|null $withString
-	 * @return ?array
+	 * @param array $default
+	 * @return array
 	 */
-	public static function extractWith($withString, array $allOption = []) : ?array {
-		if($withString == 'all') return $allOption;
-		if(is_null($withString)) return [];
-		if(is_array($withString)) return $withString;
-		if(preg_match('/([{\[])/', $withString) >= 1) {
-			$with = json_decode($withString, 1);
-			if(is_null($with)) throw new InvalidArgumentException("Invalid format of 'with' attribute (is this correct json?)");
-			return (array) $with;
-		}
-		else return array_filter(explode(',', $withString));
+	public static function extractWith($withString, array $default = []) : array {
+		return WithOptions::extractWith($withString, $default);
 	}
 
 }
