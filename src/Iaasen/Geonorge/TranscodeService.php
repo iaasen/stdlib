@@ -72,6 +72,20 @@ class TranscodeService
 	}
 
 
+	public function transcodeUtmZoneToUtmZone(float $utmNorth, float $utmEast, int $fromZone, int $toZone) : LocationUtm {
+		$url = 'transformer';
+		$query = [
+			'x' => $utmEast,
+			'y' => $utmNorth,
+			'fra' => self::UTM_ZONES[$fromZone],
+			'til' => self::UTM_ZONES[$toZone],
+		];
+		$data = json_decode($this->transport->sendGet($url, $query));
+		$latitudeBand = self::LATITUDE_BANDS[(int) (($utmNorth + 80) / 8)];
+		return new LocationUtm($data->y, $data->x, $toZone . $latitudeBand);
+	}
+
+
 	/**
 	 * @deprecated use transcodeLatLongToUTM32()
 	 */
