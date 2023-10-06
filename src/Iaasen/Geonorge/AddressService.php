@@ -155,7 +155,7 @@ class AddressService
 		$geotools = new Geotools();
 		$GRS80 = new GRS80Ellipsoid();
 		$coordinate = new Coordinate([$latitude, $longitude], $GRS80);
-		$coordinate = explode(' ', $geotools->convert($coordinate)->toUTM());
+		$coordinate = explode(' ', $geotools->convert($coordinate)->toUniversalTransverseMercator());
 		return new LocationUtm($coordinate[1], $coordinate[2], $coordinate[0]);
 	}
 

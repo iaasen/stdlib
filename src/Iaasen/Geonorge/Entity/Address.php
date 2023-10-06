@@ -16,32 +16,39 @@ use Iaasen\Model\AbstractEntityV2;
  */
 class Address extends AbstractEntityV2
 {
+	// Identities
 	public string $id;
 	public int $adressekode;
+	public string $objtype;
+	public DateTime $oppdateringsdato;
+
+	// The address
 	public string $adressenavn;
+	public int $nummer;
+	public string $bokstav;
+	public string $postnummer;
+	public string $poststed;
+
+	// Convenience compliations
 	public string $adressetekst;
 	public string $adressetekstutenadressetilleggsnavn;
 	public string $adressetillegsnavn;
-	public string $bokstav;
-	/** @var string[] */
-	public array $bruksenhetsnummer;
-	public int $bruksnummer;
-	public int $festenummer;
-	public int $gardsnummer;
+
+	// Location
+	public ?\stdClass $representasjonspunkt;
+	public bool $stedfestingverifisert;
+	public ?LocationUtm $location_utm; // Locally generated
+	public ?LocationLatLong $location_lat_long; // Locally generated
+
+	// Matrikkel
 	public string $kommunenavn;
 	public string $kommunenummer;
-	public int $nummer;
-	public string $objtype;
-	public DateTime $oppdateringsdato;
-	public string $postnummer;
-	public string $poststed;
-	public \stdClass $representasjonspunkt;
-	public bool $stedfestingverifisert;
+	public int $gardsnummer;
+	public int $bruksnummer;
+	public int $festenummer;
 	public ?int $undernummer = null;
-
-	// Locally generated data, not from Geonorge
-	public LocationUtm $location_utm;
-	public LocationLatLong $location_lat_long;
+	/** @var string[] */
+	public array $bruksenhetsnummer;
 
 
 	public function __construct($data = []) {

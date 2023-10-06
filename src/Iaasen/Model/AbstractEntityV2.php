@@ -246,33 +246,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 			$this->setArrayInternal($name, $value, $doc['nullable']);
 		}
 		else {
-			switch($doc['value']) {
-				case 'bool':
-					$this->$name = (!is_null($value)) ? (bool) $value : null;
-					break;
-				case 'int':
-					$this->$name = (int) $value;
-					if(is_string($value) && !strlen($value)) $this->$name = null;
-					break;
-				case 'float':
-					$this->$name = (float) $value;
-					break;
-				case 'string':
-					$this->$name = (string) $value;
-					break;
-//				case 'array':
-//					if(is_object($value)) $this->$name = (array) $value;
-//					elseif(is_string($value)) {
-//						if(in_array(substr($value, 0, 1), ['{', '['])) $this->$name = (array) json_decode($value);
-//					}
-//					else $this->$name = $value;
-//					break;
-				default:
-					if(is_null($this->$name) || !is_null($value)) { // Make sure default values are not overwritten with null
-						$this->$name = $value;
-					}
-					break;
-			}
+			$this->setPrimitiveInternal($doc['value'], $name, $value);
 		}
 	}
 
@@ -352,6 +326,30 @@ class AbstractEntityV2 implements ModelInterfaceV2
 						break;
 				}
 			}
+		}
+	}
+
+
+	protected  function setPrimitiveInternal(string $type, string $name, mixed $value) : void {
+		switch($type) {
+			case 'bool':
+				$this->$name = (!is_null($value)) ? (bool) $value : null;
+				break;
+			case 'int':
+				$this->$name = (int)   $value;
+				if(is_string($value) && !strlen($value)) $this->$name = null;
+				break;
+			case 'float':
+				$this->$name = (float) $value;
+				break;
+			case 'string':
+				$this->$name = (string) $value;
+				break;
+			default:
+				if(is_null($this->$name) || !is_null($value)) { // Make sure default values are not overwritten with null
+					$this->$name = $value;
+				}
+				break;
 		}
 	}
 
