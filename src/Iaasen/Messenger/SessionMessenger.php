@@ -116,6 +116,12 @@ class SessionMessenger implements PluginInterface
 	}
 
 
+	public function clearQueue() : void {
+		$container = $this->getContainer();
+		$container->{$this->namespace} = new \SplQueue();
+	}
+
+
 	public function setNamespace(string $namespace = self::NAMESPACE_DEFAULT) : void {
 		$this->namespace = $namespace;
 	}
@@ -164,7 +170,12 @@ class SessionMessenger implements PluginInterface
 		return $this->controller;
 	}
 
+
+	/**
+	 * @deprecated clearQueue() describes the true purpose of this function
+	 */
 	public function clearContainer() : void {
-		self::$container = null;
+		$this->clearQueue();
 	}
+
 }
