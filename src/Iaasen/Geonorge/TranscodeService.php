@@ -115,7 +115,7 @@ class TranscodeService
 			'til' => 4326,
 		];
 		$data = json_decode($this->transport->sendGet($url, $query));
-		return new LocationLatLong($data->y, $data->x);
+		return new LocationLatLong(round($data->y, 6), round($data->x, 6));
 	}
 
 
