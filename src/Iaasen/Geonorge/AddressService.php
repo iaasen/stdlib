@@ -163,7 +163,7 @@ class AddressService
 	protected function createObject($data) : Address {
 		$address = new Address($data);
 		$address->location_utm = $this->geonorgeTranscodeService->transcodeLatLongToUTM($address->representasjonspunkt->lat, $address->representasjonspunkt->lon);
-		$address->location_lat_long = new LocationLatLong($address->representasjonspunkt->lat, $address->representasjonspunkt->lon);
+		$address->location_lat_long = new LocationLatLong(round($address->representasjonspunkt->lat, 6), round($address->representasjonspunkt->lon, 6));
 		$address->generateUniqueId();
 		return $address;
 	}

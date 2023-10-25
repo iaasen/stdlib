@@ -31,8 +31,8 @@ class LocationLatLong implements ArraySerializableInterface
 			}
 		}
 		else {
-			$this->latitude = (float) $latitude;
-			$this->longitude = $longitude;
+			$this->latitude = round((float) $latitude, 6);
+			$this->longitude = round($longitude, 6);
 			$this->epsg = $epsg;
 		}
 		$this->generateUniqueId();

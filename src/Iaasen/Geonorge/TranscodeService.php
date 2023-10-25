@@ -70,7 +70,7 @@ class TranscodeService
 		];
 		$data = json_decode($this->transport->sendGet($url, $query));
 		$latitudeBand = self::LATITUDE_BANDS[(int) (($latitude + 80) / 8)];
-		return new LocationUtm($data->y, $data->x, $zone . $latitudeBand);
+		return new LocationUtm(round($data->y, 2), round($data->x, 2), $zone . $latitudeBand);
 	}
 
 
@@ -83,8 +83,10 @@ class TranscodeService
 			'til' => self::UTM_ZONES[$toZone],
 		];
 		$data = json_decode($this->transport->sendGet($url, $query));
-		$latitudeBand = self::LATITUDE_BANDS[(int) (($utmNorth + 80) / 8)];
-		return new LocationUtm($data->y, $data->x, $toZone . $latitudeBand);
+		if($toZone == 32) $latitudeBand = $data->y >= 7099404 ? 'W': 'V';
+		elseif($toZone == 33) $latitudeBand = $data->y >= 7101726 ? 'W': 'V';
+		else $latitudeBand = 'N';
+		return new LocationUtm(round($data->y, 2), round($data->x, 2), $toZone . $latitudeBand);
 	}
 
 
