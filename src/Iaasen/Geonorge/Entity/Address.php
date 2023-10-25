@@ -57,6 +57,15 @@ class Address extends AbstractEntityV2
 	}
 
 
+	public function setRepresentasjonspunkt(?\stdClass $representasjonspunkt) : void {
+		if(!is_null($representasjonspunkt) && $representasjonspunkt->epsg == 'EPSG:4258') {
+			$representasjonspunkt->lat = round($representasjonspunkt->lat, 6);
+			$representasjonspunkt->lon = round($representasjonspunkt->lon, 6);
+		}
+		$this->representasjonspunkt = $representasjonspunkt;
+	}
+
+
 	public function getMatrikkel() : string {
 		$matrikkel = $this->kommunenummer . '-' . $this->gardsnummer . '/' . $this->bruksnummer;
 		if($this->festenummer) $matrikkel .= '/' . $this->festenummer;
