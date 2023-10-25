@@ -28,8 +28,9 @@ class TranscodeService
 	// See https://www.kartverket.no/Kart/transformere-koordinater/
 	const UTM_ZONES = [
 		31 => 25831,
-		32 => 25832, // Default for Norway
-		33 => 25833,
+		32 => 25832,
+		33 => 25833, // Default for Norway
+		34 => 25834,
 	];
 
 	const COORDINATE_SYSTEMS = [
@@ -38,6 +39,7 @@ class TranscodeService
 		25831 => 'ETRS89 UTM 31 2D',
 		25832 => 'ETRS89 UTM 32 2D',
 		25833 => 'ETRS89 UTM 33 2D',
+		25834 => 'ETRS89 UTM 34 2D',
 	];
 
 	protected Transport $transport;
