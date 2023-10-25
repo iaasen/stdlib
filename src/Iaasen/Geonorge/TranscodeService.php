@@ -60,7 +60,7 @@ class TranscodeService
 	}
 
 
-	public function transcodeLatLongToUTM(float $latitude, float $longitude, int $zone = 32) : LocationUtm {
+	public function transcodeLatLongToUTM(float $latitude, float $longitude, int $zone = 33) : LocationUtm {
 		$url = 'transformer';
 		$query = [
 			'x' => $longitude,
