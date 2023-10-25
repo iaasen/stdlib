@@ -53,7 +53,8 @@ class Address extends AbstractEntityV2
 
 	public function __construct($data = []) {
 		parent::__construct($data);
-		$this->id = $this->generateUniqueId();
+		// Don't overwrite the integer addressId from Matrikkel
+		if(!isset($this->id)) $this->id = $this->generateUniqueId();
 	}
 
 
