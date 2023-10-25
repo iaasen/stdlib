@@ -9,10 +9,9 @@ namespace Iaasen\Service;
 
 use Iaasen\WithOptions;
 use Laminas\ApiTools\Rest\AbstractResourceListener;
-use Nteb\ApiEntities\Exception\InvalidArgumentException;
+use Laminas\Http\Header\Authorization;
 
-abstract class AbstractRestResource extends AbstractResourceListener
-{
+abstract class AbstractRestResource extends AbstractResourceListener {
 
 	/**
 	 * Returns an array with start and end times in unix timestamp
@@ -94,6 +93,17 @@ abstract class AbstractRestResource extends AbstractResourceListener
 	 */
 	public static function extractWith($withString, array $default = []) : array {
 		return WithOptions::extractWith($withString, $default);
+	}
+
+
+	protected function getAccessTokenFromRequest() : ?string {
+		/** @var Authorization $authorization */
+		$authorization = $this->getEvent()->getRequest()->getHeaders()->get('Authorization');
+		if(!$authorization) return null;
+		$matches = [];
+		$success = preg_match('/^Bearer (.+)$/', trim($authorization->getFieldValue()), $matches);
+		if(!$success) return null;
+		return $matches[1];
 	}
 
 }
