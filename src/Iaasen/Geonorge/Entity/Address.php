@@ -63,7 +63,7 @@ class Address extends AbstractEntityV2
 			$representasjonspunkt->lat = round($representasjonspunkt->lat, 6);
 			$representasjonspunkt->lon = round($representasjonspunkt->lon, 6);
 		}
-		elseif(is_array($representasjonspunkt) && $representasjonspunkt['epsg'] == 'EPSG:4258') {
+		elseif(is_array($representasjonspunkt) && count($representasjonspunkt) && $representasjonspunkt['epsg'] == 'EPSG:4258') {
 			$representasjonspunkt['lat'] = round($representasjonspunkt['lat'], 6);
 			$representasjonspunkt['lon'] = round($representasjonspunkt['lon'], 6);
 		}
