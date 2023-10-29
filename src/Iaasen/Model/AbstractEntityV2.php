@@ -330,7 +330,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	}
 
 
-	protected  function setPrimitiveInternal(string $type, string $name, mixed $value) : void {
+	protected  function setPrimitiveInternal(string $type, string $name, $value) : void {
 		switch($type) {
 			case 'bool':
 				$this->$name = (!is_null($value)) ? (bool) $value : null;
