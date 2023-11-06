@@ -22,6 +22,8 @@ class WithOptions {
 		// Is already an array
 		if(is_array($withString)) return $withString;
 
+		// Is an empty string
+		if(!strlen($withString)) return [];
 
 		// Is JSON
 		if(preg_match('/^([{\[].*[}\]])$/', $withString)) {
