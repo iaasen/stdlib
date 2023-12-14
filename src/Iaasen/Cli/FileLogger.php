@@ -105,24 +105,24 @@ class FileLogger implements StyleInterface {
 	}
 
 
-	public function ask(string $question, string $default = null, callable $validator = null) {
+	public function ask(string $question, string $default = null, callable $validator = null) : mixed {
 		$this->log('[ASK] ' . $question . ': ' . $default);
 		return $default;
 	}
 
 
-	public function askHidden(string $question, callable $validator = null) {
+	public function askHidden(string $question, callable $validator = null) : mixed {
 		$this->log('[ASK] ' . $question . ': (hidden)');
 	}
 
 
-	public function confirm(string $question, bool $default = true) {
+	public function confirm(string $question, bool $default = true) : bool {
 		$this->log('[CONFIRM] ' . $question . ': ' . ($default ? 'yes' : 'no'));
 		return $default;
 	}
 
 
-	public function choice(string $question, array $choices, $default = null) {
+	public function choice(string $question, array $choices, $default = null) : mixed {
 		$this->log('[CHOICE] ' . $question . ': ' . $default);
 		return $default;
 	}

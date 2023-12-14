@@ -58,14 +58,14 @@ class Logger implements StyleInterface {
 		foreach($this->loggers AS $logger) { $logger->table($headers, $rows); }
 	}
 
-	public function ask(string $question, string $default = null, callable $validator = null) {
+	public function ask(string $question, string $default = null, callable $validator = null) : mixed {
 		foreach($this->loggers AS $logger) {
 			$default = $logger->ask($question, $default, $validator);
 		}
 		return $default;
 	}
 
-	public function askHidden(string $question, callable $validator = null) {
+	public function askHidden(string $question, callable $validator = null) : mixed {
 		$answer = reset($this->loggers)->askHidden($question, $validator);
 		foreach (array_slice($this->loggers, 1) AS $logger) {
 			$logger->askHidden($question, $validator);
@@ -73,14 +73,14 @@ class Logger implements StyleInterface {
 		return $answer;
 	}
 
-	public function confirm(string $question, bool $default = true) {
+	public function confirm(string $question, bool $default = true) : bool {
 		foreach($this->loggers AS $logger) {
 			$default = $logger->confirm($question, $default);
 		}
 		return $default;
 	}
 
-	public function choice(string $question, array $choices, $default = null) {
+	public function choice(string $question, array $choices, $default = null) : mixed {
 		foreach($this->loggers AS $logger) { $default = $logger->choice($question, $choices, $default); }
 		return $default;
 	}
