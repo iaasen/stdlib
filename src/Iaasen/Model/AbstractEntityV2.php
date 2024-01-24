@@ -366,7 +366,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	public function __unset(string $name) : void
 	{
 		$doc = $this->getDocBlock();
-		if(isset($doc[$name])) $this->$name = null;
+		if(isset($doc[$name])) unset($this->$name);
 	}
 
 
