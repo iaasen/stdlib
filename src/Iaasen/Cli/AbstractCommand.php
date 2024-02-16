@@ -19,6 +19,10 @@ class AbstractCommand extends Command {
 	
 	
 	public function initialize(InputInterface $input, OutputInterface $output) : void {
+		date_default_timezone_set('Europe/Oslo');
+		ini_set('intl.default_locale', 'nb-NO');
+		mb_internal_encoding("UTF-8");
+
 		$this->io = new SymfonyStyle($input, $output);
 		parent::initialize($input, $output);
 	}
@@ -77,8 +81,7 @@ class AbstractCommand extends Command {
 	}
 
 
-	protected function configure() : void {
-		parent::configure();
+	protected function configureIterableDatabaseLookup() : void {
 		$this->addArgument('id', InputArgument::OPTIONAL);
 		$this->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Limit number of results to return');
 		$this->addOption('with', 'w', InputOption::VALUE_OPTIONAL, 'Connected objects to include in the response');
