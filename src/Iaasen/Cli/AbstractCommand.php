@@ -81,15 +81,22 @@ class AbstractCommand extends Command {
 	}
 
 
-	protected function configureIterableDatabaseLookup() : void {
+	protected function configureTableLookup() : void {
 		$this->addArgument('id', InputArgument::OPTIONAL);
 		$this->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Limit number of results to return');
+	}
+
+
+	protected function configureWith() : void {
 		$this->addOption('with', 'w', InputOption::VALUE_OPTIONAL, 'Connected objects to include in the response');
+	}
+
+
+	protected function configureOutputOptions() : void {
 		$this->addOption('table', 't', InputOption::VALUE_OPTIONAL, 'Return table', false);
 		$this->addOption('dump', 'd', InputOption::VALUE_OPTIONAL, 'Dump the objects', false);
 		$this->addOption('json', 'j', InputOption::VALUE_OPTIONAL, 'Return as Json', false);
 		$this->addOption('output', 'o', InputOption::VALUE_OPTIONAL, 'Output: table, dump or json', false);
-		$this->addOption('random', 'r', InputOption::VALUE_OPTIONAL, 'Collect random objects for debugging', false);
 	}
 	
 }
