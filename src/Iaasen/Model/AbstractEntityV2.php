@@ -331,31 +331,35 @@ class AbstractEntityV2 implements ModelInterfaceV2
 
 
 	protected  function setPrimitiveInternal(string $type, string $name, $value) : void {
-		switch($type) {
-			case 'bool':
-				$this->$name = (!is_null($value)) ? (bool) $value : null;
-				break;
-			case 'int':
-				$this->$name = (int)   $value;
-				if(is_string($value) && !strlen($value)) $this->$name = null;
-				break;
-			case 'float':
-				$this->$name = (float) $value;
-				break;
-			case 'string':
-				$this->$name = (string) $value;
-				break;
-			default:
-				if(is_null($this->$name) || !is_null($value)) { // Make sure default values are not overwritten with null
-					$this->$name = $value;
-				}
-				break;
+		try {
+			switch ($type) {
+				case 'bool':
+					$this->$name = (!is_null($value)) ? (bool)$value : null;
+					break;
+				case 'int':
+					$this->$name = (int)$value;
+					if (is_string($value) && !strlen($value)) $this->$name = null;
+					break;
+				case 'float':
+					$this->$name = (float)$value;
+					break;
+				case 'string':
+					$this->$name = (string)$value;
+					break;
+				default:
+					if (is_null($this->$name) || !is_null($value)) { // Make sure default values are not overwritten with null
+						$this->$name = $value;
+					}
+					break;
+			}
+		}
+		catch (\Exception $e) {
+			throw  new \Exception($e->getMessage() . ' (Class: ' . get_class($this) . ', property: ' . $name . ')', $e->getCode());
 		}
 	}
 
 
-	public function __isset(string $name) : bool
-	{
+	public function __isset(string $name) : bool {
 		if(!property_exists($this, $name)) return false;
 		$doc = $this->getDocBlock();
 		if(isset($doc[$name])) return isset($this->$name); // Why go by $doc, isn't it enough to check the property?
@@ -363,8 +367,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	}
 
 
-	public function __unset(string $name) : void
-	{
+	public function __unset(string $name) : void {
 		$doc = $this->getDocBlock();
 		if(isset($doc[$name])) unset($this->$name);
 	}
@@ -377,8 +380,7 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	public function __clone() {}
 
 
-	public function databaseSaveArray() : array
-	{
+	public function databaseSaveArray() : array	{
 		$doc = $this->getDocBlock();
 		$data = $this->getArrayCopy();
 		unset($data['throwExceptionOnMissingProperty']);
