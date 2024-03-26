@@ -58,7 +58,7 @@ abstract class AbstractTable
 	/**
 	 * @param array $where
 	 * @param array $order
-	 * @return ModelInterface[]|ModelInterfaceV2
+	 * @return ModelInterface[]|ModelInterfaceV2[]
 	 */
 	protected function fetchAll($where = [], $order = []) {
 		$rowSet = $this->primaryGateway->select(

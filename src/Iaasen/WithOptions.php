@@ -20,7 +20,9 @@ class WithOptions {
 		if(is_null($withString)) return $default;
 
 		// Is already an array
-		if(is_array($withString)) return $withString;
+		if(is_array($withString)) {
+			return self::parseWithArrayRecursively($withString);
+		}
 
 		// Is an empty string
 		if(!strlen($withString)) return [];
@@ -42,6 +44,20 @@ class WithOptions {
 		$data = array_flip($data);
 		$with = [];
 		foreach($data AS $key => $value) $with[$key] = [];
+		return $with;
+	}
+
+
+	private static function parseWithArrayRecursively(array $with) : array {
+		foreach($with AS $key => $value) {
+			if(is_array($value)) {
+				$with[$key] = self::parseWithArrayRecursively($value);
+			}
+			else {
+				unset($with[$key]);
+				$with[$value] = [];
+			}
+		}
 		return $with;
 	}
 
