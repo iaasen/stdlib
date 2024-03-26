@@ -4,7 +4,9 @@ namespace Iaasen\Service;
 use Iaasen\Model\AbstractEntityV2;
 use Iaasen\Model\AbstractModel;
 use Iaasen\Exception\NotFoundException;
+use Iaasen\Model\AbstractModelV2;
 use Iaasen\Model\ModelInterface;
+use Iaasen\Model\ModelInterfaceV2;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Sql\AbstractPreparableSql;
 use Laminas\Db\Sql\Where;
@@ -21,12 +23,14 @@ abstract class AbstractTable
 	/** @var  TableGateway  */
 	protected $primaryGateway;
 
-	protected $allowInsertWithId = false;
-
+	protected bool $allowInsertWithId = false;
 	const MYSQL_TIMESTAMP_FORMAT = 'Y-m-d H:i:s';
 
-	public function __construct($currentUser, TableGatewayInterface $primaryGateway, array $additionalDependencies = [])
-	{
+	public function __construct(
+		$currentUser,
+		TableGatewayInterface $primaryGateway,
+		array $additionalDependencies = []
+	) {
 		$this->currentUser = $currentUser;
 		$this->primaryGateway = $primaryGateway;
 		foreach ($additionalDependencies AS $key => $value) {
@@ -37,23 +41,26 @@ abstract class AbstractTable
 		}
 	}
 
+
 	/**
 	 * Allow to insert rows into the database with 'id' set, bypassing the auto numbering scheme
-	 * @param bool $allow
 	 */
-	public function setAllowInsertWithId(bool $allow) {
+	public function setAllowInsertWithId(bool $allow) : void {
 		$this->allowInsertWithId = $allow;
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function getAllowInsertWithId() {
+
+	public function getAllowInsertWithId() : bool {
 		return $this->allowInsertWithId;
 	}
-	
-	protected function fetchAll($where = [], $order = [])
-	{
+
+
+	/**
+	 * @param array $where
+	 * @param array $order
+	 * @return ModelInterface[]|ModelInterfaceV2
+	 */
+	protected function fetchAll($where = [], $order = []) {
 		$rowSet = $this->primaryGateway->select(
 				function(Select $select) use ($where, $order) {
 					$select->where($where);
@@ -70,14 +77,14 @@ abstract class AbstractTable
 		return $objects;
 	}
 
+
 	/**
 	 *
-	 * @param $id
-	 * @return ModelInterface|null
+	 * @param int $id
+	 * @return ModelInterface|ModelInterfaceV2|null
 	 * @throws NotFoundException
 	 */
-	protected function find($id)
-	{
+	protected function find($id) {
 		$id  = (int) $id;
 		$rowSet = $this->primaryGateway->select(['id' => $id]);
 		$row = $rowSet->current();
@@ -86,6 +93,7 @@ abstract class AbstractTable
 		}
 		return $row;
 	}
+
 
 	/**
 	 * @param AbstractModel|AbstractEntityV2 $model
@@ -121,12 +129,12 @@ abstract class AbstractTable
 		return $id;
 	}
 
+
 	/**
 	 * @param int $id
 	 * @return bool
 	 */
-	protected function delete($id)
-	{
+	protected function delete($id) {
 		if(is_object($id)) {
 			/** @var mixed $id */
 			$id = $id->id;
@@ -134,6 +142,7 @@ abstract class AbstractTable
 		$result = $this->primaryGateway->delete(['id' => $id]);
 		return (bool) $result;
 	}
+
 	
 	/**
 	 * Send query directly to adapter return rows
@@ -202,6 +211,7 @@ abstract class AbstractTable
 		$adapter->query("COMMIT;", Adapter::QUERY_MODE_EXECUTE);
 	}
 
+
 	/**
 	 * Returns an array where they key is the the key from the objects and the value is an array of all objects with that key.
 	 * Useful for collecting dependencies from the database
@@ -209,30 +219,21 @@ abstract class AbstractTable
 	 * @param string $key
 	 * @return mixed[]
      * @deprecated Use ObjectKeyMatrix class
+	 * @see ObjectKeyMatrix
 	 */
 	protected function getObjectKeyMatrix(array $objects, string $key = 'id') : array {
-		return array_reduce($objects, function($carry, $item) use($key) {
-			$carry[$item->$key][] = $item;
-			return $carry;
-		}, []);
-
-//		//Does the same as the above code
-//		$objectKeyMatrix = [];
-//		foreach($objects AS $object) {
-//			$objectKeyMatrix[$object->$key][] = $object;
-//		}
-//		return $objectKeyMatrix;
+		return ObjectKeyMatrix::getObjectKeyMatrix($objects, $key);
 	}
+
 
     /**
-     * @deprecated Use ObjectMatrixClass
+     * @deprecated Use ObjectKeyMatrix class
+	 * @see ObjectKeyMatrix
      */
 	protected function getArrayKeyMatrix(array $array, string $key = 'id') : array {
-		return array_reduce($array, function($carry, $item) use($key) {
-			$carry[$item[$key]][] = $item;
-			return $carry;
-		}, []);
+		return ObjectKeyMatrix::getArrayKeyMatrix($array, $key);
 	}
+
 
 	/**
 	 * @param mixed[] $objectKeyMatrix The object matrix given by getObjectKeyMatrix()
@@ -240,14 +241,10 @@ abstract class AbstractTable
 	 * @param mixed[] $childObjects The child objects to populate from
 	 * @param string $childKey The child object attribute used to match against the object matrix
      * @deprecated Use ObjectKeyMatrix class
+	 * @see ObjectKeyMatrix
 	 */
 	protected function populateObjectKeyMatrixWithFunctionCall(array $objectKeyMatrix, string $objectFunction, array $childObjects, string $childKey) : void {
-		foreach($childObjects AS $childObject) {
-			if(isset($objectKeyMatrix[$childObject->$childKey])) {
-				foreach($objectKeyMatrix[$childObject->$childKey] AS $object) {
-					$object->$objectFunction($childObject);
-				}
-			}
-		}
+		ObjectKeyMatrix::populateObjectKeyMatrixWithFunctionCall($objectKeyMatrix, $objectFunction, $childObjects, $childKey);
 	}
+
 }

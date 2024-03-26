@@ -2,13 +2,12 @@
 /**
  * User: ingvar
  * Date: 03.12.2021
- * Time: 10.53
  */
 
 namespace Iaasen\Service;
 
-class ObjectKeyMatrix
-{
+class ObjectKeyMatrix {
+
 	/**
 	 * Returns an array where they key is the they keys from the objects and the value is an array of all objects with that key.
 	 * Useful for collecting dependencies from the database
@@ -21,6 +20,13 @@ class ObjectKeyMatrix
 			$carry[$item->$key][] = $item;
 			return $carry;
 		}, []);
+
+		//Does the same as the above code
+		//$objectKeyMatrix = [];
+		//foreach($objects AS $object) {
+		//	$objectKeyMatrix[$object->$key][] = $object;
+		//}
+		//return $objectKeyMatrix;
 	}
 
 
@@ -64,4 +70,5 @@ class ObjectKeyMatrix
 			}
 		}
 	}
+
 }
