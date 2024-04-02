@@ -15,12 +15,13 @@ class WithOptions {
 	 * @param array $default
 	 * @return array
 	 */
-	public static function extractWith($withString, array $default = []) : array {
+	public static function extractWith(array|string|null $withString, array $default = []) : array {
 		// Return default
 		if(is_null($withString)) return $default;
 
 		// Is already an array
 		if(is_array($withString)) {
+			if(in_array('all', $withString)) return $default;
 			return self::parseWithArrayRecursively($withString);
 		}
 
