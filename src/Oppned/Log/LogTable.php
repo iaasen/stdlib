@@ -5,22 +5,38 @@ use Iaasen\Service\AbstractTable;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
 
-class LogTable extends AbstractTable
-{
+class LogTable extends AbstractTable {
+
+	/**
+	 * @param int $id
+	 * @return false|Log
+	 */
 	public function find($id) {
 		if($this->accessToView($id)) {
-			return parent::find($id);
+			/** @var Log $log */
+			$log = parent::find($id);
+			return $log;
 		}
 		else return false;	
 	}
-	
+
+
+	/**
+	 * @param Log $model
+	 * @return false|int
+	 */
 	public function save($model) {
 		if($this->accessToEdit($model)) {
 			return parent::save($model);
 		}
 		return false;
 	}
-	
+
+
+	/**
+	 * @param int $id
+	 * @return bool
+	 */
 	public function delete($id) {
 		if($this->accessToEdit($id)) {
 			return parent::delete($id);
@@ -31,11 +47,10 @@ class LogTable extends AbstractTable
 	
 	
 	/**
-	 * 
 	 * @param string $filter Valid options: 'important', 'read', 'unread', 'all'
-	 * @param string $group
 	 */
-	public function getGroupLogs($filter = 'important', $limit = 10, $group) {
+	public function getGroupLogs(string $filter = 'important', int $limit = 10, string $group = null) {
+		if(!$group) return false;
 		if(!$this->accessToView($group, 'group')) return false;;
 
 		// Count unread logs and make sure they are all listed
@@ -49,8 +64,6 @@ class LogTable extends AbstractTable
 			if($rows->current()['count'] > $limit) $limit = (int) $rows->current()['count'];
 		}
 
-//		$query = [];
-//		$query['group'] = $group;
 		$select = new Select();
 		$select->from($this->primaryGateway->getTable());
 		$select->where->equalTo('group', $group);
@@ -75,7 +88,7 @@ class LogTable extends AbstractTable
 		}
 		$rows = $this->primaryGateway->selectWith($select);
 		
-		$logs = array();
+		$logs = [];
 		foreach($rows AS $row) {
 			$logs[] = $row;
 			if(!$row->viewed) {
@@ -86,92 +99,15 @@ class LogTable extends AbstractTable
 		}
 		return $logs;
 	}
+
 	
-	protected function accessToView($id, $idType = 'log') {
+	protected function accessToView(int|string $id, string $idType = 'log') : bool {
 		return true;
 	}
-	protected function accessToEdit($mixed) {
+
+
+	protected function accessToEdit(int|Log $mixed) : bool {
 		return true;
 	}
-	/*
-	protected function accessToView($id, $idType = 'log') {
-		$user = $this->getCurrentUser();
-		
-		if($idType == 'log') {
-			$select = new Select();
-			$select->from($this->tableGateway->getTable()); // 'messagelog'
-			$select->columns(array('group'));
-			$select->where->equalTo('id', $id);
-			$row = $this->query($select)->current();
-			$group = $row['group'];
-			if(isset($user->access[$group]) && $user->access[$group]['access_level'] > 0) {
-				Message::create(6, "Giving user '{$user->username}' access to view quotation $id of group '$group'");
-				return true;
-			}
-			else {
-				Message::create(3, "Declining user '{$user->username}' access to view quotation '$id' of group '$group'");
-				return false;
-			}
-		}
-		elseif($idType == 'group') {
-			
-			if(isset($user->access[$id]) && $user->access[$id]['access_level'] > 0) {
-				Message::create(6, "Giving user '{$user->username}' access to view quotations of group '$id'");
-				return true;
-			}
-			else {
-				Message::create(3, "Declining user '{$user->username}' access to view quotations of group '$id'");
-				return false;
-			}
-		}
-	}
-	
-	/**
-	 * 
-	 * @param unknown $mixed Quotation object or quotations_id
-	 * @return boolean
-	 * /
-	protected function accessToEdit($mixed) {
-		$user = $this->getCurrentUser();
-		
-		if($mixed instanceof Quotation) {
-			if(isset($id->id)) $id = $id->id;
-			else { // New quotation, no id yet
-				if(isset($user->access[$mixed->group])) {
-					if($mixed->owner == $user->username && $user->access[$mixed->group]['access_level'] > 1) {
-						Message::create(6, "Giving user '{$user->username}' access to create quotations for group '{$mixed->group}', owned by '{$mixed->owner}'");
-						return true;
-					}
-					elseif($user->access[$mixed->group]['access_level'] > 2) {
-						Message::create(6, "Giving user '{$user->username}' access to create quotations for group '{$mixed->group}', owned by '{$mixed->owner}'");
-						return true;
-					}
-				}
-				Message::create(3, "Declining user '{$user->username}' access to create quotations for group '{$mixed->group}', owned by '{$mixed->owner}'");
-				return false;
-			}
-		}
-		else $id = $mixed;
-		
-		// Id is given, check the database
-		$select = new Select();
-		$select->from($this->tableGateway->getTable()); // 'quotations'
-		$select->columns(array('group', 'owner'));
-		$select->where->equalTo('id', $id);
-		$row = $this->query($select)->current();
-		
-		if(isset($user->access[$row['group']])) {
-			if($row['owner'] == $user->username && $user->access[$row['group']]['access_level'] > 1) {
-				Message::create(6, "Giving user '{$user->username}' access to edit quotation $id of group '{$row['group']}', owned by '{$row['owner']}'");
-				return true;
-			}
-			elseif($user->access[$row['group']]['access_level'] > 2) {
-				Message::create(6, "Giving user '{$user->username}' access to edit quotation $id of group '{$row['group']}', owned by '{$row['owner']}'");
-				return true;
-			}
-		}
-		Message::create(3, "Declining user '{$user->username}' access to edit quotation $id of group '{$row['group']}', owned by '{$row['owner']}'");
-		return false;
-	}
-	*/
+
 }
