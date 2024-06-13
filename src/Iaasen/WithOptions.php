@@ -22,6 +22,7 @@ class WithOptions {
 		// Is already an array
 		if(is_array($withString)) {
 			if(in_array('all', $withString)) return $default;
+			if(in_array('*', $withString)) return $default;
 			return self::parseWithArrayRecursively($withString);
 		}
 
