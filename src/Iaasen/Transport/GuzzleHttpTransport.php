@@ -128,8 +128,8 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 		$this->headers = $headers;
 	}
 
-	public function addHeader(string $name, string $value) {
-		$this->addHeaders([$name => $value]);
+	public function addHeader(string $key, string $header) {
+		$this->addHeaders([$key => $header]);
 	}
 
 	public function addHeaders(array $headers) {
@@ -308,7 +308,9 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 	 * @return string
 	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
-	public function sendDelete(string $url) {
-		return $this->send('DELETE', $url);
+	public function sendDelete(string $url, array $query = []) {
+			return $this->send('DELETE', $url, [
+			'query' => $query,
+		]);
 	}
 }
