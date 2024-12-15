@@ -1,17 +1,22 @@
 <?php
 /**
- * Created by PhpStorm.
  * User: ingvar.aasen
  * Date: 29.06.2017
- * Time: 12:02
  */
 
 namespace Iaasen;
 
+class Numbers {
 
-class Numbers
-{
-	public static function secondsToHumanReadable($seconds) {
+	/**
+	 * Makes the class usable as a Laminas view helper
+	 */
+	public function __invoke(): self {
+		return $this;
+	}
+
+
+	public static function secondsToHumanReadable(int $seconds): string {
 		if ($seconds == 0) return '0 s';
 		else {
 			$s = $seconds % 60;
@@ -30,6 +35,19 @@ class Numbers
 		return ltrim($txt, ' ,');
 	}
 
+
+	public static function bytesToHumanReadable(int $size, int $precision = 2): string {
+		$units = ['B','kB','MB','GB','TB','PB','EB','ZB','YB'];
+		$step = 1024;
+		$i = 0;
+		while (($size / $step) > 0.9) {
+			$size = $size / $step;
+			$i++;
+		}
+		return round($size, $precision). ' ' . $units[$i];
+	}
+
+
 	public static $defaultFormat = [
 		0, // Decimals
 		',', // Decimal point
@@ -43,4 +61,5 @@ class Numbers
 	public static function format(float $number) : string {
 		return number_format($number, self::$defaultFormat[0], self::$defaultFormat[1],self::$defaultFormat[2]);
 	}
+
 }

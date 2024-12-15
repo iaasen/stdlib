@@ -50,11 +50,13 @@ return [
 	'view_helpers' => [
 		'aliases' => [
 			'messages' => \Iaasen\Messenger\SessionMessengerViewHelper::class,
+            'numbers' => Numbers::class
 		],
         'invokables' => [
 			'makeFormHorizontal' => \Oppned\View\Helper\BootstrapFormHorizontal::class,
 			'makeBootstrapFormHorizontal' => \Oppned\View\Helper\BootstrapFormHorizontal::class,
 			'formRowHorizontal' => \Iaasen\View\Helper\FormRowHorizontal::class,
+            Numbers::class => Numbers::class,
         ],
 		'factories' => [
 			\Iaasen\Messenger\SessionMessengerViewHelper::class => \Iaasen\Messenger\SessionMessengerViewHelper::class,
