@@ -9,6 +9,7 @@ namespace Iaasen\Model;
 use Iaasen\DateTime;
 
 /**
+ * @property ?int $id
  * @property DateTime $timestamp_created
  * @property DateTime $timestamp_updated
  */
