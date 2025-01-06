@@ -15,14 +15,14 @@ class WithOptions {
 	 * @param array $default
 	 * @return array
 	 */
-	public static function extractWith(array|string|null $withString, array $default = []) : array {
+	public static function extractWith(array|string|null $withString, array $default = [], array $full = []) : array {
 		// Return default
 		if(is_null($withString)) return $default;
 
 		// Is already an array
 		if(is_array($withString)) {
-			if(in_array('all', $withString)) return $default;
-			if(in_array('*', $withString)) return $default;
+			if(in_array('all', $withString)) return $full;
+			if(in_array('*', $withString)) return $full;
 			return self::parseWithArrayRecursively($withString);
 		}
 
@@ -40,7 +40,7 @@ class WithOptions {
 		$data = explode(',', $withString);
 
 		// 'all' keyword
-		if(in_array('all', $data)) return $default;
+		if(in_array('all', $data)) return $full;
 
 		// Convert to array
 		$data = array_flip($data);
