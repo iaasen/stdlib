@@ -60,41 +60,44 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 
 	public function __construct(array $config)
 	{
-
-		$permittedConfig = ['base_url', 'headers', 'cookies', 'auth', 'connect_timeout'];
-		$config = array_intersect_key($config, array_flip($permittedConfig));
-		foreach($config AS $key => $value) {
-			if($key == 'auth') {
-				$authArray = [
-					$value['username'],
-					$value['password'],
-					$value['type'] ?? 'basic',
-				];
-				$this->auth = $authArray;
-			}
-			else {
-				$this->$key = $value;
-			}
-		}
-
-		$guzzleConfig = [
-			'base_uri' => $this->base_url,
-			'http_errors' => true, //  Don't throw exceptions for 4xx errors
-			'cookies' => $this->cookies,
-//			'headers' => $this->headers,
-//			'auth' => [$this->username, $this->password],
-			'verify' => false,
-			'timeout' => $this->connect_timeout,
-		];
-		if($this->auth) $guzzleConfig['auth'] = $this->auth;
-
-		// Log requests to $this->historyContainer
-		if($this->debug) {
-			$guzzleConfig['handler'] = $this->createHistoryMiddleware();
-		}
-
-		$this->client = new GuzzleClient($guzzleConfig);
+        $this->createClient($config);
 	}
+
+    protected function createClient(array $config): void
+    {
+        $permittedConfig = ['base_url', 'headers', 'cookies', 'auth', 'connect_timeout'];
+        $config = array_intersect_key($config, array_flip($permittedConfig));
+        foreach($config AS $key => $value) {
+            if($key == 'auth') {
+                $authArray = [
+                    $value['username'],
+                    $value['password'],
+                    $value['type'] ?? 'basic',
+                ];
+                $this->auth = $authArray;
+            }
+            else {
+                $this->$key = $value;
+            }
+        }
+
+        $guzzleConfig = [
+            'base_uri' => $this->base_url,
+            'http_errors' => true, //  Don't throw exceptions for 4xx errors
+            'cookies' => $this->cookies,
+//			'headers' => $this->headers,
+            'verify' => false,
+            'timeout' => $this->connect_timeout,
+        ];
+        if($this->auth) $guzzleConfig['auth'] = $this->auth;
+
+        // Log requests to $this->historyContainer
+        if($this->debug) {
+            $guzzleConfig['handler'] = $this->createHistoryMiddleware();
+        }
+
+        $this->client = new GuzzleClient($guzzleConfig);
+    }
 
 	protected function createHistoryMiddleware() {
 		$history = Middleware::history($this->historyContainer);
