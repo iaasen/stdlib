@@ -164,7 +164,17 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 				if($this->renewSession()) return $this->internalSend($method, $url, $payload);
 			}
 			elseif($e->getCode() == 500) {
-				throw new BadGatewayException($e->getResponse()->getStatusCode() . ' - ' . $e->getResponse()->getReasonPhrase());
+                $response = $e->getResponse();
+                if(method_exists(get_class($response), 'getBody')) {
+                    $content = $response->getBody()->getContents();
+                    if(($content = json_decode($content)) !== null) {
+                        if(isset($content->status) && isset($content->detail)) {
+                            throw new BadGatewayException('Status ' . $response->getStatusCode() . ' - ' . $content->detail);
+                        }
+                    }
+                }
+
+				throw new BadGatewayException('Status ' . $response->getStatusCode() . ' - ' . $response->getReasonPhrase());
 			}
 			throw $e;
 		}
