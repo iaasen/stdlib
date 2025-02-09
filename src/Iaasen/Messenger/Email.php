@@ -18,12 +18,12 @@ use Iaasen\Model\AbstractEntityV2;
  */
 class Email extends AbstractEntityV2
 {
-	protected string $from;
+	protected ?string $from = null;
 	/** @var string[] */
 	protected array $to;
 	protected string $subject;
 	protected string $body;
-	protected string $body_html;
+	protected ?string $body_html = null;
 
 	public function setTo(string|array $value): void {
 		if(is_string($value)) $value = [$value];
