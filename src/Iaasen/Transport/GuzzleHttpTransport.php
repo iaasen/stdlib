@@ -41,7 +41,8 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 	protected array $historyContainer = [];
 	protected bool $debug = false;
 
-	protected int $connect_timeout = 30;
+    protected int $connect_timeout = 30; // Maximum time for the connect part of the transaction
+    protected int $timeout = 30; // Maximum time for the whole transaction
 
 	/**
 	 * Is run before each request
@@ -65,7 +66,7 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 
     protected function createClient(array $config): void
     {
-        $permittedConfig = ['base_url', 'headers', 'cookies', 'auth', 'connect_timeout'];
+        $permittedConfig = ['base_url', 'headers', 'cookies', 'auth', 'connect_timeout', 'timeout'];
         $config = array_intersect_key($config, array_flip($permittedConfig));
         foreach($config AS $key => $value) {
             if($key == 'auth') {
@@ -87,7 +88,8 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
             'cookies' => $this->cookies,
 //			'headers' => $this->headers,
             'verify' => false,
-            'timeout' => $this->connect_timeout,
+            'connect_timeout' => $this->connect_timeout,
+            'timeout' => $this->timeout,
         ];
         if($this->auth) $guzzleConfig['auth'] = $this->auth;
 
