@@ -17,6 +17,7 @@ for ($i = 0; $i < $processes; $i++) {
         die("Could not fork process\n");
     } elseif ($pid === 0) {
         // Child process
+        usleep(rand(1,10000));
         Timer::setStart();
         $cache->store("Process $i", 5);
         echo "Process $i write ".Timer::getElapsed() . PHP_EOL;
