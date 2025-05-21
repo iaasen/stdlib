@@ -6,6 +6,11 @@
 
 namespace Iaasen;
 
+/**
+ * List shared memory blocks: ipcs -m
+ * List details: ipcs -m -i <shmid>
+ * Delete shared memory block: ipcrm -m <shmid>
+ */
 readonly class SharedMemoryCache
 {
     public function __construct(
