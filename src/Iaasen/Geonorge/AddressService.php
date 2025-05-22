@@ -168,4 +168,12 @@ class AddressService
 		return $address;
 	}
 
+    /**
+     * Used for testing
+     */
+    public function getTransport(): Transport
+    {
+        return $this->transport;
+    }
+
 }
