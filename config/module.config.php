@@ -22,7 +22,6 @@ return [
 			\Iaasen\Service\LaminasMvcConfig::class => \Iaasen\Service\LaminasMvcConfigFactory::class
 		],
 		'invokables' => [
-			\Iaasen\Geonorge\AddressService::class => \Iaasen\Geonorge\AddressService::class,
 			\Iaasen\Messenger\SessionMessenger::class => \Iaasen\Messenger\SessionMessenger::class,
 		],
 		'aliases' => [
