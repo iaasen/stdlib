@@ -18,43 +18,43 @@ class Logger implements StyleInterface {
 		$this->loggers = $loggers;
 	}
 
-	public function title(string $message) {
+	public function title(string $message): void {
 		foreach($this->loggers AS $logger) { $logger->title($message); }
 	}
 
-	public function section(string $message) {
+	public function section(string $message): void {
 		foreach($this->loggers AS $logger) { $logger->section($message); }
 	}
 
-	public function listing(array $elements) {
+	public function listing(array $elements): void {
 		foreach($this->loggers AS $logger) { $logger->listing($elements); }
 	}
 
-	public function text($message) {
+	public function text($message): void {
 		foreach($this->loggers AS $logger) { $logger->text($message); }
 	}
 
-	public function success($message) {
+	public function success($message): void {
 		foreach($this->loggers AS $logger) { $logger->success($message); }
 	}
 
-	public function error($message) {
+	public function error($message): void {
 		foreach($this->loggers AS $logger) { $logger->error($message); }
 	}
 
-	public function warning($message) {
+	public function warning($message): void {
 		foreach($this->loggers AS $logger) { $logger->warning($message); }
 	}
 
-	public function note($message) {
+	public function note($message): void {
 		foreach($this->loggers AS $logger) { $logger->note($message); }
 	}
 
-	public function caution($message) {
+	public function caution($message): void {
 		foreach($this->loggers AS $logger) { $logger->caution($message); }
 	}
 
-	public function table(array $headers, array $rows) {
+	public function table(array $headers, array $rows): void {
 		foreach($this->loggers AS $logger) { $logger->table($headers, $rows); }
 	}
 
@@ -85,19 +85,19 @@ class Logger implements StyleInterface {
 		return $default;
 	}
 
-	public function newLine(int $count = 1) {
+	public function newLine(int $count = 1): void {
 		foreach($this->loggers AS $logger) { $logger->newLine($count); }
 	}
 
-	public function progressStart(int $max = 0) {
+	public function progressStart(int $max = 0): void {
 		foreach($this->loggers AS $logger) { $logger->progressStart($max); }
 	}
 
-	public function progressAdvance(int $step = 1) {
+	public function progressAdvance(int $step = 1): void {
 		foreach($this->loggers AS $logger) { $logger->progressAdvance($step); }
 	}
 
-	public function progressFinish() {
+	public function progressFinish(): void {
 		foreach($this->loggers AS $logger) { $logger->progressFinish(); }
 	}
 

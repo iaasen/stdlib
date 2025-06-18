@@ -6,8 +6,9 @@
 
 namespace Iaasen\Cli;
 
-use Laminas\Log\Logger as LaminasLogger;
-use Laminas\Log\Writer\Stream as LaminasStream;
+use Monolog\Handler\StreamHandler;
+use Monolog\Level;
+use Monolog\Logger;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\StyleInterface;
@@ -15,7 +16,7 @@ use Symfony\Component\Console\Style\StyleInterface;
 class FileLogger implements StyleInterface {
 
 	protected $logFilename = 'data/worker.log';
-	protected \Laminas\Log\Logger $logger;
+	protected \Monolog\Logger $logger;
 	protected ?int $progressLength = null;
 	protected ?int $progressAdvance = null;
 
@@ -25,65 +26,68 @@ class FileLogger implements StyleInterface {
 		if($logFilename) $this->logFilename = $logFilename;
 		$stream = @fopen($this->logFilename, 'a');
 		if(!$stream) throw new \DomainException("Unable to open log-file: " . $this->logFilename);
-		$writer = new LaminasStream($stream);
-		$this->logger = new \Laminas\Log\Logger();
-		$this->logger->addWriter($writer);
-		$this->text('Log file: ' . $this->logFilename);
+
+        $fileHandler = new StreamHandler($this->logFilename, Level::Debug);
+        $format = "[%datetime%] %level_name%: %message% %context% %extra%\n";
+        $lineFormatter = new NoMicrosecondsFormatter(format: $format, allowInlineLineBreaks: true);
+        $fileHandler->setFormatter($lineFormatter);
+        $this->logger = new Logger(name: '', handlers: [$fileHandler], );
+		$this->text('Log file: ' . $logFilename);
 	}
 
 
-	public function title(string $message) {
+	public function title(string $message): void {
 		$this->log('============================================');
 		$this->log($message);
 		$this->log('============================================');
 	}
 
 
-	public function section(string $message) {
+	public function section(string $message): void {
 		$this->log('--------------------------------------------');
 		$this->log($message);
 		$this->log('--------------------------------------------');
 	}
 
 
-	public function listing(array $elements) {
+	public function listing(array $elements): void {
 		foreach($elements AS $element) {
 			$this->log('* ' . $element);
 		}
 	}
 
 
-	public function text($message) {
+	public function text($message): void {
 		$this->log($message);
 	}
 
 
-	public function success($message) {
+	public function success($message): void {
 		$this->log('[OK] ' . $message);
 	}
 
 
-	public function error($message) {
-		$this->log('[ERROR] ' . $message, LaminasLogger::ERR);
+	public function error($message): void {
+		$this->log('[ERROR] ' . $message, Level::Error->value);
 	}
 
 
-	public function warning($message) {
-		$this->log('[WARNING] ' . $message, LaminasLogger::WARN);
+	public function warning($message): void {
+		$this->log('[WARNING] ' . $message, Level::Warning->value);
 	}
 
 
-	public function note($message) {
-		$this->log('[NOTE] ' . $message, LaminasLogger::NOTICE);
+	public function note($message): void {
+		$this->log('[NOTE] ' . $message, Level::Notice->value);
 	}
 
 
-	public function caution($message) {
-		$this->log('[CAUTION] ' . $message, LaminasLogger::WARN);
+	public function caution($message): void {
+		$this->log('[CAUTION] ' . $message, Level::Notice->value);
 	}
 
 
-	public function table(array $headers, array $rows) {
+	public function table(array $headers, array $rows): void {
 		$maxLength = 0;
 		foreach($headers AS $header) if(strlen($header) > $maxLength) $maxLength = strlen($header);
 		foreach($rows AS $row) {
@@ -128,23 +132,23 @@ class FileLogger implements StyleInterface {
 	}
 
 
-	public function newLine(int $count = 1) {
+	public function newLine(int $count = 1): void {
 		for($i = 0; $i < $count; $i++) { $this->log(''); }
 	}
 
 
-	public function progressStart(int $max = 0) {
+	public function progressStart(int $max = 0): void {
 		$this->progressLength = $max;
 		$this->progressAdvance = 0;
 	}
 
 
-	public function progressAdvance(int $step = 1) {
+	public function progressAdvance(int $step = 1): void {
 		$this->progressAdvance += $step;
 	}
 
 
-	public function progressFinish() {
+	public function progressFinish(): void {
 		$this->log('[PROGRESS] '. $this->progressAdvance . '/' . $this->progressLength);
 		$this->progressLength = $this->progressAdvance = null;
 	}
@@ -204,7 +208,7 @@ class FileLogger implements StyleInterface {
 	/////////////////////////////////////////////////////////////
 
 
-	protected function log(string $message, int $severity = LaminasLogger::INFO) : void {
+	protected function log(string $message, int $severity = Level::Info->value) : void {
 		$this->logger->log($severity, $message);
 	}
 
