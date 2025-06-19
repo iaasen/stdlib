@@ -20,20 +20,15 @@
         "phpdocumentor/reflection-docblock": "^5"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9|^10"
     },
     "autoload": {
         "psr-4": {
-            "Oppned\\": "src/Oppned",
-            "Iaasen\\": "src/Iaasen"
+            "Iaasen\\": "src/Iaasen/"
         },
         "classmap": [
-            "Module.php"
+            "src/Iaasen/Service/ObjectKeyMatrix.php"
         ]
     },
     "autoload-dev": {
-        "psr-4": {
-            "IaasenTest\\": "test/IaasenTest"
-        }
     }
 }
