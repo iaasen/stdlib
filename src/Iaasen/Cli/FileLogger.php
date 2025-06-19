@@ -28,7 +28,7 @@ class FileLogger implements StyleInterface {
 		if(!$stream) throw new \DomainException("Unable to open log-file: " . $this->logFilename);
 
         $fileHandler = new StreamHandler($this->logFilename, Level::Debug);
-        $format = "[%datetime%] %level_name%: %message% %context% %extra%\n";
+        $format = "[%datetime%] %level_name%: %message%\n";
         $lineFormatter = new NoMicrosecondsFormatter(format: $format, allowInlineLineBreaks: true);
         $fileHandler->setFormatter($lineFormatter);
         $this->logger = new Logger(name: '', handlers: [$fileHandler], );
