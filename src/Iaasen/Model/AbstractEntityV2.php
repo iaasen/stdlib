@@ -154,9 +154,8 @@ class AbstractEntityV2 implements ModelInterfaceV2
 	/**
 	 * Called by \Laminas\Form::bind()
 	 * We don't include static variables. Should we?
-	 * @return array
 	 */
-	public function getArrayCopy() {
+	public function getArrayCopy(): array {
 		$doc = $this->getDocBlock();
 
 		$data = [];
