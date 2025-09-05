@@ -2,9 +2,8 @@
 
 namespace Iaasen\Model;
 
-use Laminas\Stdlib\ArraySerializableInterface;
 
-interface ModelInterfaceV2 extends ArraySerializableInterface
+interface ModelInterfaceV2
 {
     public function __get(string $name);
     public function __set(string $name, $value) : void;
@@ -18,6 +17,18 @@ interface ModelInterfaceV2 extends ArraySerializableInterface
 	 */
 	public function __clone();
 
-    //public function __toString() : string;
+    /**
+     * Nicked from \Laminas\Stdlib\ArraySerializableInterface
+     * Populate the object with the provided array
+     */
+    public function exchangeArray(array $array): void;
+
+    /**
+     * Nicked from \Laminas\Stdlib\ArraySerializableInterface
+     * Return an array representation of the object
+     */
+    public function getArrayCopy(): array;
+
     public function databaseSaveArray() : array;
+
 }

@@ -10,7 +10,6 @@
         "ext-sysvsem": "*",
         "ext-sysvshm": "*",
         "guzzlehttp/guzzle": "^7",
-        "laminas/laminas-stdlib":"^3",
         "phpdocumentor/reflection-docblock": "^5"
     },
     "require-dev": {
