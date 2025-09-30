@@ -1,9 +1,7 @@
 <?php
 /**
- * Created by PhpStorm.
  * User: ingvar.aasen
  * Date: 28.04.2017
- * Time: 16:16
  */
 
 namespace Iaasen;
@@ -13,107 +11,68 @@ class Ipv4Calculator
 {
 	/**
 	 * Check if $ip is between $start and $end
-	 * @param string $ip
-	 * @param string $start
-	 * @param string $end
-	 * @return bool
 	 */
-	public static function isInRange($ip, $start, $end) {
+	public static function isInRange(string $ip, string $start, string $end): bool
+    {
 		return (ip2long($ip) >= ip2long($start) && ip2long($ip) <= ip2long($end));
 	}
 
-	/**
-	 * @param string $ip
-	 * @param string $mask
-	 * @return string
-	 */
-	public static function getNetworkIp($ip, $cidr) {
+	public static function getNetworkIp(string $ip, string $cidr): string
+    {
 		$ip = ip2long($ip);
 		$mask = ip2long(self::getNetmaskFromCidr($cidr));
 		return long2ip($ip & $mask);
 	}
 
-	/**
-	 * @param string $ip
-	 * @param int $cidr
-	 * @return string
-	 */
-	public static function getBroadcastIp($ip, $cidr) {
+	public static function getBroadcastIp(string $ip, int $cidr): string
+    {
 		return self::getIpRangeEnd($ip, $cidr);
 	}
 
-
-	/**
-	 * @param int $cidr
-	 * @return string
-	 */
-	public static function getNetmaskFromCidr($cidr) {
-		$netmask = '';
-		for($i = 0; $i < $cidr; $i++) {
-			$netmask .= 1;
-		}
-		for($i = 0; $i < 32 - $cidr; $i++) {
-			$netmask .= 0;
-		}
+	public static function getNetmaskFromCidr(int $cidr): string
+    {
+        $netmask = str_repeat(1, $cidr);
+        $netmask .= str_repeat(0, 32 - $cidr);
 		$netmask = bindec($netmask);
-
 		return long2ip($netmask);
 	}
 
-	/**
-	 * @param string $netmask
-	 * @return int
-	 */
-	public static function getCidrFromNetmask($netmask) : int {
+	public static function getCidrFromNetmask(string $netmask) : int
+    {
 		$mask = ip2long($netmask);
 		$base = ip2long('255.255.255.255');
 		return (int) (32 - log(($mask ^ $base)+1, 2));
 	}
 
-
-	/**
-	 * @param string $mask
-	 * @return string
-	 */
-	public static function getWildcardMaskFromNetmask($mask) {
+	public static function getWildcardMaskFromNetmask(string $mask): string
+    {
 		$mask = ip2long($mask);
 		$full = ip2long('255.255.255.255');
 		return long2ip($mask ^ $full);
 	}
 
-	/**
-	 * @param string $ip
-	 * @param int $cidr
-	 * @return string
-	 */
-	public static function getIpRangeStart($ip, $cidr) {
+	public static function getIpRangeStart(string $ip, int $cidr): string
+    {
 		$ip = ip2long($ip);
 		$mask = ip2long(self::getNetmaskFromCidr($cidr));
 		return long2ip($ip & $mask);
 	}
 
-	/**
-	 * @param string $ip
-	 * @param int $cidr
-	 * @return string
-	 */
-	public static function getIpRangeEnd($ip, $cidr) {
+	public static function getIpRangeEnd(string $ip, int $cidr): string
+    {
 		$ip = ip2long($ip);
 		$mask = ip2long(self::getNetmaskFromCidr($cidr));
 		$start = $ip & $mask;
 		return long2ip($start + self::getIpRangeCount($cidr) - 1);
 	}
 
-	/**
-	 * @param int $cidr
-	 * @return int
-	 */
-	public static function getIpRangeCount($cidr) {
+	public static function getIpRangeCount(int $cidr): int
+    {
 		return 1 << 32 - $cidr;
 	}
 
-
-	public static function addToIp(string $ip, int $add) : string {
+	public static function addToIp(string $ip, int $add) : string
+    {
 		$ip = ip2long($ip) + $add;
 		if($ip > 4294967295) {
 			trigger_error("Cannot add $add to $ip", E_USER_NOTICE );
@@ -125,18 +84,17 @@ class Ipv4Calculator
 	/**
 	 * Gives an array of all IP addresses in given network
 	 * Will only give answer for $cidr down to /20 (4096 addresses)
-	 * @param string $ip
-	 * @param int $cidr
-	 * @return array|bool
+	 * @return string[]|false
 	 */
-	public static function getIpRange($ip, $cidr) {
+	public static function getIpRange(string $ip, int $cidr): array|false
+    {
 		if($cidr < 20 || $cidr > 32) return false;
 
 		$start = ip2long(self::getIpRangeStart($ip, $cidr));
 		$count = self::getIpRangeCount($cidr);
 
 		$current = $start;
-		$range = array();
+		$range = [];
 		for($i = 0; $i <= $count; $i++) {
 			$range[] = long2ip($current);
 			$current++;
@@ -144,8 +102,8 @@ class Ipv4Calculator
 		return $range;
 	}
 
-
-	public static function isRfc1918(string $ip, int $cidr) : bool {
+	public static function isRfc1918(string $ip, int $cidr) : bool
+    {
 		$validRfc1918 = false;
 		$parts = explode('.', $ip);
 		if($parts[0] == 10 && $cidr >= 8) $validRfc1918 = true;
@@ -153,4 +111,5 @@ class Ipv4Calculator
 		elseif($parts[0] == 192 && $parts[1] == 168 && $cidr >= 16) $validRfc1918 = true;
 		return $validRfc1918;
 	}
+
 }
