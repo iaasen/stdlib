@@ -34,7 +34,7 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 	 * Other types are 'digest', 'ntlm'
 	 * @var string[]
 	 */
-	private ?array $auth = null;
+	protected ?array $auth = null;
 
 	protected GuzzleClient $client;
 	protected ?bool $cookies = null;
