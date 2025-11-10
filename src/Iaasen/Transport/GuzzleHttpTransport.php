@@ -201,7 +201,7 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 			throw new InvalidArgumentException('Only GET, POST, PATCH, PUT and DELETE allowed');
 		}
 
-		$allowedPayload = ['query', 'json', 'form_params', 'body'];
+		$allowedPayload = ['query', 'json', 'form_params', 'body', 'timeout'];
 		foreach($payload AS $key => $value) {
 			if(!in_array($key, $allowedPayload)) throw new InvalidArgumentException("Payload must be 'query', 'json', 'form_params' or 'body'");
 		}
@@ -213,14 +213,15 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 	}
 
 	/**
-	 * @param string $url
-	 * @param array $query
 	 * @return string
 	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
-	public function sendGet(string $url, array $query = [])
+	public function sendGet(string $url, array $query = [], ?int $timeout = null)
 	{
-		return $this->send('GET', $url, ['query' => $query]);
+        $payload = ['query' => $query];
+        if(!is_null($timeout)) $payload['timeout'] = $timeout;
+
+		return $this->send('GET', $url, $payload);
 	}
 
 	/**
