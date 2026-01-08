@@ -282,11 +282,12 @@ class AbstractEntityV2 implements ModelInterfaceV2
 				$this->$name = $value;
 				break;
 			case '\DateTime':
+			case '\DateTimeImmutable':
 			case 'DateTime':
 			case '\Iaasen\DateTime':
 				if(is_null($value)) $this->$name = null;
 				elseif(is_string($value)) $this->$name = (strlen($value)) ? new DateTime($value) : null;
-				elseif($value instanceof \DateTime) $this->$name = new DateTime($value->format('c'));
+				elseif($value instanceof \DateTime || $value instanceof \DateTimeImmutable) $this->$name = new DateTime($value->format('c'));
 				elseif($value instanceof DateTime) $this->$name = $value;
 				else throw new \InvalidArgumentException("Property '$name' must be a string or an instance of \\DateTime in " . get_class($this));
 				break;
