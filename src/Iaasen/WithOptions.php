@@ -38,7 +38,7 @@ class WithOptions {
         $input = trim($input);
 
 		// Is an empty string
-		if(!strlen($input)) return [];
+		if($input === '') return [];
 
         // Is GraphQL Selection Set
         if (static::isValidGraphQlSelectionSet($input)) {
@@ -51,7 +51,7 @@ class WithOptions {
 		}
 
         // Is a comma separated list
-        return self::parseCommaSeparatedList($input);
+        return self::parseCommaSeparatedList($input, $full);
 	}
 
 
@@ -103,22 +103,20 @@ class WithOptions {
         $pos = 1; // Skip first {
         $length = strlen($input);
 
-        try {
-            self::parseValidationLevel($input, $pos, $length);
+        if(self::parseValidationLevel($input, $pos, $length)) {
             return $pos === $length; // Must have read the whole string
-        } catch (\Exception $e) {
-            return false;
         }
+        else return false;
     }
 
     private static function parseArray(array $input, array $full): array
     {
-        if(in_array('all', $input)) return $full;
-        if(in_array('*', $input)) return $full;
+        if(in_array('all', $input, true)) return $full;
+        if(in_array('*', $input, true)) return $full;
         return $input;
     }
 
-    private static function parseCommaSeparatedList(string $input): array
+    private static function parseCommaSeparatedList(string $input, array $full): array
     {
         $data = explode(',', $input);
 
@@ -172,7 +170,7 @@ class WithOptions {
 
             // Read field names. Allowing !
             $name = '';
-            while ($pos < $length && preg_match('/[A-Za-z0-9_!]/', $input[$pos])) {
+            while ($pos < $length && (ctype_alnum($input[$pos]) || $input[$pos] === '_' || $input[$pos] === '!')) {
                 $name .= $input[$pos];
                 $pos++;
             }
@@ -191,42 +189,41 @@ class WithOptions {
         return self::applyBangRule($result);
     }
     
-    private static function parseValidationLevel(string $input, int &$pos, int $length): void
+    private static function parseValidationLevel(string $input, int &$pos, int $length): bool
     {
         while ($pos < $length) {
-
             self::skipGraphQlSeparators($input, $pos);
 
-            if ($pos >= $length) return;
+            if ($pos >= $length) return true;
+
+            $char = $input[$pos];
 
             // End of level
-            if ($input[$pos] === '}') {
+            if ($char === '}') {
                 $pos++;
-                return;
+                return true;
             }
+
 
             // Must be the start of a field (! or letter)
-            if (!preg_match('/[A-Za-z_!]/', $input[$pos])) {
-                throw new \Exception("Invalid field start");
+            if (!(ctype_alpha($char) || $char === '_' || $char === '!')) {
+                return false;
             }
 
-            // Read field
-            $name = '';
-
             // Optional !
-            if ($input[$pos] === '!') {
-                $name .= '!';
+            if ($char === '!') {
                 $pos++;
+                if ($pos >= $length) return false;
+                $char = $input[$pos];
 
                 // ! must be followed by a name
-                if ($pos >= $length || !preg_match('/[A-Za-z_]/', $input[$pos])) {
-                    throw new \Exception("Invalid ! usage");
-                }
+                if (!(ctype_alpha($char) || $char !== '_')) return false;
             }
 
             // Read the rest of name
-            while ($pos < $length && preg_match('/[A-Za-z0-9_]/', $input[$pos])) {
-                $name .= $input[$pos];
+            while($pos < $length) {
+                $char = $input[$pos];
+                if(!(ctype_alnum($char) || $char === '_' || $char === '!')) break;
                 $pos++;
             }
 
@@ -234,13 +231,12 @@ class WithOptions {
 
             // Nested block?
             if ($pos < $length && $input[$pos] === '{') {
-                $pos++; // Sskip {
-                self::parseValidationLevel($input, $pos, $length);
+                $pos++;
+                if(!self::parseValidationLevel($input, $pos, $length)) return false;
             }
         }
 
-        // Missing } at the end is an error
-        throw new \Exception("Missing closing brace");
+        return false; // Missing closing brace "}"
     }
     
     private static function skipGraphQlSeparators(string $input, int &$pos): void
