@@ -23,49 +23,35 @@ class WithOptions {
      *
      * Legacy formats:
      *
-	 * @param array|string|null $withString
+	 * @param array|string|null $input
 	 * @param array $default
 	 * @return array
 	 */
-	public static function extractWith(array|string|null $withString, array $default = [], array $full = []) : array {
+	public static function extractWith(array|string|null $input, array $default = [], array $full = []) : array {
 		// Return default
-		if(is_null($withString)) return $default;
+		if(is_null($input)) return $default;
 
 		// Is already an array
-		if(is_array($withString)) {
-			if(in_array('all', $withString)) return $full;
-			if(in_array('*', $withString)) return $full;
-            return $withString;
-		}
+		if(is_array($input)) return self::parseArray($input, $full);
 
-        $withString = trim($withString);
+        // Is a string
+        $input = trim($input);
 
 		// Is an empty string
-		if(!strlen($withString)) return [];
+		if(!strlen($input)) return [];
 
         // Is GraphQL Selection Set
-        if (static::isValidGraphQlSelectionSet($withString)) {
-            return static::parseGraphQlSelectionSet($withString);
+        if (static::isValidGraphQlSelectionSet($input)) {
+            return static::parseGraphQlSelectionSet($input);
         }
 
         // Is JSON
-		if(preg_match('/^([{\[].*[}\]])$/', $withString)) {
-			$with = json_decode($withString, 1);
-			if(is_null($with)) throw new InvalidArgumentException("Invalid format of 'with' attribute (is this correct json?)");
-			return (array) $with;
+		if(self::isValidJson($input)) {
+            return self::parseJson($input);
 		}
 
         // Is a comma separated list
-		$data = explode(',', $withString);
-
-		// 'all' keyword
-		if(in_array('all', $data)) return $full;
-
-		// Convert to array
-		$data = array_flip($data);
-		$with = [];
-		foreach($data AS $key => $value) $with[$key] = [];
-		return $with;
+        return self::parseCommaSeparatedList($input);
 	}
 
 
@@ -99,6 +85,12 @@ class WithOptions {
         return $result;
     }
 
+    public static function isValidJson(string $input): bool
+    {
+        json_decode($input);
+        return json_last_error() === JSON_ERROR_NONE;
+    }
+
     public static function isValidGraphQlSelectionSet(string $input): bool
     {
         $input = trim($input);
@@ -117,6 +109,35 @@ class WithOptions {
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    private static function parseArray(array $input, array $full): array
+    {
+        if(in_array('all', $input)) return $full;
+        if(in_array('*', $input)) return $full;
+        return $input;
+    }
+
+    private static function parseCommaSeparatedList(string $input): array
+    {
+        $data = explode(',', $input);
+
+        // Contains the 'all' keyword
+        if(in_array('all', $data)) return $full;
+
+        // Convert to array
+        $data = array_flip($data);
+        $with = [];
+        foreach($data AS $key => $value) $with[$key] = [];
+        return $with;
+
+    }
+
+    private static function parseJson(string $input): array
+    {
+        $with = json_decode($input, 1);
+        if(is_null($with)) throw new InvalidArgumentException("Invalid format of 'with' attribute (is this correct json?)");
+        return (array) $with;
     }
 
     public static function parseGraphQlSelectionSet(string $input): array
@@ -239,6 +260,10 @@ class WithOptions {
         }
     }
 
+    /**
+     * And exclude rules beginning with ! will have no purpose if they are combined with include rules for simple fields.
+     * This function will look for include rules and if found remove any exclude rules beginning with !.
+     */
     private static function applyBangRule(array $result): array
     {
         $hasNonBang = false;
