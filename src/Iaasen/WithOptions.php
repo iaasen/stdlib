@@ -118,10 +118,10 @@ class WithOptions {
 
     private static function parseCommaSeparatedList(string $input, array $full): array
     {
-        $data = explode(',', $input);
+        $data = array_map('trim', explode(',', $input));
 
         // Contains the 'all' keyword
-        if(in_array('all', $data)) return $full;
+        if(in_array('all', $data, true)) return $full;
 
         // Convert to array
         $data = array_flip($data);
@@ -262,42 +262,26 @@ class WithOptions {
      */
     private static function applyBangRule(array $result): array
     {
-        $hasNonBang = false;
-        // Look for regular field names. Ignore ! and nested structures
+        $hasInclude = false;
+
         foreach ($result as $key => $value) {
-            if (is_int($key)) {
-                if ($value[0] !== '!') {
-                    $hasNonBang = true;
-                    break;
-                }
+            if (is_int($key) && $value[0] !== '!') {
+                $hasInclude = true;
+                break;
             }
         }
 
-        // If at least one regular field is found, remove all fields with ! on this level
-        if ($hasNonBang) {
-            foreach ($result as $key => $value) {
-                if (is_int($key) && $value[0] === '!') {
-                    unset($result[$key]);
-                }
-            }
-
-            // Re-index numeric array keys, keep assoc keys
-            $numeric = [];
-            $assoc = [];
-            foreach ($result as $key => $value) {
-                if (is_int($key)) {
-                    $numeric[] = $value; // Implicitly reindexed
-                } else {
-                    $assoc[$key] = $value; // Keep assoc key
-                }
-            }
-            // Merge numeric with assoc
-            $result = $numeric + $assoc;
-
+        if (!$hasInclude) {
+            return $result;
         }
 
-        return $result;
+        return array_values(array_filter(
+            $result,
+            fn($value, $key) => !is_int($key) || $value[0] !== '!',
+            ARRAY_FILTER_USE_BOTH
+        ));
     }
+
 
     public static function separateWithFromWithout(array $input): array
     {
