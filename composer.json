@@ -13,6 +13,8 @@
         "phpdocumentor/reflection-docblock": "^5"
     },
     "require-dev": {
+        "phpunit/phpunit": "^11",
+        "symfony/var-dumper": "^7"
     },
     "autoload": {
         "psr-4": {
@@ -23,5 +25,12 @@
         ]
     },
     "autoload-dev": {
+        "psr-4": {
+            "IaasenTest\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
     }
+
 }

@@ -11,7 +11,7 @@ use Iaasen\Exception\InvalidArgumentException;
 class WithOptions {
 
 	/**
-     * Current accepted formats:
+     * Accepted formats:
      * null - returns $default
      * array with value * or 'all' in top level - returns $full
      * array - returned as it is
@@ -20,12 +20,6 @@ class WithOptions {
      * JSON - converted to PHP array and returned as it is
      * comma separated list - Converted request for populated objects on top level
      * The string "all" - returns $full
-     *
-     * Legacy formats:
-     *
-	 * @param array|string|null $input
-	 * @param array $default
-	 * @return array
 	 */
 	public static function extractWith(array|string|null $input, array $default = [], array $full = []) : array {
 		// Return default
@@ -51,8 +45,12 @@ class WithOptions {
 		}
 
         // Is a comma separated list
-        return self::parseCommaSeparatedList($input, $full);
-	}
+        if(self::isValidCommaSeparatedList($input)) {
+            return self::parseCommaSeparatedList($input, $full);
+        }
+
+        throw new InvalidArgumentException('Invalid WITH format');
+    }
 
 
     /**
@@ -87,8 +85,12 @@ class WithOptions {
 
     public static function isValidJson(string $input): bool
     {
-        json_decode($input);
-        return json_last_error() === JSON_ERROR_NONE;
+        try {
+            json_decode($input, true, flags: JSON_THROW_ON_ERROR);
+            return true;
+        } catch (\JsonException) {
+            return false;
+        }
     }
 
     public static function isValidGraphQlSelectionSet(string $input): bool
@@ -103,10 +105,17 @@ class WithOptions {
         $pos = 1; // Skip first {
         $length = strlen($input);
 
-        if(self::parseValidationLevel($input, $pos, $length)) {
+        if(self::isValidGraphQlSelectionSetRecursive($input, $pos, $length)) {
             return $pos === $length; // Must have read the whole string
         }
         else return false;
+    }
+
+    public static function isValidCommaSeparatedList(string $input): bool
+    {
+        $input = trim($input);
+        if ($input === '') return false;
+        return preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(\s*,\s*[a-zA-Z_][a-zA-Z0-9_]*)*$/', $input) === 1;
     }
 
     private static function parseArray(array $input, array $full): array
@@ -140,56 +149,100 @@ class WithOptions {
 
     public static function parseGraphQlSelectionSet(string $input): array
     {
-        // Strip whitespace at beginning and end
-        $input = trim($input);
-
-        // Remove the outer {} braces
-        if ($input[0] === '{') {
-            $input = substr($input, 1, -1);
-        }
-
+        $tokens = self::tokenizeGraphQlSelectionSet($input);
         $pos = 0;
-        return static::parseGraphQlSelectionSetRecursive($input, $pos);
+        return self::parseGraphQlSelectionSetRecursive($tokens, $pos);
     }
 
-    private static function parseGraphQlSelectionSetRecursive(string $input, int &$pos): array
+    /**
+     * @param string[] $tokens
+     */
+    private static function parseGraphQlSelectionSetRecursive(array $tokens, int &$pos): array
     {
-
         $result = [];
-        $length = strlen($input);
 
-        while ($pos < $length) {
-            self::skipGraphQlSeparators($input, $pos);
+        // expect {
+        if (!isset($tokens[$pos]) || $tokens[$pos] !== '{') {
+            throw new \InvalidArgumentException("Expected '{'");
+        }
+        $pos++;
 
-            // End of this level
-            if ($pos >= $length) break;
-            if ($input[$pos] === '}') {
+        while (isset($tokens[$pos])) {
+            $token = $tokens[$pos];
+
+            // end of block
+            if ($token === '}') {
                 $pos++;
                 break;
             }
 
-            // Read field names. Allowing !
-            $name = '';
-            while ($pos < $length && (ctype_alnum($input[$pos]) || $input[$pos] === '_' || $input[$pos] === '!')) {
-                $name .= $input[$pos];
+            if ($token === ',') {
                 $pos++;
+                continue;
             }
 
-            self::skipGraphQlSeparators($input, $pos);
+            // field name
+            $name = $token;
+            $pos++;
 
-            // Nested?
-            if ($pos < $length && $input[$pos] === '{') {
-                $pos++; // {
-                $result[$name] = self::parseGraphQlSelectionSetRecursive($input, $pos);
+            // nested?
+            if (isset($tokens[$pos]) && $tokens[$pos] === '{') {
+                $result[$name] = self::parseGraphQlSelectionSetRecursive($tokens, $pos);
             } else {
                 $result[] = $name;
             }
         }
+        return $result;
 
         return self::applyBangRule($result);
+
     }
-    
-    private static function parseValidationLevel(string $input, int &$pos, int $length): bool
+
+
+    private static function tokenizeGraphQlSelectionSet(string $input): array
+    {
+        $tokens = [];
+        $length = strlen($input);
+        $i = 0;
+
+        while ($i < $length) {
+            $char = $input[$i];
+
+            // Skip token separators
+            if (ctype_space($char) || $char === ',') {
+                $i++;
+                continue;
+            }
+
+            // single char tokens
+            if ($char === '{' || $char === '}') {
+                $tokens[] = $char;
+                $i++;
+                continue;
+            }
+
+            // identifier
+            if (ctype_alnum($char) || $char === '_' || $char === '!') {
+                $start = $i;
+                while (
+                    $i < $length &&
+                    (ctype_alnum($input[$i]) || $input[$i] === '_' || $input[$i] === '!')
+                ) {
+                    $i++;
+                }
+
+                $tokens[] = substr($input, $start, $i - $start);
+                continue;
+            }
+
+            throw new \InvalidArgumentException("Invalid character '{$char}'");
+        }
+
+        return $tokens;
+    }
+
+
+    private static function isValidGraphQlSelectionSetRecursive(string $input, int &$pos, int $length): bool
     {
         while ($pos < $length) {
             self::skipGraphQlSeparators($input, $pos);
@@ -217,7 +270,7 @@ class WithOptions {
                 $char = $input[$pos];
 
                 // ! must be followed by a name
-                if (!(ctype_alpha($char) || $char !== '_')) return false;
+                if (!(ctype_alpha($char) || $char === '_')) return false;
             }
 
             // Read the rest of name
@@ -232,7 +285,7 @@ class WithOptions {
             // Nested block?
             if ($pos < $length && $input[$pos] === '{') {
                 $pos++;
-                if(!self::parseValidationLevel($input, $pos, $length)) return false;
+                if(!self::isValidGraphQlSelectionSetRecursive($input, $pos, $length)) return false;
             }
         }
 
