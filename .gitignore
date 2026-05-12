@@ -1,5 +1,6 @@
 .idea
 .git
+.phpunit.result.cache
 vendor
 composer.phar
 composer.lock
