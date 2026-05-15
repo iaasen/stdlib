@@ -344,11 +344,7 @@ class WithOptions {
         foreach ($input as $key => $value) {
             // Nested object, identified by the value being an array
             if(is_array($value)) {
-                [$nestedWith, $nestedWithout] = self::separateWithFromWithout($value);
-                $with[$key] = $nestedWith;
-                if (!empty($nestedWithout)) {
-                    $without[$key] = $nestedWithout;
-                }
+                [$with[$key], $without[$key]] = self::separateWithFromWithout($value);
             }
 
             // Simple property
