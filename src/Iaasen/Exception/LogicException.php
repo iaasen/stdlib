@@ -10,7 +10,7 @@ namespace Iaasen\Exception;
 
 class LogicException extends \LogicException
 {
-	public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
+	public function __construct(string $message = "", int $code = 0, ?\Throwable $previous = null)
 	{
 		if($code === 0) $code = 500;
 		parent::__construct($message, $code, $previous);

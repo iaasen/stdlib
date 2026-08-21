@@ -16,7 +16,7 @@ class NotAuthenticatedException extends \DomainException
 	public function __construct(
 		string $message = "Authentication is required and has failed or has not yet been provided",
 		int $code = 401,
-		Throwable $previous = null
+		?Throwable $previous = null
 	) {
 		parent::__construct($message, $code, $previous);
 	}

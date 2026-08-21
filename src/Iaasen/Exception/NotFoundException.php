@@ -16,7 +16,7 @@ class NotFoundException extends \DomainException
 	public function __construct(
 		string $message = "The requested resource could not be found",
 		int $code = 404,
-		Throwable $previous = null
+		?Throwable $previous = null
 	) {
 		parent::__construct($message, $code, $previous);
 	}

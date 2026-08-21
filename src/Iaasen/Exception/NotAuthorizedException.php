@@ -16,7 +16,7 @@ class NotAuthorizedException extends \DomainException
 	public function __construct(
 		string $message = "Forbidden",
 		int $code = 403,
-		Throwable $previous = null
+		?Throwable $previous = null
 	) {
 		parent::__construct($message, $code, $previous);
 	}
