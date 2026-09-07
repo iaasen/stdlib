@@ -1,9 +1,7 @@
 <?php
 /**
- * Created by PhpStorm.
  * User: ingvar.aasen
  * Date: 07.11.2016
- * Time: 09:22
  */
 
 namespace Iaasen\Transport;
@@ -11,7 +9,6 @@ namespace Iaasen\Transport;
 
 interface HttpTransportInterface
 {
-	public function send(string $method, string $url, array $payload = [], bool $checkSession = true);
 	public function sendGet(string $url, array $query = []);
 	public function sendPostWithJson(string $url, $json, array $query = []);
 	public function sendPostWithBody(string $url, $body, array $query = []);

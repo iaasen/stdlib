@@ -225,15 +225,6 @@ abstract class GuzzleHttpTransport implements HttpTransportInterface
 	}
 
 	/**
-	 * @deprecated Use sendGet()
-	 * @throws \GuzzleHttp\Exception\GuzzleException
-	 */
-	public function sendQuery($url, $query)
-	{
-		return $this->sendGet($url, $query);
-	}
-
-	/**
 	 * @param string $url
 	 * @param $json
 	 * @param array $query
